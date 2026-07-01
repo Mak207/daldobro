@@ -181,11 +181,17 @@ async function calc(){
     const h=document.getElementById('hint');
     if(c.vat_hint){h.style.display='block';h.textContent='⚠ '+c.vat_hint;}else h.style.display='none';
     document.getElementById('alts').textContent=(d.alt_codes&&d.alt_codes.length)?('Альтернативные коды (если спорно): '+d.alt_codes.join(', ')):'';
-    // блок уточнения: если код не 10-значный или риск высокий — просим детализировать
+    // блок уточнения из API: показываем причину + конкурирующие категории с описанием
     const cb=document.getElementById('clarifyBox');
-    const needClarify = (d.code&&d.code.length<10) || d.risk_level==='высокий';
-    if(needClarify){cb.style.display='block';cb.innerHTML='<b>Уточните товар для точного кода.</b> Слишком общее название — код и пошлина зависят от деталей (материал, состав, назначение, тип). Добавьте их в наименование и пересчитайте.';}
-    else cb.style.display='none';
+    if(d.clarify){
+      let h='<b>Уточните товар для точного кода.</b> '+d.clarify.reason;
+      const o=d.clarify.options||[];
+      if(o.length>1){
+        h+='<br><br>Возможные категории (добавьте деталь в название):<br>'+
+           o.map(x=>'• <code>'+x.code+'</code> — '+x.name).join('<br>');
+      }
+      cb.innerHTML=h; cb.style.display='block';
+    } else cb.style.display='none';
     document.getElementById('res').style.display='block';
   }catch(e){err.textContent='Ошибка запроса: '+e.message;}
   finally{btn.disabled=false;btn.textContent='Рассчитать себестоимость';}
