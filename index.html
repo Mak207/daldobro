@@ -289,6 +289,7 @@ async function typeInto(id,text){const el=document.getElementById(id);el.value='
 async function aiSend(){
   const inp=document.getElementById('aiMsg'),btn=document.getElementById('aiBtn'),msg=inp.value.trim();
   if(!msg)return; addMsg('user',msg); inp.value=''; btn.disabled=true;
+  document.getElementById('res').style.display='none';  // прячем старый расчёт, пока ИИ уточняет
   const histForApi=aiHistory.slice(); aiHistory.push({role:'user',content:msg});
   addTyping();
   try{
