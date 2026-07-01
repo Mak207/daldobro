@@ -87,6 +87,7 @@
         <div><label>Страховка, ₽</label><input id="insurance" type="number" value="0"></div>
         <div><label>Ставка НДС</label><select id="vat"><option value="20">20% (общая)</option><option value="10">10% (льготная)</option></select></div>
       </div>
+      <div id="qtyWrap" style="display:none"><label id="qtyLabel">Количество</label><input id="qty" type="number" placeholder="для пошлины за единицу"></div>
       <button id="go" onclick="calc()">Рассчитать себестоимость</button>
       <div id="errbox" class="err"></div>
       <div id="res">
@@ -112,7 +113,7 @@
       <a class="tile" href="/trends/spornye-kody-tnved.html">
         <span class="tag">Данные · 1 июля</span>
         <h3>Спорные коды ТН ВЭД: где рискуешь переплатить</h3>
-        <p>Товары, по которым импортёры и таможня чаще всего расходятся в коде — на реальной практике ФГИС.</p>
+        <p>Товары, по которым импортёры и таможня чаще всего расходятся в коде ТН ВЭД, — и где легко переплатить.</p>
       </a>
       <a class="tile" href="/trends/ved-2018-2026.html">
         <span class="tag">Тренд-разбор</span>
@@ -126,7 +127,7 @@
     <h2 class="sec">Индексы рынка</h2>
     <p class="sec-sub">Уникальные индикаторы из наших данных — обновляются ежемесячно. Скоро.</p>
     <div class="grid">
-      <div class="tile"><span class="tag soon">Скоро</span><h3>Карго-прайс-индекс</h3><p>Реальная стоимость ввоза $/кг из чатов × курс ЦБ — помесячно.</p></div>
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Карго-прайс-индекс</h3><p>Реальная стоимость ввоза $/кг в пересчёте на рубли — помесячно.</p></div>
       <div class="tile"><span class="tag soon">Скоро</span><h3>Индекс «боли ВЭД»</h3><p>Объём проблем и задержек на таможне × тональность — опережающий индикатор трения.</p></div>
       <div class="tile"><span class="tag soon">Скоро</span><h3>Платёжный барометр</h3><p>Стоимость и проходимость платежей в Китай: комиссии агентов × курс.</p></div>
       <div class="tile"><span class="tag soon">Скоро</span><h3>Реестр-дельта ФТС</h3><p>Кто вошёл и вылетел из реестра таможенных представителей за месяц.</p></div>
@@ -145,7 +146,7 @@
   </section>
 
   <div class="foot">
-    <b>ДалДобро</b> — навигатор по ввозу из Китая. Оценки навигационные: коды и ставки — из официального классификатора и ЕТТ ЕАЭС + анализа реальной практики ФГИС. Пломбу ставит лицензированный декларант; при высоком риске — предварительное решение ФТС. Данные обновляются автоматически.<br>
+    <b>ДалДобро</b> — навигатор по ввозу из Китая. Оценки навигационные: коды и ставки — по официальному классификатору и ЕТТ ЕАЭС. Пломбу ставит лицензированный декларант; при высоком риске — предварительное решение ФТС. Данные обновляются автоматически.<br>
     © ДалДобро · daldobro.ru
   </div>
 </div>
@@ -157,10 +158,16 @@ async function calc(){
   const btn=document.getElementById('go'), err=document.getElementById('errbox');
   err.textContent=''; btn.disabled=true; btn.textContent='Считаю…';
   try{
-    const q=new URLSearchParams({term:term.value,goods:goods.value||0,freight:freight.value||0,insurance:insurance.value||0,vat:vat.value});
+    const qp={term:term.value,goods:goods.value||0,freight:freight.value||0,insurance:insurance.value||0,vat:vat.value};
+    const qv=document.getElementById('qty').value; if(qv) qp.qty=qv;
+    const q=new URLSearchParams(qp);
     const r=await fetch(API+'/quote?'+q); const d=await r.json();
     if(d.error){err.textContent=d.error;document.getElementById('res').style.display='none';return;}
     const c=d.calc;
+    // пошлина за единицу — показываем поле количества с нужной единицей
+    const qw=document.getElementById('qtyWrap');
+    if(c.need_qty){qw.style.display='block';document.getElementById('qtyLabel').textContent='Количество, '+c.need_qty+' — нужно для расчёта пошлины, введите и пересчитайте';}
+    else qw.style.display='none';
     document.getElementById('code').textContent=d.code;
     const rl=d.risk_level||'', rb=document.getElementById('risk');
     rb.textContent='риск кода: '+rl;
