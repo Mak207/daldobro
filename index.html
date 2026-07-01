@@ -26,6 +26,10 @@
   .orb.c{width:360px;height:360px;background:radial-gradient(circle,#2ec9bd,transparent 70%);bottom:-120px;right:20%;animation-delay:-11s}
   @keyframes float{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.08)}66%{transform:translate(-30px,20px) scale(.95)}}
   .grid-ovl{position:fixed;inset:0;z-index:-1;background-image:linear-gradient(rgba(120,150,220,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,220,.05) 1px,transparent 1px);background-size:54px 54px;mask-image:radial-gradient(circle at 50% 0%,#000 20%,transparent 75%)}
+  .cursor-glow{position:fixed;width:460px;height:460px;border-radius:50%;background:radial-gradient(circle,rgba(91,140,255,.13),rgba(124,92,255,.06) 40%,transparent 70%);pointer-events:none;z-index:-1;transform:translate(-50%,-50%);left:50%;top:26%;transition:left .18s ease-out,top .18s ease-out}
+  .ico{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:linear-gradient(135deg,rgba(91,140,255,.2),rgba(124,92,255,.14));border:1px solid rgba(120,140,190,.18)}
+  .ico svg{width:23px;height:23px;stroke:#a9c2ff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .stat b{position:relative}
   .wrap{max-width:960px;margin:0 auto;padding:0 20px}
   /* ── навигация ── */
   nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:22px;padding:16px 0;backdrop-filter:blur(14px);background:rgba(8,11,22,.6);border-bottom:1px solid var(--line)}
@@ -93,7 +97,7 @@
 </style>
 </head>
 <body>
-<div class="bg"></div><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div><div class="grid-ovl"></div>
+<div class="bg"></div><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div><div class="grid-ovl"></div><div class="cursor-glow" id="cg"></div>
 
 <div class="wrap">
   <nav>
@@ -109,8 +113,8 @@
     <h1>Ввоз из Китая<br><span class="g">без переплат и сюрпризов</span></h1>
     <p>Введите товар и цену — мгновенно получите код ТН ВЭД, ставку пошлины, НДС и полную себестоимость. С оценкой риска классификации и аналитикой рынка.</p>
     <div class="stats">
-      <div class="stat"><b>28 488</b><span>кодов ТН ВЭД</span></div>
-      <div class="stat"><b>13 287</b><span>ставок ЕТТ ЕАЭС</span></div>
+      <div class="stat"><b data-n="28488">0</b><span>кодов ТН ВЭД</span></div>
+      <div class="stat"><b data-n="13287">0</b><span>ставок ЕТТ ЕАЭС</span></div>
       <div class="stat"><b>~0.2с</b><span>на расчёт</span></div>
     </div>
   </header>
@@ -153,11 +157,13 @@
     <p class="sec-sub">Разборы по реальным данным рынка. Новые материалы — регулярно.</p>
     <div class="grid">
       <a class="glass tile" href="/trends/spornye-kody-tnved.html">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v17M5 20h14M6 8l6-3 6 3M7 8l-2 5h4l-2-5zM17 8l-2 5h4l-2-5z"/></svg></div>
         <span class="tag">Данные · 1 июля</span>
         <h3>Спорные коды ТН ВЭД: где рискуешь переплатить</h3>
         <p>Товары, по которым импортёры и таможня чаще всего расходятся в коде, — и где легко переплатить.</p>
       </a>
       <a class="glass tile" href="/trends/ved-2018-2026.html">
+        <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 15l4-5 3 3 5-7M19 6h-3M19 6v3"/></svg></div>
         <span class="tag">Тренд-разбор</span>
         <h3>ВЭД и логистика 2018–2026: что изменилось</h3>
         <p>Девять лет рынка: от цифровизации и очередей — к санкционному шоку и «обходу» как норме.</p>
@@ -169,10 +175,10 @@
     <h2 class="sec">Индексы рынка</h2>
     <p class="sec-sub">Уникальные индикаторы — обновляются ежемесячно. Скоро.</p>
     <div class="grid">
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Карго-прайс-индекс</h3><p>Реальная стоимость ввоза $/кг в пересчёте на рубли — помесячно.</p></div>
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Индекс «боли ВЭД»</h3><p>Напряжение и задержки на таможне — опережающий индикатор трения.</p></div>
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Платёжный барометр</h3><p>Стоимость и проходимость платежей в Китай.</p></div>
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Реестр-дельта ФТС</h3><p>Кто вошёл и вылетел из реестра таможенных представителей за месяц.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 15l3-4 3 2 4-6M12 3a3 3 0 100 6 3 3 0 000-6z"/></svg></div><span class="tag soon">Скоро</span><h3>Карго-прайс-индекс</h3><p>Реальная стоимость ввоза $/кг в пересчёте на рубли — помесячно.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></div><span class="tag soon">Скоро</span><h3>Индекс «боли ВЭД»</h3><p>Напряжение и задержки на таможне — опережающий индикатор трения.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 019 9M12 12l6-4M12 21a9 9 0 01-9-9 9 9 0 019-9"/></svg></div><span class="tag soon">Скоро</span><h3>Платёжный барометр</h3><p>Стоимость и проходимость платежей в Китай.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h3"/></svg></div><span class="tag soon">Скоро</span><h3>Реестр-дельта ФТС</h3><p>Кто вошёл и вылетел из реестра таможенных представителей за месяц.</p></div>
     </div>
   </section>
 
@@ -180,10 +186,10 @@
     <h2 class="sec">Проверка и мониторинг</h2>
     <p class="sec-sub">Не потерять деньги на ненадёжном контрагенте. Скоро.</p>
     <div class="grid">
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Проверка контрагента</h3><p>Брокер / платёжный агент / поставщик: репутация и надёжность = red-flags.</p></div>
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Анти-скам платежей</h3><p>Проверка платёжного агента в Китай перед переводом.</p></div>
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Алерты и мониторинг</h3><p>Правило вступает завтра · канал платежей упал · брокер вылетел — узнай раньше всех.</p></div>
-      <div class="glass tile"><span class="tag soon">Скоро</span><h3>Фейк-радар</h3><p>Что сегодня НЕ правда на рынке: разоблачение ложных паник.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3zM9 12l2 2 4-4"/></svg></div><span class="tag soon">Скоро</span><h3>Проверка контрагента</h3><p>Брокер / платёжный агент / поставщик: репутация и надёжность = red-flags.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3zM9.5 9.5l5 5M14.5 9.5l-5 5"/></svg></div><span class="tag soon">Скоро</span><h3>Анти-скам платежей</h3><p>Проверка платёжного агента в Китай перед переводом.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 004 0"/></svg></div><span class="tag soon">Скоро</span><h3>Алерты и мониторинг</h3><p>Правило вступает завтра · канал платежей упал · брокер вылетел — узнай раньше всех.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7zM12 9a3 3 0 100 6 3 3 0 000-6z"/></svg></div><span class="tag soon">Скоро</span><h3>Фейк-радар</h3><p>Что сегодня НЕ правда на рынке: разоблачение ложных паник.</p></div>
     </div>
   </section>
 
@@ -241,6 +247,13 @@ async function calc(){
 // scroll-reveal
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+// свечение следует за курсором (только на десктопе)
+const cg=document.getElementById('cg');
+if(matchMedia('(pointer:fine)').matches){addEventListener('mousemove',e=>{cg.style.left=e.clientX+'px';cg.style.top=e.clientY+'px'});}
+// счётчики «набегают» при появлении
+function countUp(el){const t=+el.dataset.n;let c=0,s=t/55;const i=setInterval(()=>{c+=s;if(c>=t){c=t;clearInterval(i)}el.textContent=Math.round(c).toLocaleString('ru-RU')},18)}
+const cio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);cio.unobserve(e.target)}}),{threshold:.6});
+document.querySelectorAll('.stat b[data-n]').forEach(el=>cio.observe(el));
 window.addEventListener('DOMContentLoaded',calc);
 </script>
 </body>
