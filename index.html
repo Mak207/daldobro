@@ -3,78 +3,150 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ДалДобро — калькулятор себестоимости ввоза из Китая</title>
-<meta name="description" content="Введите товар и цену — получите код ТН ВЭД, ставку пошлины ЕТТ ЕАЭС, НДС и полную себестоимость ввоза. С оценкой риска классификации.">
+<title>ДалДобро — калькулятор и аналитика ввоза из Китая: код ТН ВЭД, пошлина, себестоимость</title>
+<meta name="description" content="Посчитайте себестоимость ввоза из Китая: код ТН ВЭД, ставка пошлины ЕТТ ЕАЭС, НДС, риск классификации. Плюс аналитика ВЭД по реальным данным: тренды, спорные коды, индексы рынка.">
+<link rel="canonical" href="https://www.daldobro.ru/">
 <style>
   :root{--bg:#0f1420;--card:#171e2e;--line:#26304a;--txt:#e7ecf5;--mut:#93a1bd;--acc:#5b8cff;--good:#2fbf71;--warn:#e0a53a;--bad:#e0574a}
   *{box-sizing:border-box}
-  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(160deg,#0f1420,#0c1830);color:var(--txt);min-height:100vh}
-  .wrap{max-width:820px;margin:0 auto;padding:32px 18px 60px}
-  .logo{font-size:26px;font-weight:800;letter-spacing:.5px}
-  .logo span{color:var(--acc)}
-  .sub{color:var(--mut);margin:6px 0 26px;font-size:15px;line-height:1.5}
-  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin-bottom:18px}
+  body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(160deg,#0f1420,#0c1830);color:var(--txt)}
+  a{color:var(--acc);text-decoration:none}
+  .wrap{max-width:900px;margin:0 auto;padding:0 18px}
+  nav{display:flex;align-items:center;gap:22px;padding:18px 0;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+  .logo{font-size:22px;font-weight:800}.logo span{color:var(--acc)}
+  nav .links{display:flex;gap:18px;margin-left:auto;flex-wrap:wrap}
+  nav a{color:var(--mut);font-size:15px}nav a:hover{color:var(--txt)}
+  .hero{padding:34px 0 10px}
+  .hero h1{font-size:30px;line-height:1.25;margin:0 0 10px}
+  .hero p{color:var(--mut);font-size:16px;max-width:640px;line-height:1.6;margin:0}
+  section{padding:30px 0}
+  h2.sec{font-size:22px;margin:0 0 4px}
+  .sec-sub{color:var(--mut);font-size:14px;margin:0 0 18px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px}
   label{display:block;font-size:13px;color:var(--mut);margin:12px 0 6px}
   input,select{width:100%;padding:12px 14px;background:#0e1524;border:1px solid var(--line);border-radius:10px;color:var(--txt);font-size:15px}
   input:focus,select:focus{outline:none;border-color:var(--acc)}
   .row{display:flex;gap:12px}.row>div{flex:1}
   button{margin-top:18px;width:100%;padding:14px;background:var(--acc);color:#fff;border:0;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer}
   button:hover{filter:brightness(1.08)}button:disabled{opacity:.6;cursor:wait}
-  #res{display:none}
-  .code{font-size:30px;font-weight:800;letter-spacing:1px}
-  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-left:8px;vertical-align:middle}
-  .b-low{background:rgba(47,191,113,.15);color:var(--good)}
-  .b-mid{background:rgba(224,165,58,.15);color:var(--warn)}
-  .b-high{background:rgba(224,87,74,.15);color:var(--bad)}
-  .nm{color:var(--mut);font-size:14px;margin:6px 0 16px}
-  table{width:100%;border-collapse:collapse;margin-top:6px}
-  td{padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}
-  td:last-child{text-align:right;font-variant-numeric:tabular-nums}
-  .total td{border:0;padding-top:14px;font-size:20px;font-weight:800}
-  .total td:last-child{color:var(--acc)}
+  #res{display:none;margin-top:18px}
+  .code{font-size:28px;font-weight:800;letter-spacing:1px}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;margin-left:8px}
+  .b-low{background:rgba(47,191,113,.15);color:var(--good)}.b-mid{background:rgba(224,165,58,.15);color:var(--warn)}.b-high{background:rgba(224,87,74,.15);color:var(--bad)}
+  .nm{color:var(--mut);font-size:14px;margin:6px 0 14px}
+  table{width:100%;border-collapse:collapse}
+  td{padding:9px 0;border-bottom:1px solid var(--line);font-size:15px}td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+  .total td{border:0;padding-top:14px;font-size:20px;font-weight:800}.total td:last-child{color:var(--acc)}
   .hint{margin-top:12px;padding:10px 12px;background:rgba(224,165,58,.1);border:1px solid rgba(224,165,58,.3);border-radius:8px;color:var(--warn);font-size:13px}
+  .clarify{margin-top:14px;padding:12px 14px;background:rgba(91,140,255,.08);border:1px solid rgba(91,140,255,.3);border-radius:8px;font-size:14px}
+  .clarify b{color:var(--acc)}
+  .chip{display:inline-block;margin:6px 6px 0 0;padding:6px 12px;background:#0e1524;border:1px solid var(--line);border-radius:16px;font-size:13px;cursor:pointer}
+  .chip:hover{border-color:var(--acc)}
   .alts{color:var(--mut);font-size:13px;margin-top:10px}
-  .foot{color:var(--mut);font-size:12px;text-align:center;margin-top:26px;line-height:1.6}
   .err{color:var(--bad);font-size:14px;margin-top:12px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid{grid-template-columns:1fr}}
+  .tile{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:block}
+  .tile:hover{border-color:var(--acc)}
+  .tile h3{margin:0 0 6px;font-size:17px;color:var(--txt)}
+  .tile p{margin:0;color:var(--mut);font-size:14px;line-height:1.5}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px;background:rgba(91,140,255,.15);color:var(--acc);margin-bottom:8px}
+  .soon .tile{opacity:.75}
+  .tag.soon{background:rgba(147,161,189,.15);color:var(--mut)}
+  .foot{color:var(--mut);font-size:13px;border-top:1px solid var(--line);padding:26px 0 50px;line-height:1.7;margin-top:20px}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="logo">Дал<span>Добро</span></div>
-  <div class="sub">Калькулятор себестоимости ввоза из Китая. Введите товар и цену — получите код&nbsp;ТН&nbsp;ВЭД, ставку пошлины (ЕТТ&nbsp;ЕАЭС), НДС и полную себестоимость. С оценкой риска классификации на реальной практике деклараций и сертификатов.</div>
+  <nav>
+    <div class="logo">Дал<span>Добро</span></div>
+    <div class="links">
+      <a href="#calc">Калькулятор</a>
+      <a href="#analytics">Аналитика</a>
+      <a href="#data">Индексы</a>
+      <a href="#check">Проверка</a>
+    </div>
+  </nav>
 
-  <div class="card">
-    <label>Наименование товара</label>
-    <input id="term" placeholder="например: холодильник бытовой" value="холодильник бытовой">
-    <div class="row">
-      <div><label>Стоимость товара, ₽</label><input id="goods" type="number" value="45000"></div>
-      <div><label>Фрахт до границы, ₽</label><input id="freight" type="number" value="8000"></div>
-    </div>
-    <div class="row">
-      <div><label>Страховка, ₽</label><input id="insurance" type="number" value="0"></div>
-      <div><label>Ставка НДС</label><select id="vat"><option value="20">20% (общая)</option><option value="10">10% (льготная)</option></select></div>
-    </div>
-    <button id="go" onclick="calc()">Рассчитать себестоимость</button>
-    <div id="errbox" class="err"></div>
+  <div class="hero">
+    <h1>Всё для ввоза из Китая: посчитать, проверить, не переплатить</h1>
+    <p>Калькулятор себестоимости ввоза + аналитика ВЭД по реальным данным таможни, реестров и рынка. Считаем код ТН ВЭД, пошлину и НДС; показываем риск классификации; следим за трендами и спорными кодами.</p>
   </div>
 
-  <div class="card" id="res">
-    <div><span class="code" id="code"></span><span class="badge" id="risk"></span></div>
-    <div class="nm" id="name"></div>
-    <table>
-      <tr><td>Таможенная стоимость</td><td id="cv"></td></tr>
-      <tr><td id="dutyL">Пошлина</td><td id="duty"></td></tr>
-      <tr><td id="vatL">НДС</td><td id="vat_"></td></tr>
-      <tr class="total"><td>Итого себестоимость ввоза</td><td id="total"></td></tr>
-    </table>
-    <div class="hint" id="hint" style="display:none"></div>
-    <div class="alts" id="alts"></div>
-  </div>
+  <section id="calc">
+    <h2 class="sec">Калькулятор себестоимости ввоза</h2>
+    <p class="sec-sub">Введите товар и цену — получите код ТН ВЭД, ставку пошлины ЕТТ ЕАЭС, НДС, полную себестоимость и риск классификации.</p>
+    <div class="card">
+      <label>Наименование товара</label>
+      <input id="term" placeholder="например: холодильник бытовой" value="холодильник бытовой">
+      <div class="row">
+        <div><label>Стоимость товара, ₽</label><input id="goods" type="number" value="45000"></div>
+        <div><label>Фрахт до границы, ₽</label><input id="freight" type="number" value="8000"></div>
+      </div>
+      <div class="row">
+        <div><label>Страховка, ₽</label><input id="insurance" type="number" value="0"></div>
+        <div><label>Ставка НДС</label><select id="vat"><option value="20">20% (общая)</option><option value="10">10% (льготная)</option></select></div>
+      </div>
+      <button id="go" onclick="calc()">Рассчитать себестоимость</button>
+      <div id="errbox" class="err"></div>
+      <div id="res">
+        <div id="clarifyBox" class="clarify" style="display:none"></div>
+        <div><span class="code" id="code"></span><span class="badge" id="risk"></span></div>
+        <div class="nm" id="name"></div>
+        <table>
+          <tr><td>Таможенная стоимость</td><td id="cv"></td></tr>
+          <tr><td id="dutyL">Пошлина</td><td id="duty"></td></tr>
+          <tr><td id="vatL">НДС</td><td id="vat_"></td></tr>
+          <tr class="total"><td>Итого себестоимость ввоза</td><td id="total"></td></tr>
+        </table>
+        <div class="hint" id="hint" style="display:none"></div>
+        <div class="alts" id="alts"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="analytics">
+    <h2 class="sec">Аналитика ВЭД</h2>
+    <p class="sec-sub">Разборы по реальным данным таможни, реестров и рынка. Новые материалы — регулярно.</p>
+    <div class="grid">
+      <a class="tile" href="/trends/spornye-kody-tnved.html">
+        <span class="tag">Данные · 1 июля</span>
+        <h3>Спорные коды ТН ВЭД: где рискуешь переплатить</h3>
+        <p>Товары, по которым импортёры и таможня чаще всего расходятся в коде — на реальной практике ФГИС.</p>
+      </a>
+      <a class="tile" href="/trends/ved-2018-2026.html">
+        <span class="tag">Тренд-разбор</span>
+        <h3>ВЭД и логистика 2018–2026: что изменилось</h3>
+        <p>Девять лет рынка по данным: от цифровизации и очередей — к санкционному шоку и «обходу» как норме.</p>
+      </a>
+    </div>
+  </section>
+
+  <section id="data" class="soon">
+    <h2 class="sec">Индексы рынка</h2>
+    <p class="sec-sub">Уникальные индикаторы из наших данных — обновляются ежемесячно. Скоро.</p>
+    <div class="grid">
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Карго-прайс-индекс</h3><p>Реальная стоимость ввоза $/кг из чатов × курс ЦБ — помесячно.</p></div>
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Индекс «боли ВЭД»</h3><p>Объём проблем и задержек на таможне × тональность — опережающий индикатор трения.</p></div>
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Платёжный барометр</h3><p>Стоимость и проходимость платежей в Китай: комиссии агентов × курс.</p></div>
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Реестр-дельта ФТС</h3><p>Кто вошёл и вылетел из реестра таможенных представителей за месяц.</p></div>
+    </div>
+  </section>
+
+  <section id="check" class="soon">
+    <h2 class="sec">Проверка и мониторинг</h2>
+    <p class="sec-sub">Не потерять деньги на ненадёжном контрагенте. Скоро.</p>
+    <div class="grid">
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Проверка контрагента</h3><p>Брокер / платёжный агент / поставщик: реестр ФТС + финансы ФНС + репутация рынка = red-flags.</p></div>
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Анти-скам платежей</h3><p>Проверка платёжного агента в Китай перед переводом — по жалобам и истории рынка.</p></div>
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Алерты и мониторинг</h3><p>Правило вступает завтра · канал платежей упал · брокер вылетел из реестра — узнай раньше всех.</p></div>
+      <div class="tile"><span class="tag soon">Скоро</span><h3>Фейк-радар</h3><p>Что сегодня НЕ правда на рынке: разоблачение ложных паник «границу закрыли».</p></div>
+    </div>
+  </section>
 
   <div class="foot">
-    Оценка навигационная: код и ставка — из официального классификатора и ЕТТ ЕАЭС + реальной практики ФГИС.<br>
-    Пломбу ставит лицензированный декларант; при высоком риске — предварительное решение ФТС.<br>
-    © ДалДобро · данные обновляются автоматически
+    <b>ДалДобро</b> — навигатор по ввозу из Китая. Оценки навигационные: коды и ставки — из официального классификатора и ЕТТ ЕАЭС + анализа реальной практики ФГИС. Пломбу ставит лицензированный декларант; при высоком риске — предварительное решение ФТС. Данные обновляются автоматически.<br>
+    © ДалДобро · daldobro.ru
   </div>
 </div>
 
@@ -109,6 +181,11 @@ async function calc(){
     const h=document.getElementById('hint');
     if(c.vat_hint){h.style.display='block';h.textContent='⚠ '+c.vat_hint;}else h.style.display='none';
     document.getElementById('alts').textContent=(d.alt_codes&&d.alt_codes.length)?('Альтернативные коды (если спорно): '+d.alt_codes.join(', ')):'';
+    // блок уточнения: если код не 10-значный или риск высокий — просим детализировать
+    const cb=document.getElementById('clarifyBox');
+    const needClarify = (d.code&&d.code.length<10) || d.risk_level==='высокий';
+    if(needClarify){cb.style.display='block';cb.innerHTML='<b>Уточните товар для точного кода.</b> Слишком общее название — код и пошлина зависят от деталей (материал, состав, назначение, тип). Добавьте их в наименование и пересчитайте.';}
+    else cb.style.display='none';
     document.getElementById('res').style.display='block';
   }catch(e){err.textContent='Ошибка запроса: '+e.message;}
   finally{btn.disabled=false;btn.textContent='Рассчитать себестоимость';}
