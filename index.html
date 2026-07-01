@@ -96,6 +96,27 @@
   .tag.soon{background:rgba(150,165,195,.12);color:var(--mut)}
   .soon .tile{opacity:.72}
   .foot{color:var(--mut);font-size:13px;border-top:1px solid var(--line);padding:30px 0 60px;line-height:1.7;margin-top:26px}
+  /* ── ИИ-ассистент ── */
+  .ai-card{padding:20px 22px;margin-bottom:16px;position:relative;overflow:hidden}
+  .ai-head{display:flex;align-items:center;gap:10px;font-size:14.5px;color:var(--mut);margin-bottom:14px;flex-wrap:wrap}
+  .ai-badge{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;padding:5px 12px;border-radius:20px;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff);box-shadow:0 0 20px rgba(124,92,255,.4)}
+  .ai-badge::before{content:"";width:7px;height:7px;border-radius:50%;background:#8effd0;box-shadow:0 0 8px #8effd0;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .ai-log{display:flex;flex-direction:column;gap:9px;max-height:280px;overflow-y:auto;margin-bottom:12px}
+  .ai-log:empty{display:none}
+  .msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:14.5px;line-height:1.5;animation:pop .3s ease}
+  @keyframes pop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .msg.user{align-self:flex-end;background:linear-gradient(100deg,#3b6dff,#5b8cff);color:#fff;border-bottom-right-radius:4px}
+  .msg.ai{align-self:flex-start;background:rgba(30,40,64,.8);border:1px solid var(--line);border-bottom-left-radius:4px}
+  .msg.typing{color:var(--mut)}.msg.typing span{display:inline-block;animation:blink 1.2s infinite}
+  .msg.typing span:nth-child(2){animation-delay:.2s}.msg.typing span:nth-child(3){animation-delay:.4s}
+  @keyframes blink{0%,100%{opacity:.3}50%{opacity:1}}
+  .ai-input{display:flex;gap:10px}
+  .ai-input input{flex:1}
+  .ai-input button{width:52px;padding:0;margin:0;font-size:20px;background:linear-gradient(100deg,#5b8cff,#7c5cff);border:0;border-radius:12px;color:#fff;cursor:pointer;box-shadow:0 6px 20px rgba(91,140,255,.35)}
+  .ai-input button:hover{filter:brightness(1.1)}
+  input.filling{border-color:var(--acc);box-shadow:0 0 0 3px rgba(91,140,255,.18);background:rgba(91,140,255,.06)}
+  @keyframes glowfield{0%,100%{box-shadow:0 0 0 3px rgba(91,140,255,.18)}50%{box-shadow:0 0 0 5px rgba(124,92,255,.28)}}
 </style>
 </head>
 <body>
@@ -111,9 +132,9 @@
   </nav>
 
   <header class="hero">
-    <div class="pill"><span class="dot"></span> Калькулятор + аналитика ВЭД · данные обновляются автоматически</div>
+    <div class="pill"><span class="dot"></span> ИИ-ассистент · калькулятор · аналитика ВЭД</div>
     <h1>Ввоз из Китая<br><span class="g">без переплат и сюрпризов</span></h1>
-    <p>Введите товар и цену — мгновенно получите код ТН ВЭД, ставку пошлины, НДС и полную себестоимость. С оценкой риска классификации и аналитикой рынка.</p>
+    <p>Опишите товар обычными словами — <b style="color:#c9d8ff">ИИ подберёт код ТН ВЭД</b> и сам заполнит расчёт: пошлина, НДС, полная себестоимость. С оценкой риска классификации и аналитикой рынка.</p>
     <div class="stats">
       <div class="stat"><b data-n="28488">0</b><span>кодов ТН ВЭД</span></div>
       <div class="stat"><b data-n="13287">0</b><span>ставок ЕТТ ЕАЭС</span></div>
@@ -124,6 +145,14 @@
   <section id="calc" class="reveal">
     <h2 class="sec">Калькулятор себестоимости ввоза</h2>
     <p class="sec-sub">Код ТН ВЭД · пошлина ЕТТ ЕАЭС · НДС · полная себестоимость · риск классификации.</p>
+    <div class="glass ai-card">
+      <div class="ai-head"><span class="ai-badge">ИИ-ассистент</span> Опишите товар своими словами — подберу код ТН ВЭД и заполню расчёт за вас</div>
+      <div class="ai-log" id="aiLog"></div>
+      <div class="ai-input">
+        <input id="aiMsg" placeholder="например: везу шоколадные конфеты из Китая, тонна" onkeydown="if(event.key==='Enter')aiSend()">
+        <button onclick="aiSend()" id="aiBtn" title="Отправить">→</button>
+      </div>
+    </div>
     <div class="glass calc-card">
       <label>Наименование товара</label>
       <input id="term" placeholder="например: холодильник бытовой" value="холодильник бытовой">
@@ -249,6 +278,28 @@ async function calc(){
     document.getElementById('res').style.display='block';
   }catch(e){err.textContent='Ошибка запроса: '+e.message;}
   finally{btn.disabled=false;btn.textContent='Рассчитать себестоимость →';}
+}
+// ── ИИ-ассистент (чат + авто-заполнение) ──
+let aiHistory=[];
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function addMsg(who,text){const l=document.getElementById('aiLog');const d=document.createElement('div');d.className='msg '+who;d.textContent=text;l.appendChild(d);l.scrollTop=l.scrollHeight;return d}
+function addTyping(){const l=document.getElementById('aiLog');const d=document.createElement('div');d.className='msg ai typing';d.id='typing';d.innerHTML='<span>●</span><span>●</span><span>●</span>';l.appendChild(d);l.scrollTop=l.scrollHeight}
+function rmTyping(){const t=document.getElementById('typing');if(t)t.remove()}
+async function typeInto(id,text){const el=document.getElementById(id);el.value='';el.classList.add('filling');el.scrollIntoView({behavior:'smooth',block:'center'});for(let i=0;i<text.length;i++){el.value+=text[i];await sleep(28)}await sleep(300);el.classList.remove('filling')}
+async function aiSend(){
+  const inp=document.getElementById('aiMsg'),btn=document.getElementById('aiBtn'),msg=inp.value.trim();
+  if(!msg)return; addMsg('user',msg); inp.value=''; btn.disabled=true;
+  const histForApi=aiHistory.slice(); aiHistory.push({role:'user',content:msg});
+  addTyping();
+  try{
+    const r=await fetch(API+'/assist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg,history:histForApi})});
+    const d=await r.json(); rmTyping();
+    addMsg('ai',d.reply); aiHistory.push({role:'assistant',content:d.reply});
+    if(d.term){await typeInto('term',d.term);}
+    if(d.qty){const qw=document.getElementById('qtyWrap');qw.style.display='block';qw.classList.add('need');const qi=document.getElementById('qty');qi.value=d.qty;qi.classList.add('filling');await sleep(500);qi.classList.remove('filling');}
+    if(d.done){await sleep(500); await calc(); addMsg('ai','Готово — расчёт заполнен ниже ✓');document.getElementById('res').scrollIntoView({behavior:'smooth',block:'center'});}
+  }catch(e){rmTyping();addMsg('ai','Не получилось связаться с ИИ: '+e.message);}
+  finally{btn.disabled=false;inp.focus();}
 }
 // scroll-reveal
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in')}),{threshold:.12});
