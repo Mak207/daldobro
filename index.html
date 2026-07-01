@@ -65,6 +65,8 @@
   .btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(124,92,255,.5);filter:brightness(1.05)}
   .btn:disabled{opacity:.6;cursor:wait;transform:none}
   #qtyWrap{display:none;margin-top:4px}
+  #qtyWrap.need{padding:12px;border:1px solid rgba(91,140,255,.5);border-radius:12px;background:rgba(91,140,255,.08);box-shadow:0 0 0 3px rgba(91,140,255,.12)}
+  #qtyWrap.need label{color:#a9c2ff}
   #res{display:none;margin-top:22px;animation:fadein .5s ease}
   @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .code{font-size:32px;font-weight:900;letter-spacing:1px;background:linear-gradient(90deg,#eaf0fb,#a9c2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -212,7 +214,8 @@ async function calc(){
     if(d.error){err.textContent=d.error;document.getElementById('res').style.display='none';return;}
     const c=d.calc;
     const qw=document.getElementById('qtyWrap');
-    if(c.need_qty){qw.style.display='block';document.getElementById('qtyLabel').textContent='Количество, '+c.need_qty+' — нужно для расчёта пошлины, введите и пересчитайте';}else qw.style.display='none';
+    if(c.need_qty){qw.style.display='block';qw.classList.add('need');document.getElementById('qtyLabel').textContent='Сколько '+c.need_qty+' в партии? Введите и нажмите «Рассчитать» — тогда посчитаем пошлину и итог';}
+    else{qw.style.display='none';qw.classList.remove('need');}
     document.getElementById('code').textContent=d.code;
     const rl=d.risk_level||'',rb=document.getElementById('risk');
     rb.textContent='риск кода: '+rl;
@@ -226,9 +229,12 @@ async function calc(){
       document.getElementById('vat_').textContent=f(c.vat);
       document.getElementById('total').textContent=f(c.total);
     }else{
-      document.getElementById('duty').textContent='по весу/кол-ву';
-      document.getElementById('dutyL').textContent='Пошлина: '+c.duty_note;
-      document.getElementById('vat_').textContent='—';document.getElementById('total').textContent='уточните';
+      // пошлина за единицу — нужен вес/количество, показываем ставку и ведём к вводу
+      document.getElementById('dutyL').textContent='Пошлина: '+(c.duty_note||'').replace(/ — укажите.*/,'');
+      document.getElementById('duty').textContent='нужно кол-во ↑';
+      document.getElementById('vatL').textContent='НДС '+c.vat_rate+'%';
+      document.getElementById('vat_').textContent='после ввода кол-ва';
+      document.getElementById('total').textContent='введите кол-во ↑';
     }
     const h=document.getElementById('hint');
     if(c.vat_hint){h.style.display='block';h.textContent='⚠ '+c.vat_hint;}else h.style.display='none';
