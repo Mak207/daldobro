@@ -98,6 +98,22 @@
   .optbtn{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 12px;background:rgba(10,15,28,.5);border:1px solid rgba(91,140,255,.35);border-radius:9px;color:#cfe0ff;cursor:pointer;font-size:13.5px;transition:.15s}
   .optbtn:hover{background:rgba(91,140,255,.2);border-color:#5b8cff}
   .alts{color:var(--mut);font-size:13px;margin-top:12px}
+  .code-nm{color:#c9d8ff;font-size:15px;font-weight:700;margin:6px 0 2px;line-height:1.35}
+  .src{display:inline-flex;align-items:center;gap:6px;margin:6px 0 14px;font-size:13px;color:var(--mut)}
+  .src.ok{color:var(--good)}
+  .altbox{margin-top:16px;padding:14px 16px;background:rgba(240,176,58,.06);border:1px solid rgba(240,176,58,.25);border-radius:12px}
+  .altbox.calm{background:rgba(91,140,255,.05);border-color:var(--line)}
+  .altbox .abt{font-size:14px;font-weight:800;margin-bottom:4px}
+  .altbox .abs{font-size:13px;color:var(--mut);margin-bottom:10px;line-height:1.5}
+  .altcard{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:6px 0;padding:10px 12px;background:rgba(10,15,28,.5);border:1px solid rgba(91,140,255,.3);border-radius:10px;color:#cfe0ff;cursor:pointer;font-size:13.5px;line-height:1.4;transition:.15s}
+  .altcard:hover{background:rgba(91,140,255,.16);border-color:#5b8cff;transform:translateY(-1px)}
+  .altcard.sel{border-color:var(--good);background:rgba(47,191,113,.08);cursor:default}
+  .altcard.sel:hover{transform:none}
+  .altcard .ac-code{font-weight:800;white-space:nowrap;color:#eaf0fb}
+  .altcard .ac-duty{white-space:nowrap;font-weight:800;padding:2px 9px;border-radius:12px;font-size:12px;background:rgba(91,140,255,.15);color:#a9c2ff}
+  .altcard.sel .ac-duty{background:rgba(47,191,113,.16);color:var(--good)}
+  .altcard .ac-nm{color:var(--mut);flex:1}
+  .altcard .ac-pick{white-space:nowrap;font-size:12px;color:#a9c2ff}
   .err{color:var(--bad);font-size:14px;margin-top:12px}
   /* ── сетка карточек ── */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -185,7 +201,8 @@
       <div id="res">
         <div id="clarifyBox" class="clarify" style="display:none"></div>
         <div><span class="code" id="code"></span><span class="badge" id="risk"></span></div>
-        <div class="nm" id="name"></div>
+        <div class="code-nm" id="codeName"></div>
+        <div class="src" id="name"></div>
         <table>
           <tr><td>Таможенная стоимость</td><td id="cv"></td></tr>
           <tr><td id="dutyL">Пошлина</td><td id="duty"></td></tr>
@@ -193,7 +210,7 @@
           <tr class="total"><td>Итого себестоимость ввоза</td><td id="total"></td></tr>
         </table>
         <div class="hint" id="hint" style="display:none"></div>
-        <div class="alts" id="alts"></div>
+        <div class="altbox" id="altBox" style="display:none"></div>
       </div>
     </div>
   </section>
@@ -251,23 +268,43 @@
 <script>
 const API='https://api.201-51-30-177.sslip.io';
 const f=n=>new Intl.NumberFormat('ru-RU').format(Math.round(n))+' ₽';
-async function calc(){
+// человеческий вид: КАПС из классификатора -> обычный текст
+const human=s=>(s||'').toLowerCase().replace(/\s+/g,' ').trim().replace(/^./,c=>c.toUpperCase());
+const fmtCode=c=>c&&c.length===10?c.slice(0,4)+' '+c.slice(4,6)+' '+c.slice(6):c;
+// откуда взялся код — объясняем на языке пользователя
+function srcInfo(s){
+  s=s||'';
+  if(s.includes('выбор'))    return {t:'✓ Вы уточнили товар — расчёт по вашему выбору',ok:1};
+  if(s.includes('якорь'))    return {t:'✓ Код из проверенного справочника ДалДобро',ok:1};
+  if(s.includes('практика')) return {t:'✓ Код подтверждён практикой реальных деклараций',ok:1};
+  if(s.includes('контролёр'))return {t:'Код подобран ИИ и перепроверен вторым ИИ',ok:0};
+  return {t:'Код подобран ИИ по описанию товара',ok:0};
+}
+function riskInfo(rl){
+  if(rl==='низкий') return {t:'код однозначный',cls:'b-low'};
+  if(rl==='высокий')return {t:'есть варианты — проверьте ниже',cls:'b-high'};
+  return {t:'код стоит перепроверить',cls:'b-mid'};
+}
+async function calc(chosen){
+  if(typeof chosen!=='string') chosen=null;   // onclick передаёт event — отсекаем
   const btn=document.getElementById('go'),err=document.getElementById('errbox');
   err.textContent='';btn.disabled=true;btn.textContent='Считаю…';
   try{
     const qp={term:term.value,goods:goods.value||0,freight:freight.value||0,insurance:insurance.value||0,vat:vat.value};
     const qv=document.getElementById('qty').value; if(qv) qp.qty=qv;
+    if(chosen) qp.code=chosen;
     const r=await fetch(API+'/quote?'+new URLSearchParams(qp)); const d=await r.json();
     if(d.error){err.textContent=d.error;document.getElementById('res').style.display='none';return;}
     const c=d.calc;
     const qw=document.getElementById('qtyWrap');
     if(c.need_qty){qw.style.display='block';qw.classList.add('need');document.getElementById('qtyLabel').textContent='Сколько '+c.need_qty+' в партии? Введите и нажмите «Рассчитать» — тогда посчитаем пошлину и итог';}
     else{qw.style.display='none';qw.classList.remove('need');}
-    document.getElementById('code').textContent=d.code;
-    const rl=d.risk_level||'',rb=document.getElementById('risk');
-    rb.textContent='риск кода: '+rl;
-    rb.className='badge '+(rl==='низкий'?'b-low':rl==='высокий'?'b-high':'b-mid');
-    document.getElementById('name').textContent='источник кода: '+(d.code_source||'—');
+    document.getElementById('code').textContent=fmtCode(d.code);
+    document.getElementById('codeName').textContent=human(d.code_name);
+    const ri=riskInfo(d.risk_level||''),rb=document.getElementById('risk');
+    rb.textContent=ri.t; rb.className='badge '+ri.cls;
+    const si=srcInfo(d.code_source),sn=document.getElementById('name');
+    sn.textContent=si.t; sn.className='src'+(si.ok?' ok':'');
     document.getElementById('cv').textContent=f(c.customs_value);
     document.getElementById('dutyL').textContent='Пошлина'+(c.duty_note&&c.duty!=null?' ('+c.duty_note.replace(' (ЕТТ)','')+')':'');
     if(c.duty!=null){
@@ -292,15 +329,34 @@ async function calc(){
       if(o.length>=1)s+='<br><br>Это ваш товар? Нажмите — сохраню выбор и пересчитаю:<br>'+o.map(x=>'<button type="button" class="optbtn" onclick="chooseCode('+JSON.stringify(x.code)+')">'+x.code+' — '+x.name+'</button>').join('');
       cb.innerHTML=s;cb.style.display='block';
     }else cb.style.display='none';
-    document.getElementById('alts').textContent=(d.alt_codes&&d.alt_codes.length)?('Альтернативные коды: '+d.alt_codes.join(', ')):'';
+    renderAlts(d);
     document.getElementById('res').style.display='block';
   }catch(e){err.textContent='Ошибка запроса: '+e.message;}
   finally{btn.disabled=false;btn.textContent='Рассчитать себестоимость →';}
 }
-// клик по варианту уточнения = человеческая метка -> практика -> пересчёт
+// карточки похожих кодов: юзер выбирает свой вариант -> мгновенный пересчёт
+function renderAlts(d){
+  const box=document.getElementById('altBox');
+  const alts=(d.alternatives||[]).filter(a=>a.code!==d.code);
+  if(d.clarify||!alts.length){box.style.display='none';return;}
+  const hi=(d.risk_level==='высокий');
+  const cur='<div class="altcard sel"><span class="ac-code">'+fmtCode(d.code)+'</span>'+
+      (d.duty_rate?'<span class="ac-duty">пошлина '+d.duty_rate+'</span>':'')+
+      '<span class="ac-nm">'+human(d.code_name)+'</span><span class="ac-pick">✓ выбран</span></div>';
+  const cards=alts.map(a=>'<button type="button" class="altcard" onclick="chooseCode(\''+a.code+'\')">'+
+      '<span class="ac-code">'+fmtCode(a.code)+'</span>'+
+      (a.duty?'<span class="ac-duty">пошлина '+a.duty+'</span>':'')+
+      '<span class="ac-nm">'+human(a.name)+'</span><span class="ac-pick">выбрать →</span></button>').join('');
+  box.className='altbox'+(hi?'':' calm');
+  box.innerHTML='<div class="abt">'+(hi?'Похожие товары оформляют по-разному':'Похожие варианты кода')+'</div>'+
+      '<div class="abs">'+(hi?'Чтобы попасть в код точно, выберите строку, которая лучше всего описывает ваш товар — пересчитаем сразу. Обратите внимание: ставка пошлины у вариантов может отличаться.':'Если ваш товар точнее описан другой строкой — нажмите на неё, пересчитаем сразу.')+'</div>'+
+      cur+cards;
+  box.style.display='block';
+}
+// клик по варианту = человеческая метка -> практика (самообучение) -> мгновенный пересчёт по выбранному коду
 async function chooseCode(code){
-  try{ await fetch(API+'/choose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({term:term.value,code})}); }catch(e){}
-  calc();
+  try{ fetch(API+'/choose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({term:term.value,code})}); }catch(e){}
+  await calc(code);
 }
 // ── ИИ-ассистент (чат + авто-заполнение) ──
 let aiHistory=[];
