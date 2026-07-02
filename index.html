@@ -79,7 +79,7 @@
   #qtyWrap{display:none;margin-top:4px}
   #qtyWrap.need{padding:12px;border:1px solid rgba(91,140,255,.5);border-radius:12px;background:rgba(91,140,255,.08);box-shadow:0 0 0 3px rgba(91,140,255,.12)}
   #qtyWrap.need label{color:#a9c2ff}
-  #res{display:none;margin-top:22px;animation:fadein .5s ease}
+  #res{display:none;margin-top:0;animation:fadein .5s ease}
   @keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
   .code{font-size:32px;font-weight:900;letter-spacing:1px;background:linear-gradient(90deg,#eaf0fb,#a9c2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
   .badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:800;margin-left:10px;vertical-align:middle}
@@ -114,6 +114,36 @@
   .altcard.sel .ac-duty{background:rgba(47,191,113,.16);color:var(--good)}
   .altcard .ac-nm{color:var(--mut);flex:1}
   .altcard .ac-pick{white-space:nowrap;font-size:12px;color:#a9c2ff}
+  /* ── ввод и результат на одном экране ── */
+  .calc-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+  .calc-right{position:sticky;top:76px}
+  .res-card{padding:26px;position:relative;overflow:hidden;min-height:340px}
+  #resEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:300px;gap:10px}
+  .ph-seal{width:96px;height:96px;opacity:.25;filter:grayscale(.4)}
+  .ph-t{font-weight:800;font-size:17px;color:#c9d8ff}
+  .ph-s{color:var(--mut);font-size:13.5px;line-height:1.6;max-width:360px}
+  /* ── живая печать: штампуется при готовом расчёте ── */
+  .seal{position:absolute;top:14px;right:14px;width:86px;height:86px;opacity:0;pointer-events:none;z-index:2}
+  .seal.on{animation:stamp .55s cubic-bezier(.2,1.4,.4,1) forwards}
+  @keyframes stamp{
+    0%{opacity:0;transform:scale(2.4) rotate(-32deg)}
+    55%{opacity:.95;transform:scale(.92) rotate(-13deg)}
+    75%{transform:scale(1.05) rotate(-15deg)}
+    100%{opacity:.9;transform:scale(1) rotate(-14deg)}
+  }
+  .res-card.thud{animation:thud .3s ease-out}
+  @keyframes thud{0%{transform:none}35%{transform:translateY(2px) scale(.996)}100%{transform:none}}
+  #total.bump{animation:bump .5s ease-out}
+  @keyframes bump{0%{color:#fff;text-shadow:0 0 18px rgba(91,255,192,.8)}100%{}}
+  /* липкая полоса итога на мобильном */
+  #stickyBar{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:60;padding:13px 18px;border-radius:14px;background:rgba(14,20,38,.92);backdrop-filter:blur(10px);border:1px solid rgba(91,140,255,.4);box-shadow:0 10px 30px rgba(0,0,0,.5);cursor:pointer;align-items:center;justify-content:space-between;gap:12px}
+  #stickyBar span{color:var(--mut);font-size:13px}
+  #stickyBar b{font-size:18px;color:#5bffc0}
+  @media(max-width:900px){
+    .calc-wrap{grid-template-columns:1fr}
+    .calc-right{position:static}
+    #stickyBar.show{display:flex}
+  }
   .err{color:var(--bad);font-size:14px;margin-top:12px}
   /* ── сетка карточек ── */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -176,6 +206,8 @@
   <section id="calc" class="reveal">
     <h2 class="sec">Калькулятор себестоимости ввоза</h2>
     <p class="sec-sub">Код ТН ВЭД · пошлина ЕТТ ЕАЭС · НДС · полная себестоимость · риск классификации.</p>
+    <div class="calc-wrap">
+    <div class="calc-left">
     <div class="glass ai-card">
       <div class="ai-head"><span class="ai-badge">ИИ-ассистент</span> Опишите товар своими словами — подберу код ТН ВЭД и заполню расчёт за вас</div>
       <div class="ai-log" id="aiLog"></div>
@@ -198,6 +230,16 @@
       <div id="qtyWrap"><label id="qtyLabel">Количество</label><input id="qty" type="number" placeholder="для пошлины за единицу"></div>
       <button class="btn" id="go" onclick="calc()">Рассчитать себестоимость →</button>
       <div id="errbox" class="err"></div>
+    </div>
+    </div>
+    <div class="calc-right">
+    <div class="glass res-card">
+      <img id="seal" class="seal" src="logo.png" alt="">
+      <div id="resEmpty">
+        <img src="logo.png" alt="" class="ph-seal">
+        <div class="ph-t">Здесь появится расчёт</div>
+        <div class="ph-s">Заполните поля слева или опишите товар ИИ-ассистенту — код, пошлина, НДС и итог посчитаются на этом месте, без прокрутки. Цифры обновляются по мере ввода.</div>
+      </div>
       <div id="res">
         <div id="clarifyBox" class="clarify" style="display:none"></div>
         <div><span class="code" id="code"></span><span class="badge" id="risk"></span></div>
@@ -212,6 +254,11 @@
         <div class="hint" id="hint" style="display:none"></div>
         <div class="altbox" id="altBox" style="display:none"></div>
       </div>
+    </div>
+    </div>
+    </div>
+    <div id="stickyBar" onclick="document.querySelector('.res-card').scrollIntoView({behavior:'smooth',block:'center'})">
+      <span>Итого себестоимость</span><b id="stickyTotal">—</b>
     </div>
   </section>
 
@@ -285,8 +332,10 @@ function riskInfo(rl){
   if(rl==='высокий')return {t:'есть варианты — проверьте ниже',cls:'b-high'};
   return {t:'код стоит перепроверить',cls:'b-mid'};
 }
+let _chosen=null;   // код, выбранный юзером: живёт при правке цифр, сбрасывается при смене товара
 async function calc(chosen){
   if(typeof chosen!=='string') chosen=null;   // onclick передаёт event — отсекаем
+  if(!chosen&&_chosen) chosen=_chosen;
   const btn=document.getElementById('go'),err=document.getElementById('errbox');
   err.textContent='';btn.disabled=true;btn.textContent='Считаю…';
   try{
@@ -294,7 +343,7 @@ async function calc(chosen){
     const qv=document.getElementById('qty').value; if(qv) qp.qty=qv;
     if(chosen) qp.code=chosen;
     const r=await fetch(API+'/quote?'+new URLSearchParams(qp)); const d=await r.json();
-    if(d.error){err.textContent=d.error;document.getElementById('res').style.display='none';return;}
+    if(d.error){err.textContent=d.error;document.getElementById('res').style.display='none';document.getElementById('resEmpty').style.display='flex';return;}
     const c=d.calc;
     const qw=document.getElementById('qtyWrap');
     if(c.need_qty){qw.style.display='block';qw.classList.add('need');document.getElementById('qtyLabel').textContent='Сколько '+c.need_qty+' в партии? Введите и нажмите «Рассчитать» — тогда посчитаем пошлину и итог';}
@@ -331,9 +380,30 @@ async function calc(chosen){
       cb.innerHTML=s;cb.style.display='block';
     }else cb.style.display='none';
     renderAlts(d);
+    document.getElementById('resEmpty').style.display='none';
     document.getElementById('res').style.display='block';
+    // печать «дала добро»: штамп + лёгкий удар карточки + вспышка итога
+    const seal=document.getElementById('seal'),card=document.querySelector('.res-card'),tot=document.getElementById('total');
+    seal.classList.remove('on');card.classList.remove('thud');tot.classList.remove('bump');void seal.offsetWidth;
+    seal.classList.add('on');card.classList.add('thud');tot.classList.add('bump');
+    document.getElementById('stickyTotal').textContent=tot.textContent;
+    document.getElementById('stickyBar').classList.add('show');
   }catch(e){err.textContent='Ошибка запроса: '+e.message;}
   finally{btn.disabled=false;btn.textContent='Рассчитать себестоимость →';}
+}
+// живой пересчёт: цифры меняются по мере ввода (задержка, чтобы не дёргать API на каждой букве)
+let _lt=null;
+function liveCalc(){clearTimeout(_lt);_lt=setTimeout(()=>{if(term.value.trim().length>2&&+goods.value>0)calc();},800)}
+['goods','freight','insurance','qty'].forEach(id=>document.getElementById(id).addEventListener('input',liveCalc));
+document.getElementById('vat').addEventListener('change',liveCalc);
+document.getElementById('term').addEventListener('input',()=>{_chosen=null;liveCalc();});
+// липкая полоса итога на мобильном: видна, пока результат за экраном
+if('IntersectionObserver' in window){
+  const rio=new IntersectionObserver(es=>es.forEach(e=>{
+    const bar=document.getElementById('stickyBar');
+    if(document.getElementById('res').style.display==='block'&&!e.isIntersecting)bar.classList.add('show');else bar.classList.remove('show');
+  }),{threshold:.15});
+  rio.observe(document.querySelector('.res-card'));
 }
 // карточки похожих кодов: юзер выбирает свой вариант -> мгновенный пересчёт
 function renderAlts(d){
@@ -356,6 +426,7 @@ function renderAlts(d){
 }
 // клик по варианту = человеческая метка -> практика (самообучение) -> мгновенный пересчёт по выбранному коду
 async function chooseCode(code){
+  _chosen=code;   // выбор живёт при правке цифр, сбрасывается при смене товара
   try{ fetch(API+'/choose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({term:term.value,code})}); }catch(e){}
   await calc(code);
 }
@@ -369,7 +440,7 @@ async function typeInto(id,text){const el=document.getElementById(id);el.value='
 async function aiSend(){
   const inp=document.getElementById('aiMsg'),btn=document.getElementById('aiBtn'),msg=inp.value.trim();
   if(!msg)return; addMsg('user',msg); inp.value=''; btn.disabled=true;
-  document.getElementById('res').style.display='none';  // прячем старый расчёт, пока ИИ уточняет
+  document.getElementById('res').style.display='none';document.getElementById('resEmpty').style.display='flex';  // прячем старый расчёт, пока ИИ уточняет
   const histForApi=aiHistory.slice(); aiHistory.push({role:'user',content:msg});
   addTyping();
   try{
