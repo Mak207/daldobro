@@ -301,7 +301,8 @@ async function calc(chosen){
     else{qw.style.display='none';qw.classList.remove('need');}
     document.getElementById('code').textContent=fmtCode(d.code);
     document.getElementById('codeName').textContent=human(d.code_name);
-    const ri=riskInfo(d.risk_level||''),rb=document.getElementById('risk');
+    const userPick=(d.code_source||'').includes('выбор');
+    const ri=userPick?{t:'ваш выбор ✓',cls:'b-low'}:riskInfo(d.risk_level||''),rb=document.getElementById('risk');
     rb.textContent=ri.t; rb.className='badge '+ri.cls;
     const si=srcInfo(d.code_source),sn=document.getElementById('name');
     sn.textContent=si.t; sn.className='src'+(si.ok?' ok':'');
@@ -339,7 +340,7 @@ function renderAlts(d){
   const box=document.getElementById('altBox');
   const alts=(d.alternatives||[]).filter(a=>a.code!==d.code);
   if(d.clarify||!alts.length){box.style.display='none';return;}
-  const hi=(d.risk_level==='высокий');
+  const hi=(d.risk_level==='высокий')&&!(d.code_source||'').includes('выбор');
   const cur='<div class="altcard sel"><span class="ac-code">'+fmtCode(d.code)+'</span>'+
       (d.duty_rate?'<span class="ac-duty">пошлина '+d.duty_rate+'</span>':'')+
       '<span class="ac-nm">'+human(d.code_name)+'</span><span class="ac-pick">✓ выбран</span></div>';
