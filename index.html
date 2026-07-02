@@ -105,15 +105,15 @@
   .altbox.calm{background:rgba(91,140,255,.05);border-color:var(--line)}
   .altbox .abt{font-size:14px;font-weight:800;margin-bottom:4px}
   .altbox .abs{font-size:13px;color:var(--mut);margin-bottom:10px;line-height:1.5}
-  .altcard{display:flex;align-items:center;gap:10px;width:100%;text-align:left;margin:6px 0;padding:10px 12px;background:rgba(10,15,28,.5);border:1px solid rgba(91,140,255,.3);border-radius:10px;color:#cfe0ff;cursor:pointer;font-size:13.5px;line-height:1.4;transition:.15s}
+  .altcard{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;width:100%;text-align:left;margin:6px 0;padding:10px 12px;background:rgba(10,15,28,.5);border:1px solid rgba(91,140,255,.3);border-radius:10px;color:#cfe0ff;cursor:pointer;font-size:13.5px;line-height:1.4;transition:.15s}
   .altcard:hover{background:rgba(91,140,255,.16);border-color:#5b8cff;transform:translateY(-1px)}
   .altcard.sel{border-color:var(--good);background:rgba(47,191,113,.08);cursor:default}
   .altcard.sel:hover{transform:none}
   .altcard .ac-code{font-weight:800;white-space:nowrap;color:#eaf0fb}
   .altcard .ac-duty{white-space:nowrap;font-weight:800;padding:2px 9px;border-radius:12px;font-size:12px;background:rgba(91,140,255,.15);color:#a9c2ff}
   .altcard.sel .ac-duty{background:rgba(47,191,113,.16);color:var(--good)}
-  .altcard .ac-nm{color:var(--mut);flex:1}
-  .altcard .ac-pick{white-space:nowrap;font-size:12px;color:#a9c2ff}
+  .altcard .ac-nm{color:var(--mut);flex:1 1 100%;order:3}
+  .altcard .ac-pick{margin-left:auto;white-space:nowrap;font-size:12px;color:#a9c2ff}
   /* ── ввод и результат на одном экране ── */
   .calc-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
   .calc-right{position:sticky;top:76px}
