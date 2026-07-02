@@ -88,6 +88,8 @@
   .hint{margin-top:14px;padding:12px 14px;background:rgba(240,176,58,.09);border:1px solid rgba(240,176,58,.28);border-radius:11px;color:#f6cd7a;font-size:13px}
   .clarify{margin-top:16px;padding:14px 16px;background:rgba(91,140,255,.08);border:1px solid rgba(91,140,255,.3);border-radius:12px;font-size:14px;line-height:1.6}
   .clarify b{color:#a9c2ff}.clarify code{background:rgba(10,15,28,.6);padding:2px 7px;border-radius:6px;color:#8fb0ff}
+  .optbtn{display:block;width:100%;text-align:left;margin:6px 0;padding:9px 12px;background:rgba(10,15,28,.5);border:1px solid rgba(91,140,255,.35);border-radius:9px;color:#cfe0ff;cursor:pointer;font-size:13.5px;transition:.15s}
+  .optbtn:hover{background:rgba(91,140,255,.2);border-color:#5b8cff}
   .alts{color:var(--mut);font-size:13px;margin-top:12px}
   .err{color:var(--bad);font-size:14px;margin-top:12px}
   /* ── сетка карточек ── */
@@ -274,15 +276,20 @@ async function calc(){
     if(c.vat_hint){h.style.display='block';h.textContent='⚠ '+c.vat_hint;}else h.style.display='none';
     const cb=document.getElementById('clarifyBox');
     if(d.clarify){
-      let s='<b>Уточните товар для точного кода.</b> '+d.clarify.reason;
+      let s='<b>Уточните код.</b> '+d.clarify.reason;
       const o=d.clarify.options||[];
-      if(o.length>1)s+='<br><br>Возможные категории (добавьте деталь в название):<br>'+o.map(x=>'• <code>'+x.code+'</code> — '+x.name).join('<br>');
+      if(o.length>=1)s+='<br><br>Это ваш товар? Нажмите — сохраню выбор и пересчитаю:<br>'+o.map(x=>'<button type="button" class="optbtn" onclick="chooseCode('+JSON.stringify(x.code)+')">'+x.code+' — '+x.name+'</button>').join('');
       cb.innerHTML=s;cb.style.display='block';
     }else cb.style.display='none';
     document.getElementById('alts').textContent=(d.alt_codes&&d.alt_codes.length)?('Альтернативные коды: '+d.alt_codes.join(', ')):'';
     document.getElementById('res').style.display='block';
   }catch(e){err.textContent='Ошибка запроса: '+e.message;}
   finally{btn.disabled=false;btn.textContent='Рассчитать себестоимость →';}
+}
+// клик по варианту уточнения = человеческая метка -> практика -> пересчёт
+async function chooseCode(code){
+  try{ await fetch(API+'/choose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({term:term.value,code})}); }catch(e){}
+  calc();
 }
 // ── ИИ-ассистент (чат + авто-заполнение) ──
 let aiHistory=[];
