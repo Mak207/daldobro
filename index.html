@@ -144,6 +144,48 @@
     .calc-right{position:static}
     #stickyBar.show{display:flex}
   }
+  /* кнопки-примеры */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{padding:7px 13px;border-radius:20px;border:1px solid var(--line);background:rgba(91,140,255,.07);color:#bcd0ff;font-size:12.5px;cursor:pointer;transition:.15s}
+  .chip:hover{background:rgba(91,140,255,.18);border-color:#5b8cff}
+  /* разбивка итога */
+  .bd{display:flex;height:12px;border-radius:8px;overflow:hidden;margin-top:16px;gap:2px}
+  .bd i{display:block;min-width:8px;border-radius:3px}
+  .bd-leg{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:9px;font-size:12.5px;color:var(--mut)}
+  .bd-leg b{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  /* действия: печать/шаринг */
+  .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+  .acts button{flex:1 1 auto;min-width:120px;padding:10px 14px;border-radius:11px;border:1px solid rgba(91,140,255,.35);background:rgba(10,15,28,.5);color:#cfe0ff;font-size:13px;font-weight:700;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .acts button:hover{background:rgba(91,140,255,.18);border-color:#5b8cff;transform:translateY(-1px)}
+  .acts button.prim{background:linear-gradient(100deg,rgba(91,140,255,.25),rgba(124,92,255,.25));border-color:#5b8cff}
+  /* история расчётов */
+  .hist{margin-top:14px}
+  .hist .h-t{font-size:12.5px;color:var(--mut);margin-bottom:8px}
+  .hist .h-i{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:left;padding:9px 12px;margin:5px 0;border:1px solid var(--line);border-radius:10px;background:rgba(10,15,28,.4);color:#cfe0ff;font-size:13px;cursor:pointer;transition:.15s}
+  .hist .h-i:hover{border-color:#5b8cff;background:rgba(91,140,255,.12)}
+  .hist .h-i b{color:#5bffc0;white-space:nowrap}
+  .hist .h-i span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* печатная смета */
+  #printArea{display:none}
+  @media print{
+    body>*{display:none!important}
+    body{background:#fff!important}
+    body>#printArea{display:block!important}
+    #printArea{color:#111;font-family:Arial,sans-serif;font-size:13px;line-height:1.5;position:relative;padding:10px 6px}
+    #printArea .pd-head{display:flex;align-items:center;gap:14px;border-bottom:2px solid #1a3fa8;padding-bottom:12px;margin-bottom:18px}
+    #printArea .pd-head img{width:64px;height:64px}
+    #printArea h1{font-size:20px;margin:0 0 4px;color:#12235c}
+    #printArea .pd-mut{color:#556;font-size:12px}
+    #printArea .pd-term{font-size:16px;font-weight:bold;margin:14px 0 4px}
+    #printArea table{width:100%;border-collapse:collapse;margin-top:12px}
+    #printArea td{padding:8px 4px;border-bottom:1px solid #ccd;font-size:13.5px}
+    #printArea td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+    #printArea tr.pt td{border-bottom:0;font-size:17px;font-weight:bold;padding-top:14px;color:#12235c}
+    #printArea .pd-sec{margin-top:16px;font-weight:bold;color:#12235c}
+    #printArea .pd-alt{margin:4px 0;font-size:12.5px;color:#334}
+    #printArea .pd-disc{margin-top:22px;padding-top:10px;border-top:1px solid #ccd;color:#667;font-size:11px}
+    #printArea .pd-seal{position:absolute;top:110px;right:24px;width:110px;height:110px;transform:rotate(-14deg);opacity:.88}
+  }
   .err{color:var(--bad);font-size:14px;margin-top:12px}
   /* ── сетка карточек ── */
   .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -219,6 +261,7 @@
     <div class="glass calc-card">
       <label>Наименование товара</label>
       <input id="term" placeholder="например: холодильник бытовой" value="холодильник бытовой">
+      <div class="chips" id="chips"></div>
       <div class="row">
         <div><label>Стоимость товара, ₽</label><input id="goods" type="number" value="45000"></div>
         <div><label>Фрахт до границы, ₽</label><input id="freight" type="number" value="8000"></div>
@@ -230,6 +273,7 @@
       <div id="qtyWrap"><label id="qtyLabel">Количество</label><input id="qty" type="number" placeholder="для пошлины за единицу"></div>
       <button class="btn" id="go" onclick="calc()">Рассчитать себестоимость →</button>
       <div id="errbox" class="err"></div>
+      <div class="hist" id="histBox" style="display:none"></div>
     </div>
     </div>
     <div class="calc-right">
@@ -251,8 +295,17 @@
           <tr><td id="vatL">НДС</td><td id="vat_"></td></tr>
           <tr class="total"><td>Итого себестоимость ввоза</td><td id="total"></td></tr>
         </table>
+        <div class="bd" id="bdBar" style="display:none"></div>
+        <div class="bd-leg" id="bdLeg"></div>
         <div class="hint" id="hint" style="display:none"></div>
         <div class="altbox" id="altBox" style="display:none"></div>
+        <div class="acts" id="acts" style="display:none">
+          <button class="prim" onclick="printDoc()">🖨 Распечатать / PDF</button>
+          <button onclick="shareTg()">📨 Telegram</button>
+          <button onclick="shareWa()">💬 WhatsApp</button>
+          <button onclick="shareMail()">✉️ На почту</button>
+          <button id="copyBtn" onclick="copyRes()">📋 Копировать</button>
+        </div>
       </div>
     </div>
     </div>
@@ -380,6 +433,8 @@ async function calc(chosen){
       cb.innerHTML=s;cb.style.display='block';
     }else cb.style.display='none';
     renderAlts(d);
+    window._lastD=d; renderBd(d); saveHist(d);
+    document.getElementById('acts').style.display='flex';
     document.getElementById('resEmpty').style.display='none';
     document.getElementById('res').style.display='block';
     // печать «дала добро»: штамп + лёгкий удар карточки + вспышка итога
@@ -424,6 +479,105 @@ function renderAlts(d){
       cur+cards;
   box.style.display='block';
 }
+// ── разбивка итога: из чего складывается цена ──
+function renderBd(d){
+  const c=d.calc,bar=document.getElementById('bdBar'),leg=document.getElementById('bdLeg');
+  if(c.total==null){bar.style.display='none';leg.innerHTML='';return;}
+  const parts=[['Товар',+goods.value||0,'#5b8cff'],['Доставка',(+freight.value||0)+(+insurance.value||0),'#7c5cff'],['Пошлина',c.duty||0,'#f0b03a'],['НДС',c.vat||0,'#3ad7c8']].filter(p=>p[1]>0);
+  bar.innerHTML=parts.map(p=>'<i style="flex:'+p[1]+';background:'+p[2]+'"></i>').join('');
+  leg.innerHTML=parts.map(p=>'<span><b style="background:'+p[2]+'"></b>'+p[0]+' — '+f(p[1])+' ('+Math.round(p[1]/c.total*100)+'%)</span>').join('');
+  bar.style.display='flex';
+}
+// ── текст результата и глубокая ссылка (получатель откроет тот же расчёт) ──
+function buildText(d){
+  const c=d.calc,L=[];
+  L.push('Расчёт себестоимости ввоза: '+d.term);
+  L.push('Код ТН ВЭД '+fmtCode(d.code)+' — '+human(d.code_name));
+  L.push('Таможенная стоимость: '+f(c.customs_value));
+  L.push('Пошлина'+(c.duty_note?' ('+c.duty_note.replace(' (ЕТТ)','')+')':'')+': '+(c.duty!=null?f(c.duty):'нужно количество'));
+  L.push('НДС '+c.vat_rate+'%: '+(c.vat!=null?f(c.vat):'—'));
+  if(c.total!=null)L.push('ИТОГО: '+f(c.total));
+  return L.join('\n');
+}
+function buildUrl(){
+  const qp=new URLSearchParams({term:term.value,goods:goods.value||0,freight:freight.value||0,insurance:insurance.value||0,vat:vat.value});
+  const qv=document.getElementById('qty').value; if(qv)qp.set('qty',qv);
+  if(_chosen)qp.set('code',_chosen);
+  return 'https://www.daldobro.ru/?'+qp.toString()+'#calc';
+}
+function shareTg(){if(!window._lastD)return;window.open('https://t.me/share/url?url='+encodeURIComponent(buildUrl())+'&text='+encodeURIComponent(buildText(window._lastD)),'_blank');}
+function shareWa(){if(!window._lastD)return;window.open('https://wa.me/?text='+encodeURIComponent(buildText(window._lastD)+'\n'+buildUrl()),'_blank');}
+function shareMail(){if(!window._lastD)return;location.href='mailto:?subject='+encodeURIComponent('Расчёт себестоимости ввоза — '+window._lastD.term)+'&body='+encodeURIComponent(buildText(window._lastD)+'\n\nОткрыть расчёт: '+buildUrl());}
+async function copyRes(){
+  if(!window._lastD)return;
+  try{await navigator.clipboard.writeText(buildText(window._lastD)+'\n'+buildUrl());
+    const b=document.getElementById('copyBtn');b.textContent='✓ Скопировано';setTimeout(()=>b.textContent='📋 Копировать',1600);}catch(e){}
+}
+// ── печатная смета: все детали + печать бренда; в диалоге печати можно «Сохранить как PDF» ──
+function printDoc(){
+  const d=window._lastD; if(!d)return;
+  const c=d.calc,dt=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  const rows=[['Товар',d.term],['Код ТН ВЭД',fmtCode(d.code)+' — '+human(d.code_name)],
+    ['Как определён код',srcInfo(d.code_source).t.replace('✓ ','')],
+    ['Стоимость товара',f(+goods.value||0)],['Фрахт до границы',f(+freight.value||0)],['Страховка',f(+insurance.value||0)]];
+  const qv=document.getElementById('qty').value; if(qv)rows.push(['Количество',qv]);
+  let t='<div class="pd-head"><img src="logo.png"><div><h1>Смета себестоимости ввоза</h1><div class="pd-mut">ДалДобро · daldobro.ru — навигатор по ввозу из Китая · '+dt+'</div></div></div>';
+  t+='<img class="pd-seal" src="logo.png" alt="">';
+  t+='<table>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>';
+  t+='<div class="pd-sec">Расчёт</div><table>';
+  t+='<tr><td>Таможенная стоимость (товар + фрахт + страховка)</td><td>'+f(c.customs_value)+'</td></tr>';
+  t+='<tr><td>Пошлина'+(c.duty_note?' — '+c.duty_note.replace(' (ЕТТ)','')+' по ЕТТ ЕАЭС':'')+'</td><td>'+(c.duty!=null?f(c.duty):'нужно количество')+'</td></tr>';
+  t+='<tr><td>НДС '+c.vat_rate+'%'+(c.vat_hint?' (проверьте льготу: '+c.vat_hint+')':'')+'</td><td>'+(c.vat!=null?f(c.vat):'—')+'</td></tr>';
+  if(c.fee)t+='<tr><td>Сбор</td><td>'+f(c.fee)+'</td></tr>';
+  t+='<tr class="pt"><td>ИТОГО себестоимость ввоза</td><td>'+(c.total!=null?f(c.total):'—')+'</td></tr></table>';
+  const alts=(d.alternatives||[]).filter(a=>a.code!==d.code);
+  if(alts.length){t+='<div class="pd-sec">Похожие коды (если товар точнее описан другой строкой)</div>';
+    t+=alts.map(a=>'<div class="pd-alt">'+fmtCode(a.code)+(a.duty?' · пошлина '+a.duty:'')+' — '+human(a.name)+'</div>').join('');}
+  if(d.risk_level)t+='<div class="pd-alt" style="margin-top:10px">Однозначность кода: '+(d.risk_level==='низкий'?'высокая':d.risk_level==='высокий'?'низкая — похожие товары оформляют по-разному, рекомендуем проверку декларантом':'средняя')+'</div>';
+  t+='<div class="pd-disc">Оценка навигационная: коды и ставки — по официальному классификатору ТН ВЭД и ЕТТ ЕАЭС на дату расчёта. Итоговое решение о коде принимает лицензированный таможенный представитель; при неоднозначности кода — предварительное решение ФТС. Расчёт: daldobro.ru</div>';
+  document.getElementById('printArea').innerHTML=t;
+  window.print();
+}
+// ── история расчётов (в этом браузере) ──
+function saveHist(d){
+  if(!d.calc||d.calc.total==null)return;
+  try{
+    let h=JSON.parse(localStorage.dd_hist||'[]');
+    h=h.filter(x=>!(x.t===d.term&&x.g===goods.value));
+    h.unshift({t:d.term,c:d.code,tot:d.calc.total,g:goods.value,fr:freight.value,ins:insurance.value,v:vat.value,q:document.getElementById('qty').value||'',cc:_chosen||''});
+    localStorage.dd_hist=JSON.stringify(h.slice(0,6));renderHist();
+  }catch(e){}
+}
+function renderHist(){
+  try{
+    const h=JSON.parse(localStorage.dd_hist||'[]'),box=document.getElementById('histBox');
+    if(!h.length){box.style.display='none';return;}
+    box.innerHTML='<div class="h-t">Недавние расчёты</div>'+h.map((x,i)=>'<button type="button" class="h-i" onclick="loadHist('+i+')"><span>'+x.t+'</span><b>'+f(x.tot)+'</b></button>').join('');
+    box.style.display='block';
+  }catch(e){}
+}
+function loadHist(i){
+  try{
+    const x=JSON.parse(localStorage.dd_hist||'[]')[i]; if(!x)return;
+    term.value=x.t;goods.value=x.g;freight.value=x.fr;insurance.value=x.ins;vat.value=x.v;
+    document.getElementById('qty').value=x.q;_chosen=x.cc||null;calc();
+    document.querySelector('.res-card').scrollIntoView({behavior:'smooth',block:'center'});
+  }catch(e){}
+}
+// ── кнопки-примеры ──
+const EXAMPLES=['холодильник бытовой','шоколадные конфеты','кроссовки','смартфон','игрушки детские','носки'];
+document.getElementById('chips').innerHTML=EXAMPLES.map(x=>'<button type="button" class="chip" onclick="term.value=this.textContent;_chosen=null;calc()">'+x+'</button>').join('');
+renderHist();
+// ── глубокая ссылка: открыли расчёт из мессенджера/почты — заполняем и считаем ──
+(function(){
+  const u=new URLSearchParams(location.search);
+  if(!u.get('term'))return;
+  term.value=u.get('term');goods.value=u.get('goods')||0;freight.value=u.get('freight')||0;
+  insurance.value=u.get('insurance')||0;if(u.get('vat'))vat.value=u.get('vat');
+  if(u.get('qty'))document.getElementById('qty').value=u.get('qty');
+  if(u.get('code'))_chosen=u.get('code');
+  setTimeout(calc,400);
+})();
 // клик по варианту = человеческая метка -> практика (самообучение) -> мгновенный пересчёт по выбранному коду
 async function chooseCode(code){
   _chosen=code;   // выбор живёт при правке цифр, сбрасывается при смене товара
@@ -467,5 +621,6 @@ const cio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){count
 document.querySelectorAll('.stat b[data-n]').forEach(el=>cio.observe(el));
 window.addEventListener('DOMContentLoaded',calc);
 </script>
+<div id="printArea"></div>
 </body>
 </html>
