@@ -184,7 +184,8 @@
     #printArea .pd-sec{margin-top:16px;font-weight:bold;color:#12235c}
     #printArea .pd-alt{margin:4px 0;font-size:12.5px;color:#334}
     #printArea .pd-disc{margin-top:22px;padding-top:10px;border-top:1px solid #ccd;color:#667;font-size:11px}
-    #printArea .pd-seal{position:absolute;top:110px;right:24px;width:110px;height:110px;transform:rotate(-14deg);opacity:.88}
+    #printArea .pd-seal{width:112px;height:112px;transform:rotate(-14deg);opacity:.9;margin:2px 36px 0 0}
+    #printArea .pd-sig{display:flex;justify-content:flex-end;margin-top:-6px}
   }
   .err{color:var(--bad);font-size:14px;margin-top:12px}
   /* ── сетка карточек ── */
@@ -522,7 +523,6 @@ function printDoc(){
     ['Стоимость товара',f(+goods.value||0)],['Фрахт до границы',f(+freight.value||0)],['Страховка',f(+insurance.value||0)]];
   const qv=document.getElementById('qty').value; if(qv)rows.push(['Количество',qv]);
   let t='<div class="pd-head"><img src="logo.png"><div><h1>Смета себестоимости ввоза</h1><div class="pd-mut">ДалДобро · daldobro.ru — навигатор по ввозу из Китая · '+dt+'</div></div></div>';
-  t+='<img class="pd-seal" src="logo.png" alt="">';
   t+='<table>'+rows.map(r=>'<tr><td>'+r[0]+'</td><td>'+r[1]+'</td></tr>').join('')+'</table>';
   t+='<div class="pd-sec">Расчёт</div><table>';
   t+='<tr><td>Таможенная стоимость (товар + фрахт + страховка)</td><td>'+f(c.customs_value)+'</td></tr>';
@@ -530,6 +530,7 @@ function printDoc(){
   t+='<tr><td>НДС '+c.vat_rate+'%'+(c.vat_hint?' (проверьте льготу: '+c.vat_hint+')':'')+'</td><td>'+(c.vat!=null?f(c.vat):'—')+'</td></tr>';
   if(c.fee)t+='<tr><td>Сбор</td><td>'+f(c.fee)+'</td></tr>';
   t+='<tr class="pt"><td>ИТОГО себестоимость ввоза</td><td>'+(c.total!=null?f(c.total):'—')+'</td></tr></table>';
+  t+='<div class="pd-sig"><img class="pd-seal" src="logo.png" alt=""></div>';
   const alts=(d.alternatives||[]).filter(a=>a.code!==d.code);
   if(alts.length){t+='<div class="pd-sec">Похожие коды (если товар точнее описан другой строкой)</div>';
     t+=alts.map(a=>'<div class="pd-alt">'+fmtCode(a.code)+(a.duty?' · пошлина '+a.duty:'')+' — '+human(a.name)+'</div>').join('');}
