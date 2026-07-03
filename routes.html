@@ -52,6 +52,10 @@ tr:last-child td{border-bottom:0}
 <table id="seaTbl"><thead><tr><th>Порт отправления (Китай)</th><th>Транзит до Владивостока</th><th>Частота</th><th>Ставка</th></tr></thead><tbody id="seaBody"><tr><td colspan="4" style="color:var(--mut)">загрузка…</td></tr></tbody></table>
 <p class="mut">Далее из Владивостока — таможенное оформление (Владивостокская / Находкинская таможня) и ЖД/авто по РФ.</p>
 
+<h2>💰 Ставки по направлениям <span style="font-size:13px;font-weight:400;color:var(--mut)">— из рынка, обновляются</span></h2>
+<p class="mut">Реальные ставки Китай→РФ по сигналам рынка (карго, авто, авиа). Таких цифр нет в мировых индексах — только у форвардеров и в отраслевых источниках. Открываются после входа.</p>
+<table><thead><tr><th>Откуда</th><th>Куда</th><th>Ставка</th><th>Точек</th></tr></thead><tbody id="ratesBody"><tr><td colspan="4" style="color:var(--mut)">войдите, чтобы увидеть →</td></tr></tbody></table>
+
 <h2>🚂 ЖД: Китай → Россия</h2>
 <p class="mut">Компромисс цена/срок для центральной РФ. Контейнерные поезда через погранпереходы.</p>
 <table><thead><tr><th>Маршрут</th><th>Транзит</th><th>Через</th><th>Ставка</th></tr></thead><tbody>
@@ -102,6 +106,14 @@ function renderSea(){
     (r.freq_per_week?('~'+r.freq_per_week+' рейс/нед'):'по расписанию')+'</td><td class="rate">'+rateCell(r.cn_ru)+'</td></tr>').join('')
     : '<tr><td colspan="4" style="color:var(--mut)">данные обновляются</td></tr>';
 }
+function renderRates(){
+  const body=document.getElementById('ratesBody');
+  if(!AUTH.active){body.innerHTML='<tr><td colspan="4"><a href="/login.html" style="color:#8fb4ff">Войти — и увидеть реальные ставки по направлениям (14 дней бесплатно) →</a></td></tr>';return;}
+  const rs=(RATES.rates||[]);
+  body.innerHTML = rs.length ? rs.map(r=>
+    '<tr><td class="d">'+r.cn+'</td><td class="d">'+r.ru+'</td><td class="rate"><b style="color:#5bffc0">~$'+r.usd_kg+'/кг</b></td><td class="rate">'+r.n+'</td></tr>').join('')
+    : '<tr><td colspan="4" style="color:var(--mut)">данные накапливаются — скоро появятся ставки</td></tr>';
+}
 async function initAuth(){
   const tok=localStorage.getItem('dd_token');
   const bar=document.getElementById('authBar'),msg=document.getElementById('authMsg'),btn=document.getElementById('authBtn');
@@ -125,6 +137,7 @@ fetch('data/routes.json').then(r=>r.json()).then(async d=>{
   document.getElementById('upd').textContent='обновлено '+d.updated+' · источник: расписания '+(d.carrier||'перевозчиков');
   await initAuth();
   renderSea();
+  renderRates();
 }).catch(()=>{document.getElementById('seaBody').innerHTML='<tr><td colspan="4" style="color:var(--mut)">данные временно недоступны</td></tr>';});
 </script>
 </body></html>
