@@ -255,6 +255,9 @@
   .tile p{margin:0;color:var(--mut);font-size:14px;line-height:1.55}
   .tag{display:inline-block;font-size:11px;font-weight:800;padding:3px 10px;border-radius:12px;background:linear-gradient(90deg,rgba(91,140,255,.2),rgba(124,92,255,.2));color:#b9caff;margin-bottom:10px;letter-spacing:.3px}
   .tag.soon{background:rgba(150,165,195,.12);color:var(--mut)}
+  .tag.live{background:rgba(47,191,113,.16);color:var(--good);box-shadow:0 0 14px rgba(47,191,113,.15)}
+  a.tile{text-decoration:none;color:inherit;display:block;transition:.15s}
+  a.tile:hover{transform:translateY(-3px);border-color:rgba(91,140,255,.45)}
   .soon .tile{opacity:.72}
   .foot{color:var(--mut);font-size:13px;border-top:1px solid var(--line);padding:30px 0 60px;line-height:1.7;margin-top:26px}
   /* ── ИИ-ассистент ── */
@@ -289,7 +292,7 @@
     <div class="logo"><img src="/logo.png" alt="ДалДобро"><span>Дал<b>Добро</b></span><button id="pinBtn" onclick="togglePin()" title="Зафиксировать панель расчёта по центру экрана — до первого скролла">📌 Закрепить</button></div>
     <div class="links">
       <a href="#calc">Калькулятор</a><a href="#analytics">Аналитика</a>
-      <a href="#data">Индексы</a><a href="#check">Проверка</a>
+      <a href="#data">Индексы</a><a href="#check">Проверка</a><a href="/claim.html">Тарифы</a><a href="https://t.me/daldobro_bot" style="color:#5bb8ff">Telegram-бот</a>
     </div>
   </nav>
 
@@ -401,7 +404,7 @@
         <div class="bk-fact"><span class="k">Порт</span><span class="v">Владивосток · морской из Китая</span></div>
       </div>
       <div class="bk-note">🎯 Скоро: подбор представителя <b>под ваш код ТН ВЭД</b> — у допусков в реестре ФТС есть ограничения по товарам и регионам, мы их знаем. Плюс рейтинг надёжности по живым сигналам рынка.</div>
-      <a class="bk-claim" href="mailto:hello@daldobro.ru?subject=Карточка исполнителя на ДалДобро">Вы таможенный представитель? Займите карточку →</a>
+      <a class="bk-claim" href="/claim.html?plan=card_month">Вы таможенный представитель? Займите карточку →</a>
     </div>
     </div>
     </div>
@@ -430,33 +433,39 @@
     <a class="vc-link" href="https://vc.ru/id6028594" target="_blank" rel="noopener">Читать и обсуждать разборы на vc.ru →</a>
   </section>
 
-  <section id="data" class="reveal soon">
+  <section id="data" class="reveal">
     <h2 class="sec">Индексы рынка</h2>
-    <p class="sec-sub">Уникальные индикаторы, которых нет у других — считаем на своих данных рынка. Запускаем в этом квартале.</p>
+    <p class="sec-sub">Живые индикаторы, которых нет в официальной статистике — считаем на собственных данных рынка, обновляем ежедневно.</p>
     <div class="grid">
-      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 15l3-4 3 2 4-6M12 3a3 3 0 100 6 3 3 0 000-6z"/></svg></div><span class="tag soon">Скоро</span><h3>Карго-прайс-индекс</h3><p>Реальная стоимость ввоза $/кг в пересчёте на рубли — помесячно.</p></div>
-      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></div><span class="tag soon">Скоро</span><h3>Индекс «боли ВЭД»</h3><p>Напряжение и задержки на таможне — опережающий индикатор трения.</p></div>
-      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 019 9M12 12l6-4M12 21a9 9 0 01-9-9 9 9 0 019-9"/></svg></div><span class="tag soon">Скоро</span><h3>Платёжный барометр</h3><p>Стоимость и проходимость платежей в Китай.</p></div>
+      <a class="glass tile" href="/indices.html"><div class="ico"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg></div><span class="tag live" id="idxPain">живой</span><h3>Индекс «боли ВЭД»</h3><p>Напряжение и задержки на таможне — опережающий индикатор трения. Ряд с 2019 года.</p></a>
+      <a class="glass tile" href="/indices.html"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 019 9M12 12l6-4M12 21a9 9 0 01-9-9 9 9 0 019-9"/></svg></div><span class="tag live" id="idxComm">живой</span><h3>Платёжный барометр</h3><p>Реальная комиссия за платёж в Китай по сигналам рынка.</p></a>
+      <a class="glass tile" href="/indices.html"><div class="ico"><svg viewBox="0 0 24 24"><path d="M4 19h16M6 15l3-4 3 2 4-6M12 3a3 3 0 100 6 3 3 0 000-6z"/></svg></div><span class="tag live" id="idxCargo">живой</span><h3>Карго-прайс-индекс</h3><p>Стоимость доставки «карго» $/кг — по ценам рынка, не по прайсам.</p></a>
       <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM9 8h6M9 12h6M9 16h3"/></svg></div><span class="tag soon">Скоро</span><h3>Реестр-дельта ФТС</h3><p>Кто вошёл и вылетел из реестра таможенных представителей за месяц.</p></div>
     </div>
-    <div class="early"><span>Хотите получать индексы первыми, как только запустим?</span><a href="https://t.me/daldobro_bot">Подписаться на запуск →</a></div>
+    <div class="early"><span>Полная история рядов, выгрузка и алерты по порогам — в «Индексы PRO», 4 900 ₽/мес.</span><a href="/claim.html?plan=indices_pro">Подключить PRO →</a></div>
   </section>
 
-  <section id="check" class="reveal soon">
-    <h2 class="sec">Проверка и мониторинг</h2>
-    <p class="sec-sub">Не потерять деньги на ненадёжном контрагенте и не пропустить смену правил. Запускаем в этом квартале.</p>
+  <section id="check" class="reveal">
+    <h2 class="sec">Проверка контрагента</h2>
+    <p class="sec-sub">Брокер, форвардер, «таможенный представитель» из рекламы — проверьте бесплатно по официальному реестру ФТС и нашим данным, прежде чем платить.</p>
+    <div class="glass" style="padding:22px 24px;margin-bottom:16px">
+      <div class="row" style="display:flex;gap:12px;flex-wrap:wrap">
+        <input id="chkQ" placeholder="ИНН или название компании — например: Юнитрейд" style="flex:1;min-width:230px;padding:13px 15px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:15px" onkeydown="if(event.key==='Enter')doCheck()">
+        <button class="btn" style="margin:0;width:auto;padding:13px 26px" onclick="doCheck()">Проверить →</button>
+      </div>
+      <div id="chkRes" style="margin-top:6px"></div>
+    </div>
     <div class="grid">
-      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3zM9 12l2 2 4-4"/></svg></div><span class="tag soon">Скоро</span><h3>Проверка контрагента</h3><p>Брокер / платёжный агент / поставщик: репутация и надёжность = red-flags.</p></div>
       <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3zM9.5 9.5l5 5M14.5 9.5l-5 5"/></svg></div><span class="tag soon">Скоро</span><h3>Анти-скам платежей</h3><p>Проверка платёжного агента в Китай перед переводом.</p></div>
-      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 004 0"/></svg></div><span class="tag soon">Скоро</span><h3>Алерты и мониторинг</h3><p>Правило вступает завтра · канал платежей упал · брокер вылетел — узнай раньше всех.</p></div>
+      <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 004 0"/></svg></div><span class="tag soon">Скоро</span><h3>Алерты и мониторинг</h3><p>Правило вступает завтра · канал платежей упал · брокер вылетел — узнай раньше всех. 1 490 ₽/мес.</p></div>
       <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7zM12 9a3 3 0 100 6 3 3 0 000-6z"/></svg></div><span class="tag soon">Скоро</span><h3>Фейк-радар</h3><p>Что сегодня НЕ правда на рынке: разоблачение ложных паник.</p></div>
     </div>
-    <div class="early"><span>Проверки и алерты — первым по подписке. Оставьте заявку в боте.</span><a href="https://t.me/daldobro_bot">Получить ранний доступ →</a></div>
+    <div class="early"><span>Нужен полный отчёт с финансами, историей и сигналами рынка? 990 ₽ за компанию.</span><a href="/claim.html?plan=check_full">Заказать полную проверку →</a></div>
   </section>
 
   <div class="foot">
     <b>ДалДобро</b> — навигатор по ввозу из Китая. Оценки навигационные: коды и ставки — по официальному классификатору и ЕТТ ЕАЭС. Пломбу ставит лицензированный декларант; при высоком риске — предварительное решение ФТС.<br>
-    © ДалДобро · daldobro.ru
+    © ДалДобро · daldobro.ru · <a href="https://t.me/daldobro_bot" style="color:#5bb8ff">Telegram-бот с калькулятором</a> · <a href="/claim.html" style="color:#a9c2ff">тарифы</a> · <a href="/indices.html" style="color:#a9c2ff">индексы</a> · <a href="mailto:hello@daldobro.ru" style="color:#a9c2ff">hello@daldobro.ru</a>
   </div>
 </div>
 
@@ -685,6 +694,34 @@ function loadHist(i){
   }catch(e){}
 }
 renderHist();
+// ── бесплатная проверка контрагента по реестру ФТС + наши данные ──
+async function doCheck(){
+  const q=document.getElementById('chkQ').value.trim(),box=document.getElementById('chkRes');
+  if(q.length<3){box.innerHTML='<div class="err">Введите ИНН или минимум 3 буквы названия.</div>';return;}
+  box.innerHTML='<div style="color:var(--mut);font-size:13.5px;padding:10px 0">Проверяю по реестру ФТС и нашим данным…</div>';
+  try{
+    const r=await fetch(API+'/check?q='+encodeURIComponent(q));const d=await r.json();
+    if(!d.items||!d.items.length){
+      box.innerHTML='<div style="margin-top:10px;padding:14px;border:1px solid rgba(255,106,90,.4);border-radius:12px;background:rgba(255,106,90,.07);font-size:14px;line-height:1.6">🚩 <b>Не найден в реестре таможенных представителей ФТС.</b> '+(d.note||'')+'<br><span style="color:var(--mut);font-size:12.5px">Компания может работать как посредник без статуса — но декларацию за вас она подавать не вправе.</span></div>';
+      return;
+    }
+    box.innerHTML=d.items.map(x=>'<div style="margin-top:10px;padding:14px;border:1px solid rgba(47,191,113,.4);border-radius:12px;background:rgba(47,191,113,.06)">'+
+      '<b>'+x.name+'</b> <span style="color:var(--mut);font-size:12px">ИНН '+x.inn+'</span>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:8px;font-size:13px;color:var(--mut)">'+
+      '<span style="color:var(--good)">✓ в реестре ФТС'+(x.fts_since?' с '+x.fts_since:'')+'</span>'+
+      '<span>'+(x.active?'действует':'⚠ статус неактивен')+'</span>'+
+      '<span>'+(x.region||'')+'</span><span>масштаб: '+(x.scale||'н/д')+'</span>'+
+      (x.company_since?'<span>компания с '+x.company_since+'</span>':'')+'</div>'+
+      '<div style="margin-top:10px"><a href="/claim.html?plan=check_full" style="color:#a9c2ff;font-size:13px;font-weight:700">Полный отчёт: финансы, история, сигналы рынка — 990 ₽ →</a></div></div>').join('');
+  }catch(e){box.innerHTML='<div class="err">Сервис проверки временно недоступен.</div>';}
+}
+// живые значения индексов на плитках
+fetch('data/indices.json').then(r=>r.json()).then(d=>{
+  const set=(id,val)=>{const el=document.getElementById(id);if(el&&val){el.textContent=val;el.classList.add('live');}};
+  if(d.pain&&d.pain.length)set('idxPain','боль: '+d.pain[d.pain.length-1].v+'%');
+  if(d.comm&&d.comm.length)set('idxComm','комиссия: '+d.comm[d.comm.length-1].v+'%');
+  if(d.cargo&&d.cargo.length)set('idxCargo','$'+d.cargo[d.cargo.length-1].v+'/кг');
+}).catch(()=>{});
 // ── закрепление панели: три карточки фиксируются на экране до первого скролла вне панели ──
 function togglePin(){document.body.classList.contains('pinned')?unpin():pin();}
 function pin(){
