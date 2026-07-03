@@ -43,6 +43,38 @@ input:focus{outline:none;border-color:var(--acc)}
 .err{color:var(--bad);font-size:13.5px;margin-top:10px}
 .ok{color:var(--good);font-size:13.5px;margin-top:10px}
 .foot{color:var(--mut);font-size:12.5px;border-top:1px solid var(--line);padding:20px 0 40px;line-height:1.7;margin-top:26px}
+.paykind{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.pk{flex:1 1 240px;display:block;padding:12px 14px;border:1px solid var(--line);border-radius:13px;cursor:pointer;font-size:14px;font-weight:700;background:rgba(10,15,28,.4)}
+.pk span{display:block;font-weight:400;font-size:12px;color:var(--mut);margin-top:3px}
+.pk input{display:none}
+.pk.sel{border-color:var(--acc);background:rgba(91,140,255,.1)}
+.qrbox{display:none;margin-top:16px;padding:16px;border:1px solid rgba(47,191,113,.4);border-radius:14px;background:rgba(47,191,113,.05);gap:18px;align-items:center;flex-wrap:wrap}
+.qrbox.show{display:flex}
+.qr-l #qrCanvas{background:#fff;padding:10px;border-radius:10px}
+.qr-r{flex:1;min-width:240px}
+.qr-r b{font-size:15px}
+.qr-r p{color:var(--mut);font-size:13px;line-height:1.6;margin:8px 0}
+.qr-r a{color:#8fd7ff}
+.qr-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.qr-btns button{padding:10px 16px;border-radius:11px;border:1px solid rgba(91,140,255,.4);background:rgba(23,30,48,.6);color:#cfe0ff;font-weight:700;cursor:pointer;font-size:13px}
+#payState{font-size:12.5px;color:var(--warn)}
+#payState.ok{color:var(--good);font-weight:800}
+#invoiceArea{display:none}
+@media print{
+  body>*{display:none!important}
+  body>#invoiceArea{display:block!important;color:#111;font-family:Arial;font-size:13px;line-height:1.55;padding:8px}
+  #invoiceArea .ih{display:flex;gap:14px;align-items:center;border-bottom:2px solid #1a3fa8;padding-bottom:10px;margin-bottom:16px}
+  #invoiceArea .ih img{width:58px;height:58px}
+  #invoiceArea h1{font-size:19px;margin:0;color:#12235c}
+  #invoiceArea .mut{color:#556;font-size:11.5px}
+  #invoiceArea table{width:100%;border-collapse:collapse;margin:12px 0}
+  #invoiceArea td{padding:7px 4px;border-bottom:1px solid #ccd}
+  #invoiceArea td:last-child{text-align:right;white-space:nowrap}
+  #invoiceArea .tot td{font-weight:bold;font-size:16px;color:#12235c;border-bottom:0}
+  #invoiceArea .qrrow{display:flex;gap:18px;align-items:center;margin-top:14px}
+  #invoiceArea .qrrow img{width:150px;height:150px}
+  #invoiceArea .disc{margin-top:18px;padding-top:8px;border-top:1px solid #ccd;color:#667;font-size:10.5px}
+}
 </style></head>
 <body>
 <div class="bg"></div>
@@ -67,9 +99,27 @@ input:focus{outline:none;border-color:var(--acc)}
     <div><label>E-mail (чек и доступ)</label><input id="email" type="email" placeholder="you@company.ru"></div>
   </div>
   <div class="prev" id="prev"></div>
+  <div class="paykind" id="payKind">
+    <label class="pk sel" data-k="card"><input type="radio" name="pk" checked> 💳 Оплатить онлайн <span>карта · для ИП и физлиц</span></label>
+    <label class="pk" data-k="qr"><input type="radio" name="pk"> 🧾 Счёт + QR для юрлица <span>оплата из бизнес-приложения банка, счёт для бухгалтерии</span></label>
+  </div>
+  <div class="row" id="orgRow" style="display:none">
+    <div><label>Название компании-плательщика (для счёта)</label><input id="orgName" placeholder="ООО «Ромашка Импорт»"></div>
+  </div>
   <button class="btn" id="payBtn" onclick="pay()">Перейти к оплате →</button>
   <div class="err" id="err"></div>
   <div class="ok" id="okmsg"></div>
+  <div class="qrbox" id="qrBox">
+    <div class="qr-l"><div id="qrCanvas"></div></div>
+    <div class="qr-r">
+      <b>Счёт сформирован — оплатите по QR</b>
+      <p>Отсканируйте QR из приложения банка (в т.ч. бизнес-приложения) или откройте <a href="#" id="qrLink" target="_blank" rel="noopener">страницу оплаты</a>. Кассовый чек придёт на указанный e-mail. Услуга активируется автоматически после оплаты.</p>
+      <div class="qr-btns">
+        <button type="button" onclick="printInvoice()">🖨 Распечатать счёт</button>
+        <span id="payState">ожидаем оплату…</span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="foot">Оплата через ЮKassa (карты, СБП). Нажимая «Перейти к оплате», вы соглашаетесь с офертой: услуга информационная, активация — после подтверждения платежа, чек придёт на e-mail. Вопросы: <a href="mailto:hello@daldobro.ru" style="color:#a9c2ff">hello@daldobro.ru</a> · <a href="https://t.me/daldobro_bot" style="color:#a9c2ff">@daldobro_bot</a></div>
@@ -101,6 +151,15 @@ document.getElementById('inn').addEventListener('input',e=>{
     }catch(e){}
   },350);
 });
+// способ оплаты: онлайн (редирект) или счёт+QR для юрлица
+let payKind='card';
+document.querySelectorAll('.pk').forEach(el=>el.addEventListener('click',()=>{
+  payKind=el.dataset.k;
+  document.querySelectorAll('.pk').forEach(x=>x.classList.toggle('sel',x===el));
+  document.getElementById('orgRow').style.display=payKind==='qr'?'flex':'none';
+  document.getElementById('payBtn').textContent=payKind==='qr'?'Сформировать счёт и QR →':'Перейти к оплате →';
+}));
+let _lastPay=null,_pollT=null;
 async function pay(){
   const err=document.getElementById('err'),ok=document.getElementById('okmsg'),btn=document.getElementById('payBtn');
   err.textContent='';ok.textContent='';
@@ -110,10 +169,55 @@ async function pay(){
   try{
     const r=await fetch(API+'/pay/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:plan,inn:inn,email:email})});
     const d=await r.json();
-    if(d.url){ok.textContent='Переходим на защищённую страницу оплаты ЮKassa…';location.href=d.url;}
-    else{err.textContent=d.detail||'Не удалось создать счёт. Напишите нам: hello@daldobro.ru';}
+    if(!d.url){err.textContent=d.detail||'Не удалось создать счёт. Напишите нам: hello@daldobro.ru';return;}
+    if(payKind==='card'){ok.textContent='Переходим на защищённую страницу оплаты ЮKassa…';location.href=d.url;return;}
+    // ── юрлицо: QR + счёт ──
+    _lastPay=d;
+    document.getElementById('qrLink').href=d.url;
+    const qc=document.getElementById('qrCanvas');qc.innerHTML='';
+    new QRCode(qc,{text:d.url,width:170,height:170,correctLevel:QRCode.CorrectLevel.M});
+    document.getElementById('qrBox').classList.add('show');
+    ok.textContent='';
+    // поллинг статуса: как оплатят — покажем «Дал добро!»
+    clearInterval(_pollT);
+    _pollT=setInterval(async()=>{
+      try{
+        const s=await(await fetch(API+'/pay/status?yk='+encodeURIComponent(d.yk_id))).json();
+        if(s.paid||s.status==='succeeded'){
+          clearInterval(_pollT);
+          const st=document.getElementById('payState');st.textContent='✓ Оплачено — дал добро! Услуга активируется автоматически.';st.className='ok';
+        }
+      }catch(e){}
+    },7000);
   }catch(e){err.textContent='Ошибка сети. Попробуйте ещё раз или напишите hello@daldobro.ru';}
-  finally{btn.disabled=false;btn.textContent='Перейти к оплате →';}
+  finally{btn.disabled=false;btn.textContent=payKind==='qr'?'Сформировать счёт и QR →':'Перейти к оплате →';}
+}
+// печатный счёт для бухгалтерии (QR внутри)
+function printInvoice(){
+  if(!_lastPay)return;
+  const t=document.querySelector('.plan[data-plan="'+plan+'"] .t').textContent;
+  const org=document.getElementById('orgName').value.trim()||'—';
+  const inn=document.getElementById('inn').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const dt=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  const num=(_lastPay.yk_id||'').slice(0,8).toUpperCase();
+  const qrImg=document.querySelector('#qrCanvas img,#qrCanvas canvas');
+  const qrSrc=qrImg?(qrImg.tagName==='IMG'?qrImg.src:qrImg.toDataURL()):'';
+  document.getElementById('invoiceArea').innerHTML=
+    '<div class="ih"><img src="/logo.png"><div><h1>Счёт-оферта № '+num+' от '+dt+'</h1>'+
+    '<div class="mut">Сервис ДалДобро · daldobro.ru · hello@daldobro.ru · оплата через ЮKassa (ООО «ЮМани»)</div></div></div>'+
+    '<table><tr><td>Плательщик</td><td>'+org+(inn?' · ИНН '+inn:'')+'</td></tr>'+
+    '<tr><td>Услуга</td><td>'+t+'</td></tr>'+
+    '<tr><td>E-mail для чека и доступа</td><td>'+email+'</td></tr>'+
+    '<tr class="tot"><td>К оплате</td><td>'+Number(_lastPay.amount).toLocaleString('ru-RU')+' ₽ (НДС не облагается)</td></tr></table>'+
+    '<div class="qrrow">'+(qrSrc?'<img src="'+qrSrc+'">':'')+
+    '<div><b>Как оплатить:</b><br>1. Отсканируйте QR из приложения банка (в т.ч. бизнес-приложения)<br>'+
+    'или откройте ссылку: '+_lastPay.url.slice(0,60)+'…<br>'+
+    '2. Оплатите картой организации или через СБП.<br>3. Кассовый чек придёт на e-mail, услуга активируется автоматически.</div></div>'+
+    '<div class="disc">Оплата счёта означает согласие с офертой на daldobro.ru. Услуга информационная. Счёт действителен 3 банковских дня. Вопросы: hello@daldobro.ru</div>';
+  window.print();
 }
 </script>
+<script src="/qr.js"></script>
+<div id="invoiceArea"></div>
 </body></html>
