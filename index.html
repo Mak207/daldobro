@@ -725,6 +725,12 @@ async function doCheck(){
   }catch(e){box.innerHTML='<div class="err">Сервис проверки временно недоступен.</div>';}
 }
 // ── подбор исполнителей под товар: после расчёта колонка перестраивается ──
+// название компании: ООО/АО оставляем, остальное — Каждое Слово С Заглавной
+function coName(s){
+  return (s||'').replace(/"/g,'').split(/\s+/).map(w=>
+    /^(ООО|АО|ЗАО|ПАО|ИП|НАО)$/i.test(w)?w.toUpperCase():
+    w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+}
 async function loadBrokers(code){
   try{
     const r=await fetch(API+'/brokers/match?code='+encodeURIComponent(code));
@@ -733,7 +739,7 @@ async function loadBrokers(code){
     document.getElementById('brokTitle').textContent='Кто повезёт ваш товар';
     document.getElementById('brokSub').textContent='Подбор под товарную группу '+d.chapter+' — по данным реестра ФТС и финансовой отчётности. Информирование, не реклама.';
     document.getElementById('brokList').innerHTML=d.items.map(x=>{
-      const nm=x.url?'<a href="'+x.url+'" target="_blank" rel="noopener" style="color:#8fd7ff;text-decoration:underline">'+human(x.name)+'</a>':human(x.name);
+      const nm=x.url?'<a href="'+x.url+'" target="_blank" rel="noopener" style="color:#8fd7ff;text-decoration:underline">'+coName(x.name)+'</a>':coName(x.name);
       const paid=x.cat==='Партнёр ДалДобро';
       return '<div class="bk"'+(paid?' style="border-color:rgba(58,215,200,.45);background:rgba(58,215,200,.05)"':'')+'>'+
         '<span class="bk-cat"'+(paid?' style="color:#5bffc0;border-color:rgba(47,191,113,.4)"':'')+'>'+x.cat+'</span>'+
