@@ -43,7 +43,7 @@ svg{width:100%;height:190px;display:block}
 <nav><a class="logo" href="/"><img src="/logo.png" alt="">Дал<b>Добро</b></a><a class="back" href="/#data">← на главную</a></nav>
 
 <h1>Индексы рынка ВЭД</h1>
-<p class="sub">Живые индикаторы рынка ввоза из Китая, которых нет в официальной статистике. Считаем по собственным данным ДалДобро — сигналам рынка, накапливаемым ежедневно с 2017 года. Значения навигационные.</p>
+<p class="sub">Живые индикаторы рынка ввоза из Китая, которых нет в официальной статистике. Здесь — текущие значения и тренд за полгода, бесплатно. Полная история, срезы по маршрутам и алерты — в <a href="/claim.html?plan=indices_pro" style="color:#8fb4ff">Индексах PRO</a>.</p>
 <span class="upd" id="upd">обновлено —</span>
 
 <div class="card">
@@ -67,9 +67,15 @@ svg{width:100%;height:190px;display:block}
   <svg id="chCargo" viewBox="0 0 900 190" preserveAspectRatio="none"></svg>
 </div>
 
-<div class="cta">
-  <span><b>Индексы PRO</b> — полная история рядов, разбивка по направлениям, выгрузка в Excel/API и алерты при скачках. <b>4 900 ₽/мес</b>.</span>
-  <a href="/claim.html?plan=indices_pro">Подключить →</a>
+<div class="card" style="border-color:rgba(91,140,255,.3)">
+  <h2 style="margin-top:0">Индексы PRO — за что платят <span class="badge b-acc">4 900 ₽/мес</span></h2>
+  <p style="margin-bottom:14px">Текущее значение видно и так. PRO — про то, чего на этой странице нет:</p>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+    <div style="padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(10,15,28,.4)"><b style="color:#c9d8ff">🔔 Алерты «раньше всех»</b><br><span style="color:var(--mut);font-size:13px">сигнал в Telegram в момент скачка ставок, обвала платёжного канала, ужесточения — а не постфактум на графике</span></div>
+    <div style="padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(10,15,28,.4)"><b style="color:#c9d8ff">🧭 Срезы по маршрутам</b><br><span style="color:var(--mut);font-size:13px">не усреднённая линия, а ваше направление: море / жд / авиа, порт Китая → порт РФ с таможенным постом</span></div>
+    <div style="padding:14px;border:1px solid var(--line);border-radius:12px;background:rgba(10,15,28,.4)"><b style="color:#c9d8ff">🔌 Данные в вашу систему</b><br><span style="color:var(--mut);font-size:13px">выгрузка Excel и доступ по API — чтобы индексы втекали в ваши таблицы и прогнозы автоматически</span></div>
+  </div>
+  <a class="cta" style="display:inline-block;margin:16px 0 0;padding:12px 24px;background:linear-gradient(100deg,#5b8cff,#7c5cff);border:0" href="/claim.html?plan=indices_pro">Подключить PRO →</a>
 </div>
 <div class="cta" style="background:rgba(58,215,200,.06);border-color:rgba(58,215,200,.25)">
   <span>Свежие значения индексов — каждую неделю в нашем Telegram-канале.</span>
@@ -103,9 +109,10 @@ fetch('data/indices.json').then(r=>r.json()).then(d=>{
   if(pain.length){document.getElementById('painNow').textContent=pain[pain.length-1].v+'%';}
   if(comm.length){document.getElementById('commNow').textContent=comm[comm.length-1].v+'%';}
   if(cargo.length){document.getElementById('cargoNow').textContent='$'+cargo[cargo.length-1].v;}
-  chart('chPain',pain,'#ff6a5a','%');
-  chart('chComm',comm,'#f0b03a','%');
-  chart('chCargo',cargo,'#3ad7c8','$');
+  // на сайте — бесплатно только текущее значение и тренд за полгода; полная история и срезы — в PRO
+  chart('chPain',pain.slice(-6),'#ff6a5a','%');
+  chart('chComm',comm.slice(-6),'#f0b03a','%');
+  chart('chCargo',cargo.slice(-6),'#3ad7c8','$');
 }).catch(()=>{document.getElementById('upd').textContent='данные временно недоступны';});
 </script>
 </body></html>
