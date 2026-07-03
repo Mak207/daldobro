@@ -128,6 +128,7 @@
   #pinBtn:hover{background:rgba(91,140,255,.22)}
   #pinBtn.on{background:linear-gradient(100deg,#5b8cff,#7c5cff);color:#fff;border-color:transparent}
   body.pinned{overflow:hidden}
+  body.pinned::before{content:"";position:fixed;inset:0;z-index:70;background:rgba(5,8,18,.82);backdrop-filter:blur(10px)}
   body.pinned .calc-wrap{position:fixed;top:72px;bottom:12px;left:50%;transform:translateX(-50%);width:min(1520px,calc(100vw - 28px));z-index:80;margin:0}
   body.pinned .col{height:100%;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(91,140,255,.4) transparent}
   /* всплывающее окно «Недавние расчёты» */
