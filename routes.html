@@ -78,14 +78,53 @@ tr:last-child td{border-bottom:0}
 <div class="foot"><b>ДалДобро</b> — навигатор по ввозу из Китая. Сроки и частота — по расписаниям перевозчиков на дату обновления, значения навигационные и не являются офертой перевозки. © ДалДобро · <a href="/">daldobro.ru</a> · <a href="/indices.html">индексы</a> · <a href="https://t.me/DalDobro_media">Telegram-канал</a></div>
 </div>
 
+<div id="authBar" style="margin:8px 0 18px;padding:14px 18px;border:1px solid rgba(91,140,255,.3);border-radius:14px;background:rgba(91,140,255,.07);display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+  <span id="authMsg" style="flex:1;min-width:220px;color:#c9d8ff;font-size:14px">Цены по маршрутам открываются после входа — 14 дней бесплатно.</span>
+  <a id="authBtn" href="/login.html" style="padding:11px 20px;border-radius:11px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff)">Войти, чтобы видеть цены →</a>
+</div>
 <script>
-fetch('data/routes.json').then(r=>r.json()).then(d=>{
-  document.getElementById('upd').textContent='обновлено '+d.updated+' · источник: расписания '+(d.carrier||'перевозчиков');
+const API='https://api.201-51-30-177.sslip.io';
+let RATES={}, AUTH={active:false};
+function rateFor(cnRu){
+  // сопоставляем порт (Нинбо, Шанхай...) с направлением ставки (город → Москва/Владивосток)
+  for(const r of (RATES.rates||[])){ if(r.cn && cnRu.indexOf(r.cn)>=0) return '~$'+r.usd_kg+'/кг'; }
+  return AUTH.active ? 'по запросу' : null;
+}
+function rateCell(cnRu){
+  if(!AUTH.active) return '<a href="/login.html" style="color:#8fb4ff">войти →</a>';
+  const v=rateFor(cnRu); return v?('<b style="color:#5bffc0">'+v+'</b>'):'по запросу';
+}
+function renderSea(){
+  const d=window._routes;
   const rows=(d.routes||[]).sort((a,b)=>a.transit_days-b.transit_days);
   document.getElementById('seaBody').innerHTML = rows.length ? rows.map(r=>
     '<tr><td class="d">'+r.cn_ru+'</td><td class="d">'+r.transit_days+' сут</td><td class="f">'+
-    (r.freq_per_week?('~'+r.freq_per_week+' рейс/нед'):'по расписанию')+'</td><td class="rate">в PRO</td></tr>').join('')
+    (r.freq_per_week?('~'+r.freq_per_week+' рейс/нед'):'по расписанию')+'</td><td class="rate">'+rateCell(r.cn_ru)+'</td></tr>').join('')
     : '<tr><td colspan="4" style="color:var(--mut)">данные обновляются</td></tr>';
+}
+async function initAuth(){
+  const tok=localStorage.getItem('dd_token');
+  const bar=document.getElementById('authBar'),msg=document.getElementById('authMsg'),btn=document.getElementById('authBtn');
+  if(tok){
+    try{
+      const m=await(await fetch(API+'/auth/me?t='+tok)).json();
+      if(m.auth&&m.active){
+        AUTH={active:true};
+        RATES=await(await fetch(API+'/routes/rates?t='+tok)).json();
+        msg.innerHTML='✓ Доступ к ценам открыт до <b>'+m.trial_until+'</b>'+(m.company?' · '+m.company:'');
+        btn.textContent='Открыть тарифы';btn.href='/claim.html';
+      }else if(m.auth&&!m.active){
+        msg.innerHTML='Бесплатный период закончился ('+m.trial_until+'). Продлите доступ к ценам в тарифах.';
+        btn.textContent='Продлить →';btn.href='/claim.html?plan=indices_pro';
+      }
+    }catch(e){}
+  }
+}
+fetch('data/routes.json').then(r=>r.json()).then(async d=>{
+  window._routes=d;
+  document.getElementById('upd').textContent='обновлено '+d.updated+' · источник: расписания '+(d.carrier||'перевозчиков');
+  await initAuth();
+  renderSea();
 }).catch(()=>{document.getElementById('seaBody').innerHTML='<tr><td colspan="4" style="color:var(--mut)">данные временно недоступны</td></tr>';});
 </script>
 </body></html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вход — ДалДобро</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#080b16;--card:rgba(23,30,48,.55);--line:rgba(120,140,190,.14);--txt:#eaf0fb;--mut:#9aa8c6;--acc:#5b8cff;--good:#2fbf71}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(1200px 800px at 80% -10%,#12204a 0%,transparent 60%),radial-gradient(1000px 700px at -10% 20%,#1a1140 0%,transparent 55%),linear-gradient(180deg,#080b16,#0a1020)}
+.box{max-width:440px;margin:auto;padding:36px 24px;width:100%}
+.logo{display:flex;align-items:center;justify-content:center;gap:10px;font-size:22px;font-weight:900;margin-bottom:6px}
+.logo img{width:40px;height:40px}
+.logo b{background:linear-gradient(90deg,#7db0ff,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+h1{font-size:22px;text-align:center;margin:14px 0 6px}
+.sub{color:var(--mut);font-size:14px;text-align:center;line-height:1.55;margin-bottom:22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;backdrop-filter:blur(16px)}
+.oauth{display:block;width:100%;padding:13px;border-radius:12px;font-size:15px;font-weight:800;text-decoration:none;text-align:center;margin-bottom:10px;border:0;cursor:pointer;color:#111}
+.o-ya{background:#fc3f1d;color:#fff}
+.o-mail{background:#0077ff;color:#fff}
+.sep{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:13px;margin:16px 0}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
+label{display:block;font-size:12.5px;color:var(--mut);margin:10px 0 6px}
+input{width:100%;padding:12px 14px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:15px}
+input:focus{outline:none;border-color:var(--acc)}
+.btn{margin-top:16px;width:100%;padding:14px;border:0;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff)}
+.note{color:var(--mut);font-size:12px;line-height:1.55;margin-top:14px;text-align:center}
+.note a{color:#8fb4ff}
+.ok{display:none;text-align:center}
+.ok .big{font-size:44px}
+.ok h2{margin:10px 0 6px}
+.ok p{color:var(--mut);font-size:14px;line-height:1.6}
+.ok a.go{display:inline-block;margin-top:14px;padding:13px 24px;border-radius:12px;font-weight:800;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff)}
+.err{color:#ff6a5a;font-size:13.5px;margin-top:10px;text-align:center}
+.foot{text-align:center;color:var(--mut);font-size:12px;padding:18px}
+.foot a{color:#a9c2ff}
+</style></head>
+<body>
+<div class="bg"></div>
+<div class="box">
+  <a href="/" style="text-decoration:none;color:inherit"><div class="logo"><img src="/logo.png" alt="">Дал<b>Добро</b></div></a>
+
+  <div id="formView">
+    <h1>Вход и регистрация</h1>
+    <div class="sub">Войдите, чтобы проложить маршрут с ценами Китай→Россия. <b style="color:#c9d8ff">14 дней бесплатно</b>, карта не нужна.</div>
+    <div class="card">
+      <div id="oauthBox">
+        <a class="oauth o-ya" id="btnYa" href="#">Войти через Яндекс</a>
+        <a class="oauth o-mail" id="btnMail" href="#">Войти через Mail</a>
+        <div class="sep">или по e-mail</div>
+      </div>
+      <label>E-mail</label>
+      <input id="email" type="email" placeholder="you@company.ru" autocomplete="email">
+      <label>Название компании <span style="color:#6b7a9c">(необязательно)</span></label>
+      <input id="company" placeholder="ООО «Ромашка Импорт»">
+      <button class="btn" id="go" onclick="emailAuth()">Продолжить →</button>
+      <div class="err" id="err"></div>
+      <div class="note">Продолжая, вы соглашаетесь с <a href="/oferta.html">офертой</a>. Мы не публикуем ваши данные.</div>
+    </div>
+  </div>
+
+  <div class="card ok" id="okView">
+    <div class="big">🛃</div>
+    <h2>Дал добро! Вы вошли</h2>
+    <p id="okMsg">Доступ к ценам открыт на 14 дней.</p>
+    <a class="go" href="/routes.html">Проложить маршрут с ценами →</a>
+    <div class="note" id="companyPrompt" style="margin-top:18px"></div>
+  </div>
+</div>
+<div class="foot">© ДалДобро · <a href="/">daldobro.ru</a> · <a href="/routes.html">маршруты</a></div>
+
+<script>
+const API='https://api.201-51-30-177.sslip.io';
+document.getElementById('btnYa').href=API+'/auth/start/yandex';
+document.getElementById('btnMail').href=API+'/auth/start/mailru';
+// провайдеры: если ключей нет — прячем
+fetch(API+'/auth/config').then(r=>r.json()).then(c=>{
+  if(!c.providers||!c.providers.length){document.getElementById('oauthBox').style.display='none';}
+  else{ if(!c.providers.includes('yandex'))document.getElementById('btnYa').style.display='none';
+        if(!c.providers.includes('mailru'))document.getElementById('btnMail').style.display='none';}
+}).catch(()=>{});
+
+function saveAndShow(tok,newUser){
+  localStorage.setItem('dd_token',tok);
+  document.getElementById('formView').style.display='none';
+  document.getElementById('okView').style.display='block';
+  fetch(API+'/auth/me?t='+tok).then(r=>r.json()).then(m=>{
+    if(m.trial_until)document.getElementById('okMsg').textContent='Доступ к ценам маршрутов открыт до '+m.trial_until+'.';
+    if(!m.company){
+      document.getElementById('companyPrompt').innerHTML='Укажите компанию, чтобы мы подобрали лучших исполнителей: <br><input id="lateco" placeholder="ООО «...»" style="margin-top:8px"><button class="btn" style="margin-top:8px" onclick="saveCompany()">Сохранить</button>';
+    }
+  });
+}
+function saveCompany(){
+  const c=document.getElementById('lateco').value.trim();
+  fetch(API+'/auth/company',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({t:localStorage.getItem('dd_token'),company:c})})
+    .then(()=>{document.getElementById('companyPrompt').innerHTML='<span style="color:#2fbf71">Спасибо, сохранили ✓</span>';});
+}
+async function emailAuth(){
+  const email=document.getElementById('email').value.trim(),company=document.getElementById('company').value.trim();
+  const err=document.getElementById('err');err.textContent='';
+  if(email.indexOf('@')<1){err.textContent='Введите корректный e-mail.';return;}
+  const btn=document.getElementById('go');btn.disabled=true;btn.textContent='Входим…';
+  try{
+    const r=await fetch(API+'/auth/email',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,company})});
+    const d=await r.json();
+    if(d.token)saveAndShow(d.token,true); else err.textContent=d.detail||'Не удалось войти.';
+  }catch(e){err.textContent='Ошибка сети. Попробуйте ещё раз.';}
+  finally{btn.disabled=false;btn.textContent='Продолжить →';}
+}
+// возврат из OAuth: токен в hash #t=...
+(function(){
+  const h=new URLSearchParams(location.hash.slice(1));
+  if(h.get('t'))saveAndShow(h.get('t'),false);
+  else if(h.get('err'))document.getElementById('err').textContent='Не удалось войти через провайдера. Попробуйте e-mail.';
+  else if(localStorage.getItem('dd_token')){ // уже вошёл
+    fetch(API+'/auth/me?t='+localStorage.getItem('dd_token')).then(r=>r.json()).then(m=>{if(m.auth)saveAndShow(localStorage.getItem('dd_token'),false);});
+  }
+})();
+</script>
+</body></html>
