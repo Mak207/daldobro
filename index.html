@@ -382,6 +382,7 @@
     <div class="glass res-card">
       <h3>Проверенные исполнители</h3>
       <div class="bk-sub">Лучшие по нашим данным — реестр таможенных представителей ФТС, финансовая отчётность, отраслевые источники. Информирование, не реклама.</div>
+      <div id="liveCards"></div>
       <div class="bk">
         <span class="bk-cat">Крупнейший на рынке</span>
         <div class="bk-top"><span class="bk-nm">ФИТ</span><span class="bk-lock">🔒 профиль не подключён</span></div>
@@ -715,6 +716,19 @@ async function doCheck(){
       '<div style="margin-top:10px"><a href="/claim.html?plan=check_full" style="color:#a9c2ff;font-size:13px;font-weight:700">Полный отчёт: финансы, история, сигналы рынка — 990 ₽ →</a></div></div>').join('');
   }catch(e){box.innerHTML='<div class="err">Сервис проверки временно недоступен.</div>';}
 }
+// оплаченные карточки исполнителей: имя-ссылка, приоритетное место
+fetch(API+'/brokers/live').then(r=>r.json()).then(d=>{
+  if(!d.items||!d.items.length)return;
+  document.getElementById('liveCards').innerHTML=d.items.map(x=>{
+    const nm=x.url?'<a href="'+x.url+'" target="_blank" rel="noopener" style="color:#8fd7ff;text-decoration:underline">'+human(x.name)+'</a>':human(x.name);
+    return '<div class="bk" style="border-color:rgba(58,215,200,.45);background:rgba(58,215,200,.05)">'+
+      '<span class="bk-cat" style="color:#5bffc0;border-color:rgba(47,191,113,.4);background:rgba(47,191,113,.1)">Партнёр ДалДобро</span>'+
+      '<div class="bk-top"><span class="bk-nm">'+nm+'</span><span class="bk-lock" style="color:#5bffc0">✓ подключён</span></div>'+
+      '<div class="bk-reg">✓ в реестре таможенных представителей ФТС'+(x.fts_since?' с '+x.fts_since:'')+'</div>'+
+      (x.scale?'<div class="bk-fact"><span class="k">Масштаб</span><span class="v">'+x.scale+'</span></div>':'')+
+      (x.region?'<div class="bk-fact"><span class="k">Регион</span><span class="v">'+x.region+'</span></div>':'')+
+      '</div>';}).join('');
+}).catch(()=>{});
 // живые значения индексов на плитках
 fetch('data/indices.json').then(r=>r.json()).then(d=>{
   const set=(id,val)=>{const el=document.getElementById(id);if(el&&val){el.textContent=val;el.classList.add('live');}};
