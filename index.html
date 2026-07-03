@@ -326,7 +326,17 @@
       <input id="term" placeholder="например: холодильник бытовой">
       <div class="row">
         <div><label>Стоимость товара, ₽</label><input id="goods" type="number" placeholder="например: 45 000"></div>
-        <div><label>Фрахт до границы, ₽</label><input id="freight" type="number" placeholder="например: 8 000"></div>
+        <div><label>Фрахт до границы, ₽</label><input id="freight" type="number" placeholder="например: 8 000">
+          <div id="freightHelp" style="margin-top:5px;font-size:12px"></div>
+          <div id="freightCalc" style="display:none;margin-top:8px;padding:10px 12px;border:1px solid rgba(91,140,255,.3);border-radius:10px;background:rgba(91,140,255,.06)">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <select id="frDir" style="flex:1;min-width:130px;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select>
+              <input id="frWeight" type="number" placeholder="вес, кг" style="width:100px;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
+              <button type="button" onclick="applyFreight()" style="padding:8px 14px;border:0;border-radius:8px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff);cursor:pointer">Подставить</button>
+            </div>
+            <div id="frOut" style="font-size:12px;color:var(--mut);margin-top:6px"></div>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div><label>Страховка, ₽</label><input id="insurance" type="number" placeholder="0, если без страховки"></div>
@@ -703,6 +713,31 @@ function loadHist(i){
   }catch(e){}
 }
 renderHist();
+// ── мостик: прикинуть фрахт из наших ставок рынка ($/кг × вес × курс) — за входом ──
+let _rates=null;
+async function initFreightBridge(){
+  const help=document.getElementById('freightHelp'),tok=localStorage.getItem('dd_token');
+  if(!tok){help.innerHTML='<a href="/routes.html" style="color:#8fb4ff">🚚 Не знаете фрахт? Прикинуть из ставок рынка →</a>';return;}
+  try{
+    const m=await(await fetch(API+'/auth/me?t='+tok)).json();
+    if(!(m.auth&&m.active)){help.innerHTML='<a href="/routes.html" style="color:#8fb4ff">🚚 Прикинуть доставку из ставок рынка →</a>';return;}
+    _rates=await(await fetch(API+'/routes/rates?t='+tok)).json();
+    if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">🚚 Ставки рынка накапливаются</span>';return;}
+    help.innerHTML='<a href="#" onclick="document.getElementById(\'freightCalc\').style.display=\'block\';this.parentElement.style.display=\'none\';return false" style="color:#8fb4ff">🚚 Прикинуть доставку из ставок рынка →</a>';
+    document.getElementById('frDir').innerHTML=_rates.rates.map((r,i)=>'<option value="'+i+'">'+r.cn+' → '+r.ru+' (~$'+r.usd_kg+'/кг)</option>').join('');
+  }catch(e){}
+}
+function applyFreight(){
+  if(!_rates)return;
+  const r=_rates.rates[+document.getElementById('frDir').value], w=+document.getElementById('frWeight').value;
+  const fx=_rates.usd_rub||90;
+  if(!w||w<=0){document.getElementById('frOut').textContent='Введите вес в кг.';return;}
+  const rub=Math.round(r.usd_kg*w*fx);
+  document.getElementById('freight').value=rub;
+  document.getElementById('frOut').innerHTML='≈ '+r.usd_kg+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b> (ориентир рынка). Пересчитываю…';
+  _chosen=null; calc();
+}
+setTimeout(initFreightBridge, 350);
 // ── бесплатная проверка контрагента по реестру ФТС + наши данные ──
 async function doCheck(){
   const q=document.getElementById('chkQ').value.trim(),box=document.getElementById('chkRes');

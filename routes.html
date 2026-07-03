@@ -53,10 +53,9 @@ tr:last-child td{border-bottom:0}
 <p class="mut">Далее из Владивостока — таможенное оформление (Владивостокская / Находкинская таможня) и ЖД/авто по РФ.</p>
 
 <h2>🎯 Точная ставка по вашему адресу</h2>
-<p class="mut">Наши ставки ниже — ориентир рынка. Для точного расчёта «от двери до двери» по конкретным адресам (ж/д + авто + море) откройте официальный калькулятор ТрансКонтейнера — крупнейшего ж/д‑контейнерного оператора Китай↔Россия.</p>
-<div id="isalesBox" style="margin:8px 0 24px;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card)">
-  <a id="isalesBtn" href="/login.html" style="display:inline-block;padding:12px 22px;border-radius:11px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff)">Войти, чтобы открыть калькулятор →</a>
-  <span style="color:var(--mut);font-size:12.5px;margin-left:12px">Расчёт — на сайте ТрансКонтейнера (isales.trcont.com)</span>
+<p class="mut">Наши ставки ниже — ориентир рынка. Точный расчёт «от двери до двери» по конкретным адресам даёт перевозчик. Разместите свою карточку и получайте заявки — место перевозчика на этом направлении свободно.</p>
+<div id="carrierBox" style="margin:8px 0 24px;padding:16px 18px;border:1px dashed var(--line);border-radius:14px;background:var(--card)">
+  <div id="carrierSlot" style="color:var(--mut);font-size:14px">Место перевозчика свободно. <a href="mailto:hello@daldobro.ru?subject=Карточка%20перевозчика%20на%20маршрутах" style="color:#8fb4ff">Занять карточку →</a></div>
 </div>
 
 <h2>💰 Ставки по направлениям <span style="font-size:13px;font-weight:400;color:var(--mut)">— из рынка, обновляются</span></h2>
@@ -113,9 +112,18 @@ function renderSea(){
     (r.freq_per_week?('~'+r.freq_per_week+' рейс/нед'):'по расписанию')+'</td><td class="rate">'+rateCell(r.cn_ru)+'</td></tr>').join('')
     : '<tr><td colspan="4" style="color:var(--mut)">данные обновляются</td></tr>';
 }
-function renderIsales(){
-  const btn=document.getElementById('isalesBtn');
-  if(AUTH.active){btn.textContent='Открыть калькулятор ТрансКонтейнера →';btn.href='https://isales.trcont.com/?tab=calc&lang=ru&utm_source=daldobro';btn.target='_blank';btn.rel='noopener';}
+// Карточка перевозчика: активна ТОЛЬКО если перевозчик оплатил размещение (партнёр).
+// Пока никто не занял — место свободно, ссылки на сторонние калькуляторы нет.
+async function renderCarrier(){
+  const slot=document.getElementById('carrierSlot');
+  try{
+    const r=await(await fetch(API+'/brokers/live?slot=carrier_route')).json();
+    const c=(r.brokers||r.cards||[]).find(x=>x.slot==='carrier_route'||x.kind==='carrier');
+    if(c&&c.name){
+      slot.innerHTML='Перевозчик-партнёр: <b>'+c.name+'</b> — '+
+        (c.url?'<a href="'+c.url+'" target="_blank" rel="noopener" style="color:#8fb4ff">открыть расчёт →</a>':(c.phone||'по запросу'));
+    }
+  }catch(e){}
 }
 function renderRates(){
   const body=document.getElementById('ratesBody');
@@ -153,7 +161,7 @@ fetch('data/routes.json').then(r=>r.json()).then(async d=>{
   await initAuth();
   renderSea();
   renderRates();
-  renderIsales();
+  renderCarrier();
 }).catch(()=>{document.getElementById('seaBody').innerHTML='<tr><td colspan="4" style="color:var(--mut)">данные временно недоступны</td></tr>';});
 </script>
 </body></html>
