@@ -52,6 +52,13 @@ tr:last-child td{border-bottom:0}
 <table id="seaTbl"><thead><tr><th>Порт отправления (Китай)</th><th>Транзит до Владивостока</th><th>Частота</th><th>Ставка</th></tr></thead><tbody id="seaBody"><tr><td colspan="4" style="color:var(--mut)">загрузка…</td></tr></tbody></table>
 <p class="mut">Далее из Владивостока — таможенное оформление (Владивостокская / Находкинская таможня) и ЖД/авто по РФ.</p>
 
+<h2>🎯 Точная ставка по вашему адресу</h2>
+<p class="mut">Наши ставки ниже — ориентир рынка. Для точного расчёта «от двери до двери» по конкретным адресам (ж/д + авто + море) откройте официальный калькулятор ТрансКонтейнера — крупнейшего ж/д‑контейнерного оператора Китай↔Россия.</p>
+<div id="isalesBox" style="margin:8px 0 24px;padding:16px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card)">
+  <a id="isalesBtn" href="/login.html" style="display:inline-block;padding:12px 22px;border-radius:11px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff)">Войти, чтобы открыть калькулятор →</a>
+  <span style="color:var(--mut);font-size:12.5px;margin-left:12px">Расчёт — на сайте ТрансКонтейнера (isales.trcont.com)</span>
+</div>
+
 <h2>💰 Ставки по направлениям <span style="font-size:13px;font-weight:400;color:var(--mut)">— из рынка, обновляются</span></h2>
 <p class="mut">Реальные ставки Китай→РФ по сигналам рынка (карго, авто, авиа). Таких цифр нет в мировых индексах — только у форвардеров и в отраслевых источниках. Открываются после входа.</p>
 <table><thead><tr><th>Откуда</th><th>Куда</th><th>Ставка</th><th>Точек</th></tr></thead><tbody id="ratesBody"><tr><td colspan="4" style="color:var(--mut)">войдите, чтобы увидеть →</td></tr></tbody></table>
@@ -106,6 +113,10 @@ function renderSea(){
     (r.freq_per_week?('~'+r.freq_per_week+' рейс/нед'):'по расписанию')+'</td><td class="rate">'+rateCell(r.cn_ru)+'</td></tr>').join('')
     : '<tr><td colspan="4" style="color:var(--mut)">данные обновляются</td></tr>';
 }
+function renderIsales(){
+  const btn=document.getElementById('isalesBtn');
+  if(AUTH.active){btn.textContent='Открыть калькулятор ТрансКонтейнера →';btn.href='https://isales.trcont.com/?tab=calc&lang=ru&utm_source=daldobro';btn.target='_blank';btn.rel='noopener';}
+}
 function renderRates(){
   const body=document.getElementById('ratesBody');
   if(!AUTH.active){body.innerHTML='<tr><td colspan="4"><a href="/login.html" style="color:#8fb4ff">Войти — и увидеть реальные ставки по направлениям (14 дней бесплатно) →</a></td></tr>';return;}
@@ -138,6 +149,7 @@ fetch('data/routes.json').then(r=>r.json()).then(async d=>{
   await initAuth();
   renderSea();
   renderRates();
+  renderIsales();
 }).catch(()=>{document.getElementById('seaBody').innerHTML='<tr><td colspan="4" style="color:var(--mut)">данные временно недоступны</td></tr>';});
 </script>
 </body></html>
