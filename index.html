@@ -730,7 +730,6 @@ if(matchMedia('(pointer:fine)').matches){addEventListener('mousemove',e=>{cg.sty
 function countUp(el){const t=+el.dataset.n;let c=0,s=t/55;const i=setInterval(()=>{c+=s;if(c>=t){c=t;clearInterval(i)}el.textContent=Math.round(c).toLocaleString('ru-RU')},18)}
 const cio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);cio.unobserve(e.target)}}),{threshold:.6});
 document.querySelectorAll('.stat b[data-n]').forEach(el=>cio.observe(el));
-window.addEventListener('DOMContentLoaded',calc);
 </script>
 <div id="printArea"></div>
 </body>
