@@ -68,7 +68,7 @@ tr:last-child td{border-bottom:0}
 <table><thead><tr><th>Маршрут</th><th>Транзит</th><th>Через</th><th>Ставка</th></tr></thead><tbody>
 <tr><td class="d">Китай → РФ (прямые переходы)</td><td class="d">~12–18 сут</td><td>Забайкальск · Гродеково</td><td class="rate">в PRO</td></tr>
 <tr><td class="d">Китай → РФ (через Казахстан)</td><td class="d">~14–22 сут</td><td>Достык / Алтынколь</td><td class="rate">в PRO</td></tr>
-<tr><td class="d">Транзитный фон Азия↔Европа</td><td class="d">~6–7 сут (участок ЕАЭС)</td><td>индекс ERAI</td><td class="rate"><a href="https://index1520.com/en/" target="_blank" rel="noopener">публичный</a></td></tr>
+<tr><td class="d">Индекс ставки ж/д (Азия→Европа, транзит РФ)</td><td class="d">~7 сут (участок ЕАЭС)</td><td>ERAI · публичный</td><td class="rate" id="eraiCell"><a href="https://index1520.com/en/" target="_blank" rel="noopener">index1520</a></td></tr>
 </tbody></table>
 
 <h2>✈️ Авиа: Китай → Москва</h2>
@@ -143,6 +143,10 @@ async function initAuth(){
     }catch(e){}
   }
 }
+// ERAI — публичный ж/д-индекс (показываем всем, живое значение)
+fetch('data/erai.json').then(r=>r.json()).then(e=>{
+  if(e.west_usd_feu){const c=document.getElementById('eraiCell');if(c)c.innerHTML='<b style="color:#5bffc0">$'+Math.round(e.west_usd_feu)+'/FEU</b>';}
+}).catch(()=>{});
 fetch('data/routes.json').then(r=>r.json()).then(async d=>{
   window._routes=d;
   document.getElementById('upd').textContent='обновлено '+d.updated+' · источник: расписания '+(d.carrier||'перевозчиков');
