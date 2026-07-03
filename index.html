@@ -34,7 +34,9 @@
   .ico{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:linear-gradient(135deg,rgba(91,140,255,.2),rgba(124,92,255,.14));border:1px solid rgba(120,140,190,.18)}
   .ico svg{width:23px;height:23px;stroke:#a9c2ff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
   .stat b{position:relative}
-  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  /* калькулятор выходит на всю ширину экрана (панель-дашборд), контент до 1600 */
+  #calc{position:relative;left:50%;transform:translateX(-50%);width:100vw;padding-left:max(20px,calc(50vw - 800px));padding-right:max(20px,calc(50vw - 800px));padding-top:34px;padding-bottom:34px}
   /* ── навигация ── */
   nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:22px;padding:16px 0;backdrop-filter:blur(14px);background:rgba(8,11,22,.6);border-bottom:1px solid var(--line)}
   .logo{font-size:22px;font-weight:900;letter-spacing:.3px;display:flex;align-items:center;gap:10px}
@@ -118,11 +120,15 @@
   .altcard .ac-nm{color:var(--mut);flex:1 1 100%;order:3}
   .altcard .ac-pick{margin-left:auto;white-space:nowrap;font-size:12px;color:#a9c2ff}
   /* ── три колонки: ввод · расчёт · исполнители — всё на одном экране ── */
-  .calc-wrap{display:grid;grid-template-columns:minmax(0,1.04fr) minmax(0,1fr) minmax(0,.82fr);gap:14px;align-items:stretch}
-  .col{display:flex;flex-direction:column;gap:14px;min-width:0}
+  .calc-wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.12fr) minmax(0,.9fr);gap:16px;align-items:stretch}
+  .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .col>.glass{margin:0}
   .col>.glass:last-child{flex:1}
-  @media(max-width:1250px){.calc-wrap{grid-template-columns:1fr 1fr}.col-brok{grid-column:1/-1}}
-  .res-card{padding:26px;position:relative;overflow:hidden;min-height:340px}
+  .col-head{font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#7f92b8;margin:2px 0 -4px 4px}
+  @media(max-width:1180px){.calc-wrap{grid-template-columns:1fr 1fr}.col-brok{grid-column:1/-1}}
+  @media(max-width:760px){.calc-wrap{grid-template-columns:1fr}.col-brok{grid-column:auto}}
+  .res-card{padding:24px;position:relative;overflow:hidden;min-height:320px}
+  .res-card h3{margin:0 0 2px;font-size:16px;font-weight:800}
   /* закрепление панели: три карточки фиксируются по центру экрана */
   #pinBtn{margin-left:14px;padding:8px 14px;border-radius:10px;border:1px solid rgba(91,140,255,.4);background:rgba(91,140,255,.1);color:#bcd0ff;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
   #pinBtn:hover{background:rgba(91,140,255,.22)}
@@ -137,31 +143,38 @@
   .hist-pop{display:none;position:absolute;left:14px;right:14px;bottom:58px;z-index:40;padding:12px;border-radius:14px;border:1px solid rgba(91,140,255,.4);background:rgba(12,17,32,.97);backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(0,0,0,.6)}
   .hist-pop.open{display:block}
   /* карточка исполнителей */
-  .bk-sub{color:var(--mut);font-size:12px;line-height:1.55;margin:6px 0 12px}
-  .bk{position:relative;margin:9px 0;padding:13px 14px;border:1px solid var(--line);border-radius:13px;background:rgba(10,15,28,.45)}
-  .bk .bk-cat{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:#8fd7ff;background:rgba(58,215,200,.1);border:1px solid rgba(58,215,200,.3);padding:3px 9px;border-radius:12px;margin-bottom:8px}
-  .bk .bk-nm{font-size:14.5px;font-weight:800;color:#eaf0fb}
-  .bk .bk-lock{font-size:10.5px;color:#8494b8;font-weight:600;margin-left:7px}
-  .bk ul{margin:8px 0 0;padding:0;list-style:none}
-  .bk li{font-size:12.5px;color:var(--mut);padding:2.5px 0;display:flex;gap:7px;align-items:baseline}
-  .bk li b{color:#c9d8ff;font-weight:700}
-  .bk li .ok{color:var(--good)}
-  .bk-note{margin-top:12px;padding:10px 12px;border-radius:11px;background:rgba(91,140,255,.08);border:1px solid rgba(91,140,255,.25);font-size:12px;color:#a9c2ff;line-height:1.5}
-  .bk-claim{display:block;margin-top:10px;text-align:center;padding:11px;border-radius:11px;font-size:12.5px;font-weight:800;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff)}
-  .bk-claim:hover{filter:brightness(1.08)}
+  .bk-sub{color:var(--mut);font-size:12.5px;line-height:1.55;margin:6px 0 14px}
+  .bk{position:relative;margin:10px 0;padding:14px 15px;border:1px solid var(--line);border-radius:14px;background:rgba(10,15,28,.45);transition:.15s}
+  .bk:hover{border-color:rgba(91,140,255,.4);background:rgba(91,140,255,.05)}
+  .bk .bk-cat{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#8fd7ff;background:rgba(58,215,200,.1);border:1px solid rgba(58,215,200,.3);padding:3px 10px;border-radius:12px;margin-bottom:10px}
+  .bk-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+  .bk .bk-nm{font-size:15px;font-weight:800;color:#eaf0fb}
+  .bk .bk-lock{font-size:10px;color:#7f8ea8;font-weight:600;white-space:nowrap}
+  .bk-reg{display:inline-flex;align-items:center;gap:6px;margin:9px 0 4px;font-size:12px;color:var(--good);font-weight:600}
+  .bk-fact{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;padding:3px 0;border-top:1px solid rgba(120,140,190,.08)}
+  .bk-fact .k{color:var(--mut)}
+  .bk-fact .v{color:#dbe6fb;font-weight:700;text-align:right}
+  .bk-note{margin-top:14px;padding:11px 13px;border-radius:12px;background:rgba(91,140,255,.08);border:1px solid rgba(91,140,255,.25);font-size:12px;color:#a9c2ff;line-height:1.55}
+  .bk-claim{display:block;margin-top:12px;text-align:center;padding:12px;border-radius:12px;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff);transition:.15s}
+  .bk-claim:hover{filter:brightness(1.08);transform:translateY(-1px)}
   #resEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:300px;gap:10px}
   .ph-seal{width:96px;height:96px;opacity:.25;filter:grayscale(.4)}
   .ph-t{font-weight:800;font-size:17px;color:#c9d8ff}
   .ph-s{color:var(--mut);font-size:13.5px;line-height:1.6;max-width:360px}
-  /* ── живая печать: штампуется при готовом расчёте ── */
-  .seal{position:absolute;top:14px;right:14px;width:86px;height:86px;opacity:0;pointer-events:none;z-index:2}
-  .seal.on{animation:stamp .55s cubic-bezier(.2,1.4,.4,1) forwards}
-  @keyframes stamp{
-    0%{opacity:0;transform:scale(2.4) rotate(-32deg)}
-    55%{opacity:.95;transform:scale(.92) rotate(-13deg)}
-    75%{transform:scale(1.05) rotate(-15deg)}
-    100%{opacity:.9;transform:scale(1) rotate(-14deg)}
+  /* ── ВАУ-печать: большой штамп с ударной волной по центру расчёта ── */
+  .stamp-fx{position:absolute;top:46%;left:50%;width:170px;height:170px;margin:-85px 0 0 -85px;pointer-events:none;z-index:6;opacity:0;filter:drop-shadow(0 8px 26px rgba(91,140,255,.5))}
+  .stamp-fx.go{animation:stampBig 1.15s cubic-bezier(.2,1.3,.35,1) forwards}
+  @keyframes stampBig{
+    0%{opacity:0;transform:scale(3.1) rotate(-42deg)}
+    38%{opacity:.97;transform:scale(.84) rotate(-16deg)}
+    50%{transform:scale(1.08) rotate(-12deg)}
+    60%{transform:scale(.96) rotate(-15deg)}
+    70%{opacity:.92;transform:scale(1) rotate(-14deg)}
+    100%{opacity:0;transform:scale(1) rotate(-14deg)}
   }
+  .stamp-ring{position:absolute;top:46%;left:50%;width:130px;height:130px;margin:-65px 0 0 -65px;border-radius:50%;border:3px solid rgba(120,190,255,.7);pointer-events:none;z-index:5;opacity:0}
+  .stamp-ring.go{animation:ring .72s ease-out .34s}
+  @keyframes ring{0%{opacity:.75;transform:scale(.32)}100%{opacity:0;transform:scale(2.6)}}
   .res-card.thud{animation:thud .3s ease-out}
   @keyframes thud{0%{transform:none}35%{transform:translateY(2px) scale(.996)}100%{transform:none}}
   #total.bump{animation:bump .5s ease-out}
@@ -170,10 +183,11 @@
   #stickyBar{display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:60;padding:13px 18px;border-radius:14px;background:rgba(14,20,38,.92);backdrop-filter:blur(10px);border:1px solid rgba(91,140,255,.4);box-shadow:0 10px 30px rgba(0,0,0,.5);cursor:pointer;align-items:center;justify-content:space-between;gap:12px}
   #stickyBar span{color:var(--mut);font-size:13px}
   #stickyBar b{font-size:18px;color:#5bffc0}
-  @media(max-width:900px){
-    .calc-wrap{grid-template-columns:1fr}
-    .calc-right{position:static}
+  @media(max-width:760px){
     #stickyBar.show{display:flex}
+    #calc{padding-top:22px}
+    .res-card{padding:18px}
+    .col-head{margin-top:4px}
   }
   .tot-hero{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
   .tot-hero span{font-size:15px;font-weight:800;color:#c9d8ff}
@@ -289,6 +303,7 @@
     <p class="sec-sub">Код ТН ВЭД · пошлина ЕТТ ЕАЭС · НДС · полная себестоимость · риск классификации.</p>
     <div class="calc-wrap">
     <div class="col">
+    <div class="col-head">Что везёте</div>
     <div class="glass ai-card">
       <div class="ai-head"><span class="ai-badge">ИИ-ассистент</span> Опишите товар своими словами — подберу код ТН ВЭД и заполню расчёт за вас</div>
       <div class="ai-log" id="aiLog"></div>
@@ -318,7 +333,10 @@
     </div>
     </div>
     <div class="col">
+    <div class="col-head">Сколько стоит ввезти</div>
     <div class="glass res-card">
+      <img class="stamp-fx" id="stampFx" src="logo.png" alt="">
+      <span class="stamp-ring" id="stampRing"></span>
       <div id="resEmpty">
         <img src="logo.png" alt="" class="ph-seal">
         <div class="ph-t">Здесь появится расчёт</div>
@@ -351,37 +369,32 @@
     </div>
     </div>
     <div class="col col-brok">
+    <div class="col-head">Кто повезёт</div>
     <div class="glass res-card">
-      <h3 style="margin:0;font-size:17px">Проверенные исполнители</h3>
-      <div class="bk-sub">Лучшие по нашим данным: реестр таможенных представителей ФТС, финансовая отчётность, отраслевые источники. Информирование, не реклама.</div>
+      <h3>Проверенные исполнители</h3>
+      <div class="bk-sub">Лучшие по нашим данным — реестр таможенных представителей ФТС, финансовая отчётность, отраслевые источники. Информирование, не реклама.</div>
       <div class="bk">
         <span class="bk-cat">Крупнейший на рынке</span>
-        <div class="bk-nm">ФИТ <span class="bk-lock">профиль не подключён</span></div>
-        <ul>
-          <li><span class="ok">✓</span> в реестре таможенных представителей ФТС</li>
-          <li>масштаб: <b>лидер отрасли, оборот 100+ млрд ₽/год</b></li>
-          <li>опыт: <b>10+ лет</b> · Москва, работает по всей РФ</li>
-        </ul>
+        <div class="bk-top"><span class="bk-nm">ФИТ</span><span class="bk-lock">🔒 профиль не подключён</span></div>
+        <div class="bk-reg">✓ в реестре таможенных представителей ФТС</div>
+        <div class="bk-fact"><span class="k">Масштаб</span><span class="v">лидер отрасли · 100+ млрд ₽/год</span></div>
+        <div class="bk-fact"><span class="k">Опыт · регион</span><span class="v">10+ лет · Москва, вся РФ</span></div>
       </div>
       <div class="bk">
         <span class="bk-cat">Ветеран отрасли</span>
-        <div class="bk-nm">Юнитрейд <span class="bk-lock">профиль не подключён</span></div>
-        <ul>
-          <li><span class="ok">✓</span> в реестре ФТС с 2010 года — 15+ лет без исключений</li>
-          <li>масштаб: <b>крупный, оборот 2+ млрд ₽/год</b></li>
-          <li>Москва · авиа- и мультимодальные перевозки</li>
-        </ul>
+        <div class="bk-top"><span class="bk-nm">Юнитрейд</span><span class="bk-lock">🔒 профиль не подключён</span></div>
+        <div class="bk-reg">✓ в реестре ФТС с 2010 — 15+ лет без исключений</div>
+        <div class="bk-fact"><span class="k">Масштаб</span><span class="v">крупный · 2+ млрд ₽/год</span></div>
+        <div class="bk-fact"><span class="k">Профиль</span><span class="v">авиа- и мультимодальные</span></div>
       </div>
       <div class="bk">
         <span class="bk-cat">Ворота Китая · Дальний Восток</span>
-        <div class="bk-nm">ВЛ Лоджистик <span class="bk-lock">профиль не подключён</span></div>
-        <ul>
-          <li><span class="ok">✓</span> в реестре таможенных представителей ФТС</li>
-          <li>масштаб: <b>крупный, оборот 9+ млрд ₽/год</b></li>
-          <li>Владивосток — главный морской маршрут из Китая</li>
-        </ul>
+        <div class="bk-top"><span class="bk-nm">ВЛ Лоджистик</span><span class="bk-lock">🔒 профиль не подключён</span></div>
+        <div class="bk-reg">✓ в реестре таможенных представителей ФТС</div>
+        <div class="bk-fact"><span class="k">Масштаб</span><span class="v">крупный · 9+ млрд ₽/год</span></div>
+        <div class="bk-fact"><span class="k">Порт</span><span class="v">Владивосток · морской из Китая</span></div>
       </div>
-      <div class="bk-note">🎯 Скоро: подбор представителя <b>под ваш код ТН ВЭД</b> (у допусков в реестре ФТС есть ограничения по товарам и регионам — мы их знаем) и рейтинг надёжности по живым сигналам рынка.</div>
+      <div class="bk-note">🎯 Скоро: подбор представителя <b>под ваш код ТН ВЭД</b> — у допусков в реестре ФТС есть ограничения по товарам и регионам, мы их знаем. Плюс рейтинг надёжности по живым сигналам рынка.</div>
       <a class="bk-claim" href="mailto:hello@daldobro.ru?subject=Карточка исполнителя на ДалДобро">Вы таможенный представитель? Займите карточку →</a>
     </div>
     </div>
@@ -517,12 +530,13 @@ async function calc(chosen){
     document.getElementById('shareMenu').classList.remove('open');
     document.getElementById('resEmpty').style.display='none';
     document.getElementById('res').style.display='block';
-    // печать в шапке «даёт добро» + вспышка итога
+    // ВАУ-печать: большой штамп бьёт по центру расчёта + ударная волна + вспышка итога + удар в шапке
     const nav=document.querySelector('.logo img'),tot=document.getElementById('total');
-    document.querySelector('.res-card').classList.remove('thud');tot.classList.remove('bump');
-    nav.classList.remove('hit');void nav.offsetWidth;nav.classList.add('hit');
+    const fx=document.getElementById('stampFx'),ring=document.getElementById('stampRing'),card=document.querySelector('.res-card');
+    [fx,ring].forEach(el=>el.classList.remove('go'));card.classList.remove('thud');tot.classList.remove('bump');nav.classList.remove('hit');
+    void fx.offsetWidth;
+    fx.classList.add('go');ring.classList.add('go');card.classList.add('thud');tot.classList.add('bump');nav.classList.add('hit');
     setTimeout(()=>nav.classList.remove('hit'),700);
-    document.querySelector('.res-card').classList.add('thud');tot.classList.add('bump');
     document.getElementById('stickyTotal').textContent=tot.textContent;
     document.getElementById('stickyBar').classList.add('show');
   }catch(e){err.textContent='Ошибка запроса: '+e.message;}
@@ -670,16 +684,24 @@ function togglePin(){document.body.classList.contains('pinned')?unpin():pin();}
 function pin(){
   document.body.classList.add('pinned');
   document.getElementById('pinBtn').classList.add('on');
-  window.addEventListener('wheel',unpinOut,{passive:true});
-  window.addEventListener('touchmove',unpinOut,{passive:true});
+  window.addEventListener('wheel',unpinWheel,{passive:true});
+  window.addEventListener('touchmove',unpin,{passive:true});
 }
 function unpin(){
   document.body.classList.remove('pinned');
   document.getElementById('pinBtn').classList.remove('on');
-  window.removeEventListener('wheel',unpinOut);
-  window.removeEventListener('touchmove',unpinOut);
+  window.removeEventListener('wheel',unpinWheel);
+  window.removeEventListener('touchmove',unpin);
 }
-function unpinOut(e){ if(e.target&&e.target.closest&&e.target.closest('.calc-wrap'))return; unpin(); }
+// колесо мыши: даём доскроллить колонку под курсором, на краю — сбрасываем закрепление
+function unpinWheel(e){
+  const col=e.target&&e.target.closest&&e.target.closest('.col');
+  if(col){
+    const down=e.deltaY>0, up=e.deltaY<0;
+    if((down&&col.scrollTop+col.clientHeight<col.scrollHeight-2)||(up&&col.scrollTop>2))return;
+  }
+  unpin();
+}
 // ── глубокая ссылка: открыли расчёт из мессенджера/почты — заполняем и считаем ──
 (function(){
   const u=new URLSearchParams(location.search);
