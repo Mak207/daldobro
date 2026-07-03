@@ -380,9 +380,10 @@
     <div class="col col-brok">
     <div class="col-head">Кто повезёт</div>
     <div class="glass res-card">
-      <h3>Проверенные исполнители</h3>
-      <div class="bk-sub">Лучшие по нашим данным — реестр таможенных представителей ФТС, финансовая отчётность, отраслевые источники. Информирование, не реклама.</div>
+      <h3 id="brokTitle">Проверенные исполнители</h3>
+      <div class="bk-sub" id="brokSub">Лучшие по нашим данным — реестр таможенных представителей ФТС, финансовая отчётность, отраслевые источники. Информирование, не реклама.</div>
       <div id="liveCards"></div>
+      <div id="brokList">
       <div class="bk">
         <span class="bk-cat">Крупнейший на рынке</span>
         <div class="bk-top"><span class="bk-nm">ФИТ</span><span class="bk-lock">🔒 профиль не подключён</span></div>
@@ -404,7 +405,8 @@
         <div class="bk-fact"><span class="k">Масштаб</span><span class="v">крупный · 9+ млрд ₽/год</span></div>
         <div class="bk-fact"><span class="k">Порт</span><span class="v">Владивосток · морской из Китая</span></div>
       </div>
-      <div class="bk-note">🎯 Скоро: подбор представителя <b>под ваш код ТН ВЭД</b> — у допусков в реестре ФТС есть ограничения по товарам и регионам, мы их знаем. Плюс рейтинг надёжности по живым сигналам рынка.</div>
+      </div>
+      <div class="bk-note" id="brokNote">🎯 Посчитайте товар в калькуляторе — подберём исполнителей <b>под вашу товарную группу</b>: маршрут (море/авиа), масштаб и стаж по данным реестра ФТС.</div>
       <a class="bk-claim" href="/claim.html?plan=card_month">Вы таможенный представитель? Займите карточку →</a>
     </div>
     </div>
@@ -547,7 +549,7 @@ async function calc(chosen){
       rb.textContent=nAlts?'есть варианты — проверьте ниже':'код зависит от деталей — опишите товар точнее';
       rb.className='badge '+(d.risk_level==='высокий'&&nAlts?'b-high':'b-mid');
     }
-    window._lastD=d; renderBd(d); saveHist(d);
+    window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code);
     document.getElementById('acts').style.display='flex';
     document.getElementById('shareMenu').classList.remove('open');
     document.getElementById('resEmpty').style.display='none';
@@ -721,6 +723,29 @@ async function doCheck(){
       (x.company_since?'<span>компания с '+x.company_since+'</span>':'')+'</div>'+
       '<div style="margin-top:10px"><a href="/claim.html?plan=check_full" style="color:#a9c2ff;font-size:13px;font-weight:700">Полный отчёт: финансы, история, сигналы рынка — 990 ₽ →</a></div></div>').join('');
   }catch(e){box.innerHTML='<div class="err">Сервис проверки временно недоступен.</div>';}
+}
+// ── подбор исполнителей под товар: после расчёта колонка перестраивается ──
+async function loadBrokers(code){
+  try{
+    const r=await fetch(API+'/brokers/match?code='+encodeURIComponent(code));
+    const d=await r.json();
+    if(!d.items||d.items.length<2)return;   // мало данных — оставляем статичный список
+    document.getElementById('brokTitle').textContent='Кто повезёт ваш товар';
+    document.getElementById('brokSub').textContent='Подбор под товарную группу '+d.chapter+' — по данным реестра ФТС и финансовой отчётности. Информирование, не реклама.';
+    document.getElementById('brokList').innerHTML=d.items.map(x=>{
+      const nm=x.url?'<a href="'+x.url+'" target="_blank" rel="noopener" style="color:#8fd7ff;text-decoration:underline">'+human(x.name)+'</a>':human(x.name);
+      const paid=x.cat==='Партнёр ДалДобро';
+      return '<div class="bk"'+(paid?' style="border-color:rgba(58,215,200,.45);background:rgba(58,215,200,.05)"':'')+'>'+
+        '<span class="bk-cat"'+(paid?' style="color:#5bffc0;border-color:rgba(47,191,113,.4)"':'')+'>'+x.cat+'</span>'+
+        '<div class="bk-top"><span class="bk-nm">'+nm+'</span><span class="bk-lock">'+(paid?'✓ подключён':'🔒 профиль не подключён')+'</span></div>'+
+        '<div class="bk-reg">✓ в реестре ФТС'+(x.fts_since?' с '+x.fts_since:'')+'</div>'+
+        '<div class="bk-fact"><span class="k">Почему</span><span class="v">'+x.why+'</span></div>'+
+        (x.scale?'<div class="bk-fact"><span class="k">Масштаб</span><span class="v">'+x.scale+'</span></div>':'')+
+        (x.region?'<div class="bk-fact"><span class="k">Регион</span><span class="v">'+x.region+'</span></div>':'')+
+        '</div>';}).join('');
+    const note=document.getElementById('brokNote');
+    note.innerHTML=d.note?('⚠️ '+d.note):'🎯 Подбор навигационный: маршрут по товарной группе, факты — из реестра ФТС и отчётности. Свяжитесь с исполнителем напрямую и сверьте условия.';
+  }catch(e){}
 }
 // оплаченные карточки исполнителей: имя-ссылка, приоритетное место
 fetch(API+'/brokers/live').then(r=>r.json()).then(d=>{
