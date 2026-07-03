@@ -36,7 +36,8 @@
   .stat b{position:relative}
   .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
   /* калькулятор выходит на всю ширину экрана (панель-дашборд), контент до 1600 */
-  #calc{position:relative;left:50%;transform:translateX(-50%);width:100vw;padding-left:max(20px,calc(50vw - 800px));padding-right:max(20px,calc(50vw - 800px));padding-top:34px;padding-bottom:34px}
+  /* full-bleed БЕЗ transform: transform ломает position:fixed у закреплённой панели */
+  #calc{position:relative;width:100vw;margin-left:calc(50% - 50vw);padding-left:max(20px,calc(50vw - 800px));padding-right:max(20px,calc(50vw - 800px));padding-top:34px;padding-bottom:34px}
   section[id]{scroll-margin-top:74px}
   /* ── навигация ── */
   nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:22px;padding:16px 0;backdrop-filter:blur(14px);background:rgba(8,11,22,.6);border-bottom:1px solid var(--line)}
@@ -236,7 +237,7 @@
     #printArea .pd-term{font-size:16px;font-weight:bold;margin:14px 0 4px}
     #printArea table{width:100%;border-collapse:collapse;margin-top:12px}
     #printArea td{padding:8px 4px;border-bottom:1px solid #ccd;font-size:13.5px}
-    #printArea td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+    #printArea td:last-child{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;vertical-align:top}
     #printArea tr.pt td{border-bottom:0;font-size:17px;font-weight:bold;padding-top:14px;color:#12235c}
     #printArea .pd-sec{margin-top:16px;font-weight:bold;color:#12235c}
     #printArea .pd-alt{margin:4px 0;font-size:12.5px;color:#334}
@@ -691,13 +692,19 @@ function pin(){
   document.getElementById('pinBtn').classList.add('on');
   window.addEventListener('wheel',unpinWheel,{passive:true});
   window.addEventListener('touchmove',unpin,{passive:true});
+  window.addEventListener('keydown',unpinEsc);
+  document.addEventListener('click',unpinClickOut,true);
 }
 function unpin(){
   document.body.classList.remove('pinned');
   document.getElementById('pinBtn').classList.remove('on');
   window.removeEventListener('wheel',unpinWheel);
   window.removeEventListener('touchmove',unpin);
+  window.removeEventListener('keydown',unpinEsc);
+  document.removeEventListener('click',unpinClickOut,true);
 }
+function unpinEsc(e){ if(e.key==='Escape')unpin(); }
+function unpinClickOut(e){ if(e.target.closest&&(e.target.closest('.calc-wrap')||e.target.closest('#pinBtn')))return; unpin(); }
 // колесо мыши: даём доскроллить колонку под курсором, на краю — сбрасываем закрепление
 function unpinWheel(e){
   const col=e.target&&e.target.closest&&e.target.closest('.col');
