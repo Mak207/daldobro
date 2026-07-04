@@ -537,7 +537,7 @@ const API='https://api.201-51-30-177.sslip.io';
     var dev=matchMedia('(max-width:820px)').matches?'mobile':'desktop';
     window._ddQ=[];
     window.ddTrack=function(t,x){try{window._ddQ.push({t:t,a:aid,s:sid,p:location.pathname,d:dev,r:ref,u:utm,c:(x&&x.c)||'',q:(x&&x.q)||'',x:(x&&x.x)||undefined});if(window._ddQ.length>=8)ddFlush();}catch(e){}};
-    window.ddFlush=function(){if(!window._ddQ.length)return;var b=JSON.stringify(window._ddQ);window._ddQ=[];try{navigator.sendBeacon?navigator.sendBeacon(API+'/ev',new Blob([b],{type:'application/json'})):fetch(API+'/ev',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true});}catch(e){}};
+    window.ddFlush=function(){if(!window._ddQ.length)return;var b=JSON.stringify(window._ddQ);window._ddQ=[];try{navigator.sendBeacon?navigator.sendBeacon(API+'/ev',new Blob([b],{type:'text/plain'})):fetch(API+'/ev',{method:'POST',headers:{'Content-Type':'text/plain'},body:b,keepalive:true});}catch(e){}};
     setInterval(ddFlush,4000);
     addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')ddFlush();});
     addEventListener('pagehide',ddFlush);
