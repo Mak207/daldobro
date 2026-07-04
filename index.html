@@ -450,6 +450,7 @@
       </div>
       </div>
       <div class="bk-note" id="brokNote">🎯 Посчитайте товар в калькуляторе — подберём исполнителей <b>под вашу товарную группу</b>: маршрут (море/авиа), масштаб и стаж по данным реестра ФТС.</div>
+      <div id="intelBox" style="display:none;margin-top:14px"></div>
       <a class="bk-claim" href="/claim.html?plan=card_month">Вы таможенный представитель? Займите карточку →</a>
     </div>
     </div>
@@ -592,7 +593,7 @@ async function calc(chosen){
       rb.textContent=nAlts?'есть варианты — проверьте ниже':'код зависит от деталей — опишите товар точнее';
       rb.className='badge '+(d.risk_level==='высокий'&&nAlts?'b-high':'b-mid');
     }
-    window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code);
+    window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code); loadIntel(d.term||term.value);
     document.getElementById('acts').style.display='flex';
     document.getElementById('shareMenu').classList.remove('open');
     document.getElementById('resEmpty').style.display='none';
@@ -774,6 +775,8 @@ async function initFreightBridge(){
   try{
     if(tok){
       const m=await(await fetch(API+'/auth/me?t='+tok)).json();
+      window._intelActive=!!(m.auth&&m.active);
+      if(window._lastD)loadIntel(window._lastD.term||term.value);   // перерисовать разведку с учётом входа
       if(m.auth&&m.active){
         _rates=await(await fetch(API+'/routes/rates?t='+tok)).json();
         if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">Ставки рынка накапливаются — скоро появятся.</span>';return;}
@@ -848,6 +851,37 @@ function coName(s){
   return (s||'').replace(/"/g,'').split(/\s+/).map(w=>
     /^(ООО|АО|ЗАО|ПАО|ИП|НАО)$/i.test(w)?w.toUpperCase():
     w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+}
+// ── разведка «кто ещё возит такое из Китая» (реестр деклараций Росаккредитации) ──
+async function loadIntel(termq){
+  const box=document.getElementById('intelBox');
+  if(!termq||termq.length<3){box.style.display='none';return;}
+  if(window.WL){box.style.display='none';return;}   // на вайтлейбле не показываем нашу разведку
+  try{
+    const r=await fetch(API+'/intel?q='+encodeURIComponent(termq));
+    const d=await r.json();
+    box.style.display='block';
+    if(!d.ready||!d.found){
+      box.innerHTML='<div class="bk-note" style="background:rgba(91,140,255,.06)">🔍 <b>Кто ещё возит такое из Китая</b> — по этому товару собираем данные из реестра деклараций. Загляните позже.</div>';
+      return;
+    }
+    const tok=localStorage.getItem('dd_token');
+    const active=window._intelActive;   // проставим ниже через /auth/me кэш
+    const rows=d.items;
+    const card=x=>'<div class="bk"><div class="bk-top"><span class="bk-nm">'+x.applicant+'</span><span class="bk-lock">'+(x.date||'')+'</span></div>'+
+      '<div class="bk-fact"><span class="k">Завод в Китае</span><span class="v">'+(x.manufacturer||'—')+'</span></div>'+
+      '<div class="bk-fact"><span class="k">Товар</span><span class="v" style="text-align:right;font-weight:400;color:var(--mut)">'+(x.product||'').slice(0,60)+'</span></div></div>';
+    let html='<div style="font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#7f92b8;margin:2px 0 8px">🔍 Кто ещё возит такое из Китая</div>'+
+      '<div class="bk-sub">Импортёры с похожим товаром и их китайские заводы — из публичного реестра деклараций (Росаккредитация). Найдено: <b>'+d.found+'</b>.</div>';
+    if(active){
+      html+=rows.map(card).join('');
+    }else{
+      html+=card(rows[0]);
+      if(rows.length>1)html+='<div class="bk" style="position:relative;filter:blur(4px);opacity:.6;pointer-events:none">'+card(rows[1]).replace(/^<div class="bk">|<\/div>$/g,'')+'</div>';
+      html+='<div class="bk-note" style="background:rgba(240,176,58,.08);border-color:rgba(240,176,58,.3);color:#f6cd7a">🔒 Ещё <b>'+(d.found-1)+'</b> импортёров и их заводы — после входа. <a href="/routes.html" style="color:#8fb4ff;font-weight:700">Открыть (14 дней бесплатно) →</a></div>';
+    }
+    box.innerHTML=html;
+  }catch(e){box.style.display='none';}
 }
 async function loadBrokers(code){
   try{
