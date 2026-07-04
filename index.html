@@ -489,13 +489,13 @@
   <section id="analytics" class="reveal">
     <h2 class="sec">Аналитика ВЭД</h2>
     <p class="sec-sub">Разборы по реальным данным рынка. Новые материалы — регулярно.</p>
-    <div id="marketCard" class="glass market-card" style="display:none">
+    <div id="marketCard" class="glass market-card">
       <span class="mc-badge"><span class="dot"></span>Обновляется под ваш товар</span>
       <h3 class="mc-title">Кто ещё возит такое из Китая <span class="mc-obj" id="mcObj"></span></h3>
-      <div class="mc-lead" id="mcLead"></div>
+      <div class="mc-lead" id="mcLead">Посчитайте товар в <a href="#calc" style="color:#8fb4ff">калькуляторе выше</a> — и здесь появится, <b>кто из ваших конкурентов уже возит такой товар из Китая</b>, у каких китайских заводов они закупаются и по какой цене растамаживают. Данные — из официального реестра деклараций (Росаккредитация) и зеркальной таможенной статистики.</div>
       <div class="mc-stat" id="mcStat"></div>
       <div class="mc-comp" id="mcFull"></div>
-      <button class="mc-cta" id="mcCta" onclick="marketReveal()">Показать конкурентов и полную статистику →</button>
+      <button class="mc-cta" id="mcCta" onclick="marketReveal()" style="display:none">Показать конкурентов и полную статистику →</button>
       <div class="mc-trial" id="mcTrial"></div>
     </div>
     <div class="grid">
@@ -1149,6 +1149,7 @@ document.querySelectorAll('.stat b[data-n]').forEach(el=>cio.observe(el));
 // blocks: порядок и состав секций; brokers_mode: daldobro | about | hide; rates: свои ставки клиента
 function wlApply(){
   const W=window.WL; if(!W) return;
+  {const mc=document.getElementById('marketCard'); if(mc)mc.remove();}  // наша разведка не на вайтлейбле
   document.title=(W.name||'Калькулятор')+' — расчёт ввоза из Китая';
   // бренд: логотип, имя, цвета
   const lg=document.querySelector('.logo');
