@@ -451,6 +451,7 @@
       </div>
       </div>
       <div class="bk-note" id="brokNote">🎯 Посчитайте товар в калькуляторе — подберём исполнителей <b>под вашу товарную группу</b>: маршрут (море/авиа), масштаб и стаж по данным реестра ФТС.</div>
+      <div id="tradeBox" style="display:none;margin-top:14px"></div>
       <div id="intelBox" style="display:none;margin-top:14px"></div>
       <a class="bk-claim" href="/claim.html?plan=card_month">Вы таможенный представитель? Займите карточку →</a>
     </div>
@@ -594,7 +595,7 @@ async function calc(chosen){
       rb.textContent=nAlts?'есть варианты — проверьте ниже':'код зависит от деталей — опишите товар точнее';
       rb.className='badge '+(d.risk_level==='высокий'&&nAlts?'b-high':'b-mid');
     }
-    window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code); loadIntel(d.term||term.value);
+    window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code); loadIntel(d.term||term.value); loadTrade(d.code);
     document.getElementById('acts').style.display='flex';
     document.getElementById('shareMenu').classList.remove('open');
     document.getElementById('resEmpty').style.display='none';
@@ -876,6 +877,22 @@ function coName(s){
   return (s||'').replace(/"/g,'').split(/\s+/).map(w=>
     /^(ООО|АО|ЗАО|ПАО|ИП|НАО)$/i.test(w)?w.toUpperCase():
     w.charAt(0).toUpperCase()+w.slice(1).toLowerCase()).join(' ');
+}
+// ── официальный ввоз из Китая по коду (зеркало China Customs / UN Comtrade) ──
+async function loadTrade(code){
+  const box=document.getElementById('tradeBox');
+  if(!code||window.WL){box.style.display='none';return;}
+  try{
+    const d=await(await fetch(API+'/trade?code='+encodeURIComponent(code))).json();
+    if(!d.ready){box.style.display='none';return;}
+    const t=(d.weight_kg/1000), tt=t>=1000?(Math.round(t/100)/10+' тыс. т'):(Math.round(t)+' т');
+    const val=d.value_usd>=1e9?('$'+(Math.round(d.value_usd/1e8)/10)+' млрд'):('$'+Math.round(d.value_usd/1e6)+' млн');
+    box.style.display='block';
+    box.innerHTML='<div class="bk-note" style="background:rgba(58,215,200,.06);border-color:rgba(58,215,200,.3);color:#bfe9df">'+
+      '📊 <b>Официально ввезено из Китая</b> по коду '+code.slice(0,6)+' ('+d.year+'): <b>'+tt+'</b> на <b>'+val+'</b>.<br>'+
+      'Средняя цена ввоза: <b style="color:#5bffc0">$'+d.usd_per_kg+'/кг</b> — сравните со своим инвойсом (ниже средней = риск корректировки таможней; выше — переплата).<br>'+
+      '<span style="color:var(--mut);font-size:11px">Источник: зеркальная статистика экспорта Китая в РФ (China Customs / UN Comtrade)</span></div>';
+  }catch(e){box.style.display='none';}
 }
 // ── разведка «кто ещё возит такое из Китая» (реестр деклараций Росаккредитации) ──
 async function loadIntel(termq){
