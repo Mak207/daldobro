@@ -746,20 +746,20 @@ function applyFreight(){
   if(!w||w<=0){document.getElementById('frOut').textContent='Введите вес в кг.';return;}
   const rs=_rates.rates||[], exact=rs.find(r=>r.cn===from&&r.ru===to);
   let kg, src;
-  if(exact){kg=exact.usd_kg;src='ставка рынка на этом направлении ('+exact.n+' точ.)';}
+  if(exact){kg=exact.usd_kg;src=window.WL?'ставка '+(WL.name||'компании'):'ставка рынка на этом направлении ('+exact.n+' точ.)';}
   else{
     const v=rs.map(r=>r.usd_kg).sort((a,b)=>a-b);
     if(!v.length){document.getElementById('frOut').textContent='Ставки накапливаются — попробуйте позже.';return;}
-    kg=v[Math.floor(v.length/2)];src='средняя по рынку (по вашему направлению точек пока нет)';
+    kg=v[Math.floor(v.length/2)];src=window.WL?'средняя ставка '+(WL.name||'компании'):'средняя по рынку (по вашему направлению точек пока нет)';
   }
   const rub=Math.round(kg*w*fx);
   document.getElementById('freight').value=rub;
   window._frCustoms=cust;
   document.getElementById('frOut').innerHTML='≈ '+kg+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b><br>'+
-    from+' → '+to+', таможня: '+cust+' · '+src+'.<br><b>Это ориентир — точную ставку уточните у брокера справа →</b>';
+    from+' → '+to+', таможня: '+cust+' · '+src+'.<br><b>'+(window.WL?'Это ориентир — точную ставку подтвердит менеджер.':'Это ориентир — точную ставку уточните у брокера справа →')+'</b>';
   _chosen=null; calc();
 }
-setTimeout(initFreightBridge, 350);
+setTimeout(()=>initFreightBridge(), 350);
 // ── бесплатная проверка контрагента по реестру ФТС + наши данные ──
 async function doCheck(){
   const q=document.getElementById('chkQ').value.trim(),box=document.getElementById('chkRes');
@@ -911,6 +911,75 @@ if(matchMedia('(pointer:fine)').matches){addEventListener('mousemove',e=>{cg.sty
 function countUp(el){const t=+el.dataset.n;let c=0,s=t/55;const i=setInterval(()=>{c+=s;if(c>=t){c=t;clearInterval(i)}el.textContent=Math.round(c).toLocaleString('ru-RU')},18)}
 const cio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){countUp(e.target);cio.unobserve(e.target)}}),{threshold:.6});
 document.querySelectorAll('.stat b[data-n]').forEach(el=>cio.observe(el));
+// ══ ВАЙТЛЕЙБЛ: модульный рендер по конфигу window.WL (сервер внедряет перед этим скриптом) ══
+// blocks: порядок и состав секций; brokers_mode: daldobro | about | hide; rates: свои ставки клиента
+function wlApply(){
+  const W=window.WL; if(!W) return;
+  document.title=(W.name||'Калькулятор')+' — расчёт ввоза из Китая';
+  // бренд: логотип, имя, цвета
+  const lg=document.querySelector('.logo');
+  if(lg){lg.innerHTML=(W.logo?'<img src="'+W.logo+'" alt="" style="height:30px;border-radius:7px">':'')+'<span>'+(W.name||'')+'</span>';}
+  if(W.colors&&W.colors.a1){
+    const st=document.createElement('style');
+    st.textContent='h1 .g{background:linear-gradient(100deg,'+W.colors.a1+','+(W.colors.a2||W.colors.a1)+');-webkit-background-clip:text;background-clip:text}'+
+      '.btn,#freightCalc button{background:linear-gradient(100deg,'+W.colors.a1+','+(W.colors.a2||W.colors.a1)+')!important}'+
+      '.ai-badge,.pill{border-color:'+W.colors.a1+'55}.col-head{color:'+W.colors.a1+'}';
+    document.head.appendChild(st);
+  }
+  // навигация: только якоря включённых секций, без наших тарифов/каналов
+  const links=document.querySelector('.links');
+  if(links){const m={analytics:'Аналитика',data:'Индексы',check:'Проверка'};
+    links.innerHTML='<a href="#calc">Калькулятор</a>'+(W.blocks||[]).filter(b=>m[b]).map(b=>'<a href="#'+b+'">'+m[b]+'</a>').join('')+
+    (W.contacts&&W.contacts.tg?'<a href="'+W.contacts.tg+'" style="color:#5bb8ff">Telegram</a>':'');}
+  // герой
+  const h1=document.querySelector('.hero h1'); if(h1&&W.name)h1.innerHTML='Ввоз из Китая<br><span class="g">с '+W.name+'</span>';
+  const hp=document.querySelector('.hero .pill'); if(hp)hp.innerHTML='<span class="dot"></span> '+(W.tagline||'калькулятор себестоимости ввоза');
+  // секции: убрать невключённые, расставить по порядку
+  const wrap=document.querySelector('.wrap'), foot=document.querySelector('.foot');
+  ['analytics','data','check'].forEach(id=>{const el=document.getElementById(id);
+    if(el&&!(W.blocks||[]).includes(id))el.remove();});
+  (W.blocks||[]).forEach(id=>{const el=document.getElementById(id); if(el&&id!=='calc')wrap.insertBefore(el,foot);});
+  // колонка «Кто повезёт»: свои данные клиента вместо наших брокеров
+  if(W.brokers_mode!=='daldobro'){
+    window.loadBrokers=async()=>{};  // не дёргаем наш подбор
+    const col=document.querySelector('.col-brok');
+    if(col){
+      if(W.brokers_mode==='hide'){col.remove();document.querySelector('.calc-wrap').style.gridTemplateColumns='1fr 1fr';}
+      else{
+        const c=W.contacts||{};
+        col.innerHTML='<div class="col-head">'+(W.about&&W.about.title||'О компании')+'</div><div class="glass res-card">'+
+          '<h3>'+(W.name||'')+'</h3><div class="bk-sub">'+(W.about&&W.about.text||'')+'</div>'+
+          '<div class="bk" style="border-color:rgba(58,215,200,.45)">'+
+          (c.phone?'<div class="bk-fact"><span class="k">Телефон</span><span class="v"><a href="tel:'+c.phone+'" style="color:#8fd7ff">'+c.phone+'</a></span></div>':'')+
+          (c.tg?'<div class="bk-fact"><span class="k">Telegram</span><span class="v"><a href="'+c.tg+'" style="color:#8fd7ff">'+c.tg.replace('https://t.me/','@')+'</a></span></div>':'')+
+          (c.email?'<div class="bk-fact"><span class="k">Почта</span><span class="v"><a href="mailto:'+c.email+'" style="color:#8fd7ff">'+c.email+'</a></span></div>':'')+
+          (c.site?'<div class="bk-fact"><span class="k">Сайт</span><span class="v"><a href="'+c.site+'" target="_blank" rel="noopener" style="color:#8fd7ff">'+c.site.replace(/^https?:\/\//,'')+'</a></span></div>':'')+
+          '</div><div class="bk-note">Точную ставку по вашему грузу уточняйте у нас — рассчитаем под конкретный маршрут.</div></div>';
+      }
+    }
+  }
+  // ставки клиента: мостик работает сразу, без входа, с подписью «ставка компании»
+  if(W.rates&&W.rates.length){
+    window.initFreightBridge=async function(){
+      _rates={usd_rub:W.usd_rub||90,rates:W.rates};
+      const help=document.getElementById('freightHelp');
+      help.innerHTML='<a href="#" onclick="document.getElementById(\'freightCalc\').style.display=\'block\';this.parentElement.style.display=\'none\';return false" style="color:#8fb4ff">🚚 Прикинуть доставку по нашим ставкам →</a>';
+      const CN=[...new Set(W.rates.map(r=>r.cn))],RU=[...new Set(W.rates.map(r=>r.ru))],
+            CUST=['Владивосток','Москва','Находка','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
+      const opt=a=>a.map(c=>'<option>'+c+'</option>').join('');
+      document.getElementById('frFrom').innerHTML=opt(CN);
+      document.getElementById('frTo').innerHTML=opt(RU);
+      document.getElementById('frCust').innerHTML=opt(CUST);
+    };
+  }
+  // подвал: клиентский + «работает на ДалДобро»
+  if(foot)foot.innerHTML='<b>'+(W.name||'')+'</b> — расчёт ориентировочный, точную ставку уточняйте у менеджера.<br>'+
+    (W.contacts&&W.contacts.email?W.contacts.email+' · ':'')+
+    '<a href="https://www.daldobro.ru" style="color:#a9c2ff">работает на технологии ДалДобро</a>';
+  // наши кнопки-продажи не показываем на чужой витрине
+  const cl=document.querySelector('.bk-claim'); if(cl)cl.remove();
+}
+wlApply();
 </script>
 <div id="printArea"></div>
 </body>
