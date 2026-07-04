@@ -932,7 +932,7 @@ function wlApply(){
     links.innerHTML='<a href="#calc">Калькулятор</a>'+(W.blocks||[]).filter(b=>m[b]).map(b=>'<a href="#'+b+'">'+m[b]+'</a>').join('')+
     (W.contacts&&W.contacts.tg?'<a href="'+W.contacts.tg+'" style="color:#5bb8ff">Telegram</a>':'');}
   // герой
-  const h1=document.querySelector('.hero h1'); if(h1&&W.name)h1.innerHTML='Ввоз из Китая<br><span class="g">с '+W.name+'</span>';
+  const h1=document.querySelector('.hero h1'); if(h1&&W.name)h1.innerHTML='Ввоз из Китая<br><span class="g">с компанией «'+W.name+'»</span>';
   const hp=document.querySelector('.hero .pill'); if(hp)hp.innerHTML='<span class="dot"></span> '+(W.tagline||'калькулятор себестоимости ввоза');
   // секции: убрать невключённые, расставить по порядку
   const wrap=document.querySelector('.wrap'), foot=document.querySelector('.foot');
