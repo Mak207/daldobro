@@ -867,7 +867,7 @@ fetch('data/indices.json').then(r=>r.json()).then(d=>{
   if(d.cargo&&d.cargo.length)set('idxCargo','$'+d.cargo[d.cargo.length-1].v+'/кг');
 }).catch(()=>{});
 // ── закрепление панели: блоки-экраны (что · как · сколько · кто), колесо листает между ними ──
-let _pinLock=false;
+let _pinLock=false,_pinIdx=0;
 function togglePin(){document.body.classList.contains('pinned')?unpin():pin();}
 function pin(){
   document.body.classList.add('pinned');
@@ -878,6 +878,7 @@ function pin(){
     h.textContent='Колесо мыши листает блоки: Что → Как → Сколько → Кто · Esc — закрыть';
     document.body.appendChild(h);
   }
+  _pinIdx=0;
   document.querySelector('.calc-wrap').scrollLeft=0;
   window.addEventListener('wheel',pinWheel,{passive:false});
   window.addEventListener('keydown',unpinEsc);
@@ -903,18 +904,15 @@ function pinWheel(e){
   }
   e.preventDefault();
   if(_pinLock)return; _pinLock=true; setTimeout(()=>_pinLock=false,420);
-  // текущий блок по позиции скролла
-  const w=cols[0].offsetWidth+16;
-  let idx=Math.round(wrap.scrollLeft/w);
   if(down){
-    if(idx>=cols.length-1){unpin();return;}
-    idx++;
+    if(_pinIdx>=cols.length-1){unpin();return;}
+    _pinIdx++;
   }else{
-    if(idx<=0){unpin();return;}
-    idx--;
+    if(_pinIdx<=0){unpin();return;}
+    _pinIdx--;
   }
-  cols[idx].scrollTop=0;
-  wrap.scrollTo({left:idx*w,behavior:'smooth'});
+  const t=cols[_pinIdx]; t.scrollTop=0;
+  wrap.scrollTo({left:t.offsetLeft-cols[0].offsetLeft,behavior:'smooth'});
 }
 // ── глубокая ссылка: открыли расчёт из мессенджера/почты — заполняем и считаем ──
 (function(){
