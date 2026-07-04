@@ -528,6 +528,7 @@
 const API='https://api.201-51-30-177.sslip.io';
 // ── свой трекер воронки (anon, без персональных данных; шлём батчами через sendBeacon) ──
 (function(){
+  if(window.WL){window.ddTrack=function(){};window.ddFlush=function(){};return;} // вайтлейбл — сайт клиента, не трекаем
   try{
     var aid=localStorage.dd_aid; if(!aid){aid='a'+Math.abs(Date.now()^(performance.now()*1e6|0)).toString(36)+Math.floor(1e6*Math.random()).toString(36);localStorage.dd_aid=aid;}
     var sid=sessionStorage.dd_sid; if(!sid){sid='s'+Date.now().toString(36);sessionStorage.dd_sid=sid;}
