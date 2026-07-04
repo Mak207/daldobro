@@ -69,5 +69,7 @@ async function calc(){
     document.getElementById('r').classList.add('show');
   }catch(err){e.textContent='Сервис временно недоступен.';}
 }
+// префилл товара из ?term= (для встраивания на товарные страницы) + автосчёт
+(function(){try{var q=new URLSearchParams(location.search);var tm=q.get('term');if(tm){document.getElementById('t').value=tm;if(q.get('goods'))document.getElementById('g').value=q.get('goods');setTimeout(calc,300);}}catch(e){}})();
 try{fetch(API+'/ev',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify([{t:'visit',a:'embed',s:'embed',p:'/embed',d:'embed',r:(document.referrer||'').replace(/^https?:\/\//,'').split('/')[0]}])});}catch(e){}
 </script></body></html>
