@@ -131,13 +131,20 @@
   .ai-bar .ai-input input{flex:1}
   .ai-bar .ai-log:empty{display:none}
   /* ── блоки: что везёте · как повезёте · сколько стоит · кто повезёт ── */
-  .calc-wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:stretch}
-  .col{display:flex;flex-direction:column;gap:16px;min-width:0}
+  .calc-wrap{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+  .col{display:flex;flex-direction:column;gap:16px;min-width:260px;position:relative;
+    flex:1 1 var(--w,300px);max-width:100%;transition:box-shadow .15s}
+  .col.drag-over{box-shadow:0 0 0 2px #5b8cff inset;border-radius:16px}
+  .col.dragging{opacity:.5}
   .col>.glass{margin:0}
   .col>.glass:last-child{flex:1}
-  .col-head{font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#7f92b8;margin:2px 0 -4px 4px}
-  @media(max-width:1180px){.calc-wrap{grid-template-columns:1fr 1fr}.col-brok{grid-column:1/-1}}
-  @media(max-width:760px){.calc-wrap{grid-template-columns:1fr}.col-brok{grid-column:auto}}
+  .col-head{font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:#7f92b8;margin:2px 0 -4px 4px;display:flex;align-items:center;gap:8px}
+  .col-grip{cursor:grab;color:#5b6a8c;font-size:14px;user-select:none;padding:0 2px}
+  .col-grip:active{cursor:grabbing}
+  .col-resize{position:absolute;top:0;right:-9px;width:14px;height:100%;cursor:col-resize;z-index:5;display:flex;align-items:center;justify-content:center}
+  .col-resize::before{content:"";width:3px;height:38px;border-radius:3px;background:rgba(120,140,190,.25);transition:.15s}
+  .col-resize:hover::before{background:#5b8cff;height:60px}
+  @media(max-width:820px){.col{flex:1 1 100%!important;min-width:0}.col-resize{display:none}.col-grip{display:none}}
   .res-card{padding:24px;position:relative;overflow:hidden;min-height:320px}
   .res-card h3{margin:0 0 2px;font-size:16px;font-weight:800}
   /* блок «Как повезёте» */
@@ -1045,6 +1052,48 @@ fetch('data/indices.json').then(r=>r.json()).then(d=>{
   if(d.comm&&d.comm.length)set('idxComm','комиссия: '+d.comm[d.comm.length-1].v+'%');
   if(d.cargo&&d.cargo.length)set('idxCargo','$'+d.cargo[d.cargo.length-1].v+'/кг');
 }).catch(()=>{});
+// ── перетаскивание и изменение ширины блоков (сохраняем в браузере) ──
+(function(){
+  const wrap=document.querySelector('.calc-wrap'); if(!wrap)return;
+  const cols=[...wrap.querySelectorAll('.col')];
+  const slug=s=>(s||'').toLowerCase().replace(/[^а-яёa-z]+/g,'-').replace(/^-|-$/g,'').slice(0,16);
+  cols.forEach(c=>{
+    const head=c.querySelector('.col-head'); if(!head)return;
+    c.dataset.key=slug(head.textContent);
+    // ручка перетаскивания
+    const grip=document.createElement('span'); grip.className='col-grip'; grip.textContent='⠿';
+    grip.title='Перетащите, чтобы поменять блоки местами'; grip.setAttribute('draggable','true');
+    head.insertBefore(grip,head.firstChild);
+    grip.addEventListener('dragstart',e=>{c.classList.add('dragging');e.dataTransfer.setData('text',c.dataset.key);e.dataTransfer.effectAllowed='move';});
+    grip.addEventListener('dragend',()=>{c.classList.remove('dragging');cols.forEach(x=>x.classList.remove('drag-over'));saveLayout();});
+    // ручка ресайза
+    const rz=document.createElement('div'); rz.className='col-resize'; rz.title='Потяните, чтобы изменить ширину';
+    c.appendChild(rz);
+    rz.addEventListener('pointerdown',e=>{
+      e.preventDefault(); rz.setPointerCapture(e.pointerId);
+      const x0=e.clientX, w0=c.getBoundingClientRect().width;
+      const mv=ev=>{const w=Math.max(260,Math.min(w0+(ev.clientX-x0),wrap.getBoundingClientRect().width));c.style.setProperty('--w',w+'px');c.style.flexGrow='0';};
+      const up=()=>{rz.removeEventListener('pointermove',mv);rz.removeEventListener('pointerup',up);saveLayout();};
+      rz.addEventListener('pointermove',mv); rz.addEventListener('pointerup',up);
+    });
+  });
+  cols.forEach(c=>{
+    c.addEventListener('dragover',e=>{e.preventDefault();const d=wrap.querySelector('.dragging');if(d&&d!==c)c.classList.add('drag-over');});
+    c.addEventListener('dragleave',()=>c.classList.remove('drag-over'));
+    c.addEventListener('drop',e=>{e.preventDefault();c.classList.remove('drag-over');const d=wrap.querySelector('.dragging');if(!d||d===c)return;
+      const rect=c.getBoundingClientRect();(e.clientX<rect.left+rect.width/2)?wrap.insertBefore(d,c):wrap.insertBefore(d,c.nextSibling);saveLayout();});
+  });
+  function saveLayout(){try{
+    const order=[...wrap.querySelectorAll('.col')].map(c=>c.dataset.key);
+    const w={}; wrap.querySelectorAll('.col').forEach(c=>{if(c.style.getPropertyValue('--w'))w[c.dataset.key]=c.style.getPropertyValue('--w');});
+    localStorage.dd_layout=JSON.stringify({order:order,w:w});
+  }catch(e){}}
+  (function restore(){try{
+    const L=JSON.parse(localStorage.dd_layout||'null'); if(!L)return;
+    (L.order||[]).forEach(k=>{const c=wrap.querySelector('.col[data-key="'+k+'"]');if(c)wrap.appendChild(c);});
+    Object.entries(L.w||{}).forEach(([k,v])=>{const c=wrap.querySelector('.col[data-key="'+k+'"]');if(c){c.style.setProperty('--w',v);c.style.flexGrow='0';}});
+  }catch(e){}})();
+})();
 // ── глубокая ссылка: открыли расчёт из мессенджера/почты — заполняем и считаем ──
 (function(){
   const u=new URLSearchParams(location.search);
