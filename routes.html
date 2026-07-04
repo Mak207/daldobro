@@ -47,6 +47,20 @@ tr:last-child td{border-bottom:0}
 <p class="sub">Как реально едет груз из Китая — море, ЖД, авиа. Сроки и частота — по расписаниям перевозчиков, обновляются автоматически. Ставки по вашему направлению — в <a href="/claim.html?plan=indices_pro" style="color:#8fb4ff">Индексах PRO</a> (реальные цены «до РФ», которых нет в мировых индексах).</p>
 <span class="upd" id="upd">обновлено —</span>
 
+<div id="cciBox" style="display:none;margin:14px 0;padding:16px 18px;border:1px solid rgba(58,215,200,.35);border-radius:14px;background:rgba(58,215,200,.05)">
+  <div style="font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#7f92b8">Рыночный бенчмарк · обновляется ежемесячно</div>
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:6px">
+    <b style="font-size:24px;color:#5bffc0" id="cciVal">—</b>
+    <span style="color:var(--mut)">за 40-фут контейнер · <b id="cciRoute">Шанхай → Москва</b></span>
+    <span id="cciDelta" style="font-size:13px"></span>
+  </div>
+  <div style="font-size:12px;color:var(--mut);margin-top:4px">Контейнерный индекс ЦЦИ — публичный композитный индекс стоимости доставки Китай→РФ (<span id="cciAsof">—</span>). Ориентир рынка для переговоров.</div>
+</div>
+
+<h2>🚢 Море: ставки по портам входа в РФ <span style="font-size:13px;font-weight:400;color:var(--mut)">— тарифы FESCO, $/контейнер</span></h2>
+<p class="mut">Реальные датированные ставки океанского фрахта FESCO по портам прибытия. К фрахту добавляются THC и надбавки. Это ориентир — точную цену подтверждает перевозчик.</p>
+<table id="portTbl"><thead><tr><th>Порт входа в РФ</th><th>Направление</th><th>20′DC</th><th>40′HC</th><th>Действует</th></tr></thead><tbody id="portBody"><tr><td colspan="5" style="color:var(--mut)">загрузка…</td></tr></tbody></table>
+
 <h2>🚢 Море: Китай → Владивосток</h2>
 <p class="mut">Основной маршрут для тяжёлых и объёмных грузов. Данные — по расписанию линий FESCO (China Direct Line), самого крупного оператора на Дальний Восток.</p>
 <table id="seaTbl"><thead><tr><th>Порт отправления (Китай)</th><th>Транзит до Владивостока</th><th>Частота</th><th>Ставка</th></tr></thead><tbody id="seaBody"><tr><td colspan="4" style="color:var(--mut)">загрузка…</td></tr></tbody></table>
@@ -155,6 +169,30 @@ async function initAuth(){
 fetch('data/erai.json').then(r=>r.json()).then(e=>{
   if(e.west_usd_feu){const c=document.getElementById('eraiCell');if(c)c.innerHTML='<b style="color:#5bffc0">$'+Math.round(e.west_usd_feu)+'/FEU</b>';}
 }).catch(()=>{});
+// ЦЦИ — публичный контейнерный индекс Китай→РФ (бенчмарк)
+fetch('data/cci.json').then(r=>r.json()).then(c=>{
+  if(!c.value_usd_feu)return;
+  document.getElementById('cciBox').style.display='block';
+  document.getElementById('cciVal').textContent='$'+c.value_usd_feu.toLocaleString('ru-RU')+' / 40′';
+  if(c.route)document.getElementById('cciRoute').textContent=c.route;
+  if(c.as_of)document.getElementById('cciAsof').textContent='на '+c.as_of;
+  const d=document.getElementById('cciDelta');
+  const parts=[];
+  if(c.mom_pct!=null)parts.push((c.mom_pct>=0?'+':'')+c.mom_pct+'% м/м');
+  if(c.yoy_pct!=null)parts.push((c.yoy_pct>=0?'+':'')+c.yoy_pct+'% г/г');
+  if(parts.length)d.innerHTML='<span style="color:'+(c.mom_pct>=0?'#ff9b6b':'#5bffc0')+'">'+parts.join(' · ')+'</span>';
+}).catch(()=>{});
+// FESCO — тарифы по портам входа в РФ (Новороссийск, СПб, …)
+fetch('data/fesco_tariffs.json').then(r=>r.json()).then(f=>{
+  const b=document.getElementById('portBody'), ps=(f.ports||[]).filter(p=>p.ct40_usd);
+  b.innerHTML = ps.length ? ps.map(p=>
+    '<tr><td class="d"><b>'+p.port+'</b>'+(p.sea?' <span style="color:var(--mut);font-size:12px">('+p.sea+')</span>':'')+'</td>'+
+    '<td class="d" style="font-size:12.5px;color:var(--mut)">'+(p.origins||'')+'</td>'+
+    '<td class="rate">'+(p.ct20_usd?'$'+p.ct20_usd.toLocaleString('ru-RU'):'—')+'</td>'+
+    '<td class="rate"><b style="color:#5bffc0">$'+p.ct40_usd.toLocaleString('ru-RU')+'</b></td>'+
+    '<td class="f" style="font-size:12px">'+(p.valid||'').replace(/Valid from/i,'до').replace(/till/i,'—')+'</td></tr>').join('')
+    : '<tr><td colspan="5" style="color:var(--mut)">данные обновляются</td></tr>';
+}).catch(()=>{document.getElementById('portBody').innerHTML='<tr><td colspan="5" style="color:var(--mut)">данные временно недоступны</td></tr>';});
 fetch('data/routes.json').then(r=>r.json()).then(async d=>{
   window._routes=d;
   document.getElementById('upd').textContent='обновлено '+d.updated+' · источник: расписания '+(d.carrier||'перевозчиков');
