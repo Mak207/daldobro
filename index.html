@@ -428,6 +428,8 @@
         <div class="bd" id="bdBar" style="display:none"></div>
         <div class="bd-leg" id="bdLeg"></div>
         <table>
+          <tr id="goodsRow" style="display:none"><td style="color:var(--mut);font-size:13.5px">↳ стоимость товара</td><td id="goodsCell" style="color:var(--mut)"></td></tr>
+          <tr id="freightRow" style="display:none"><td style="color:var(--mut);font-size:13.5px">↳ доставка до границы (фрахт)</td><td id="freightCell" style="color:#8fd7ff"></td></tr>
           <tr><td>Таможенная стоимость</td><td id="cv"></td></tr>
           <tr><td id="dutyL">Пошлина</td><td id="duty"></td></tr>
           <tr><td id="vatL">НДС</td><td id="vat_"></td></tr>
@@ -629,6 +631,10 @@ async function calc(chosen){
     const si=srcInfo(d.code_source),sn=document.getElementById('name');
     sn.textContent=si.t; sn.className='src'+(si.ok?' ok':'');
     document.getElementById('cv').textContent=f(c.customs_value);
+    // разбивка таможенной стоимости: показываем доставку отдельной графой, если посчитана
+    const _fr=+(freight.value||0), _gd=+(goods.value||0), frR=document.getElementById('freightRow'), gdR=document.getElementById('goodsRow');
+    if(_fr>0){document.getElementById('freightCell').textContent=f(_fr);frR.style.display='';gdR.style.display='';document.getElementById('goodsCell').textContent=f(_gd);}
+    else{frR.style.display='none';gdR.style.display='none';}
     document.getElementById('dutyL').textContent='Пошлина'+(c.duty_note&&c.duty!=null?' ('+c.duty_note.replace(' (ЕТТ)','')+')':'');
     if(c.duty!=null){
       document.getElementById('duty').textContent=f(c.duty);
