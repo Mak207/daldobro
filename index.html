@@ -526,6 +526,28 @@
 
 <script>
 const API='https://api.201-51-30-177.sslip.io';
+// ── свой трекер воронки (anon, без персональных данных; шлём батчами через sendBeacon) ──
+(function(){
+  try{
+    var aid=localStorage.dd_aid; if(!aid){aid='a'+Math.abs(Date.now()^(performance.now()*1e6|0)).toString(36)+Math.floor(1e6*Math.random()).toString(36);localStorage.dd_aid=aid;}
+    var sid=sessionStorage.dd_sid; if(!sid){sid='s'+Date.now().toString(36);sessionStorage.dd_sid=sid;}
+    var qp=new URLSearchParams(location.search);
+    var utm=qp.get('utm_source')||qp.get('utm')||'';
+    var ref=''; try{var rh=document.referrer?new URL(document.referrer).hostname:'';if(rh&&rh.indexOf('daldobro')<0)ref=rh;}catch(e){}
+    var dev=matchMedia('(max-width:820px)').matches?'mobile':'desktop';
+    window._ddQ=[];
+    window.ddTrack=function(t,x){try{window._ddQ.push({t:t,a:aid,s:sid,p:location.pathname,d:dev,r:ref,u:utm,c:(x&&x.c)||'',q:(x&&x.q)||'',x:(x&&x.x)||undefined});if(window._ddQ.length>=8)ddFlush();}catch(e){}};
+    window.ddFlush=function(){if(!window._ddQ.length)return;var b=JSON.stringify(window._ddQ);window._ddQ=[];try{navigator.sendBeacon?navigator.sendBeacon(API+'/ev',new Blob([b],{type:'application/json'})):fetch(API+'/ev',{method:'POST',headers:{'Content-Type':'application/json'},body:b,keepalive:true});}catch(e){}};
+    setInterval(ddFlush,4000);
+    addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')ddFlush();});
+    addEventListener('pagehide',ddFlush);
+    document.addEventListener('click',function(e){try{
+      var bk=e.target.closest&&e.target.closest('.col-brok .bk');
+      if(bk&&!window.WL){var nm=bk.querySelector('.bk-nm');ddTrack('broker_click',{x:{name:nm?nm.textContent.slice(0,40):''}});}
+    }catch(_){ }},true);
+    ddTrack('visit');
+  }catch(e){window.ddTrack=function(){};window.ddFlush=function(){};}
+})();
 const f=n=>new Intl.NumberFormat('ru-RU').format(Math.round(n))+' ₽';
 // человеческий вид: КАПС из классификатора -> обычный текст
 const human=s=>(s||'').toLowerCase().replace(/\s+/g,' ').trim().replace(/^./,c=>c.toUpperCase());
@@ -596,6 +618,7 @@ async function calc(chosen){
       rb.className='badge '+(d.risk_level==='высокий'&&nAlts?'b-high':'b-mid');
     }
     window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code); loadIntel(d.term||term.value); loadTrade(d.code);
+    if(!window.WL)ddTrack('calc',{c:d.code||'',q:(d.term||term.value||'').slice(0,60)});
     document.getElementById('acts').style.display='flex';
     document.getElementById('shareMenu').classList.remove('open');
     document.getElementById('resEmpty').style.display='none';
@@ -837,6 +860,7 @@ function applyFreight(){
   const rub=Math.round(kgP*w*fx);
   document.getElementById('freight').value=rub;
   window._frCustoms=cust;
+  if(!window.WL)ddTrack('freight_apply',{x:{from:from,to:to,port:port.name.replace(/ \(.*/,''),rub:rub}});
   const portNote=port.k!==1?(' (плечо через '+port.name.replace(/ \(.*/,'')+', ×'+port.k+')'):'';
   document.getElementById('frOut').innerHTML='≈ '+kgP+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b>'+portNote+'<br>'+
     from+' → '+to+' · порт: '+port.name.replace(/ \(.*/,'')+' 🕒'+port.days+' · таможня: '+cust+'<br>'+src+'.<br><b>'+(window.WL?'Это ориентир — точную ставку подтвердит менеджер.':'Это средняя по рынку — точную цену уточните у брокера справа →')+'</b>';
@@ -892,6 +916,7 @@ async function loadTrade(code){
       '📊 <b>Официально ввезено из Китая</b> по коду '+code.slice(0,6)+' ('+d.year+'): <b>'+tt+'</b> на <b>'+val+'</b>.<br>'+
       'Средняя цена ввоза: <b style="color:#5bffc0">$'+d.usd_per_kg+'/кг</b> — сравните со своим инвойсом (ниже средней = риск корректировки таможней; выше — переплата).<br>'+
       '<span style="color:var(--mut);font-size:11px">Источник: зеркальная статистика экспорта Китая в РФ (China Customs / UN Comtrade)</span></div>';
+    if(!window.WL)ddTrack('trade_view',{c:(code||'').slice(0,6)});
   }catch(e){box.style.display='none';}
 }
 // ── разведка «кто ещё возит такое из Китая» (реестр деклараций Росаккредитации) ──
@@ -923,6 +948,7 @@ async function loadIntel(termq){
       html+='<div class="bk-note" style="background:rgba(240,176,58,.08);border-color:rgba(240,176,58,.3);color:#f6cd7a">🔒 Ещё <b>'+(d.found-1)+'</b> импортёров и их заводы — после входа. <a href="/routes.html" style="color:#8fb4ff;font-weight:700">Открыть (14 дней бесплатно) →</a></div>';
     }
     box.innerHTML=html;
+    if(!window.WL)ddTrack('intel_view',{x:{found:d.found,active:!!active}});
   }catch(e){box.style.display='none';}
 }
 async function loadBrokers(code){
