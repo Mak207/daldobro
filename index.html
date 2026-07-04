@@ -132,7 +132,7 @@
   .ai-bar .ai-input input{flex:1}
   .ai-bar .ai-log:empty{display:none}
   /* ── блоки: что везёте · как повезёте · сколько стоит · кто повезёт ── */
-  .calc-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.78fr) minmax(0,1.05fr) minmax(0,.9fr);gap:16px;align-items:stretch}
+  .calc-wrap{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;align-items:stretch}
   .col{display:flex;flex-direction:column;gap:16px;min-width:0}
   .col>.glass{margin:0}
   .col>.glass:last-child{flex:1}
@@ -367,7 +367,7 @@
     <div class="col">
     <div class="col-head">Как повезёте</div>
     <div class="glass how-card">
-      <div class="how-lead">Прикинем доставку по ставкам рынка: выберите откуда, куда и город таможни — посчитаем фрахт и подставим в расчёт.</div>
+      <div class="how-lead">Прикинем доставку по <b>средним ставкам рынка</b>: выберите откуда, куда и город таможни — посчитаем фрахт и подставим в расчёт.</div>
       <div id="freightHelp" style="font-size:13px;margin-bottom:10px"></div>
       <div id="freightCalc" style="display:none">
         <div style="display:grid;grid-template-columns:1fr;gap:8px">
@@ -760,15 +760,34 @@ function fillFrOptions(){
   document.getElementById('frTo').innerHTML=opt(RU);
   document.getElementById('frCust').innerHTML=opt(CUST);
 }
+const FR_FREE=3;   // бесплатных демо-расчётов без входа
+function frDemoUsed(){return +(localStorage.dd_frd||0);}
+function frLock(){
+  document.getElementById('freightCalc').style.display='none';
+  document.getElementById('freightHelp').innerHTML=
+    '<div style="padding:12px;border:1px solid rgba(240,176,58,.35);border-radius:10px;background:rgba(240,176,58,.07);line-height:1.6">'+
+    '🔒 <b>Бесплатные расчёты закончились.</b> Дальше — после входа: <b>14 дней бесплатно</b>, без карты.<br>'+
+    '<a href="/routes.html" style="color:#8fb4ff;font-weight:700">Войти и продолжить →</a></div>';
+}
 async function initFreightBridge(){
   const help=document.getElementById('freightHelp'),tok=localStorage.getItem('dd_token');
-  if(!tok){help.innerHTML='Доступ к ставкам рынка — после входа. <a href="/routes.html" style="color:#8fb4ff">Войти →</a>';return;}
   try{
-    const m=await(await fetch(API+'/auth/me?t='+tok)).json();
-    if(!(m.auth&&m.active)){help.innerHTML='Ставки открываются после входа (14 дней бесплатно). <a href="/routes.html" style="color:#8fb4ff">Открыть →</a>';return;}
-    _rates=await(await fetch(API+'/routes/rates?t='+tok)).json();
-    if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">Ставки рынка накапливаются — скоро появятся.</span>';return;}
-    help.innerHTML='<span style="color:var(--good)">✓ Ставки рынка открыты</span> · курс '+(_rates.usd_rub||90)+' ₽/$';
+    if(tok){
+      const m=await(await fetch(API+'/auth/me?t='+tok)).json();
+      if(m.auth&&m.active){
+        _rates=await(await fetch(API+'/routes/rates?t='+tok)).json();
+        if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">Ставки рынка накапливаются — скоро появятся.</span>';return;}
+        help.innerHTML='<span style="color:var(--good)">✓ Ставки рынка открыты</span> · курс '+(_rates.usd_rub||90)+' ₽/$';
+        document.getElementById('freightCalc').style.display='block';
+        fillFrOptions();
+        return;
+      }
+    }
+    // демо-магнит: работает сразу, 3 расчёта бесплатно, потом вход
+    if(frDemoUsed()>=FR_FREE){frLock();return;}
+    _rates=await(await fetch(API+'/routes/rates/demo')).json();
+    if(!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">Ставки рынка накапливаются — скоро появятся.</span>';return;}
+    help.innerHTML='<span style="color:var(--good)">✓ Работает — попробуйте</span> · бесплатно: <b id="frLeft">'+(FR_FREE-frDemoUsed())+'</b> из '+FR_FREE+' расчётов';
     document.getElementById('freightCalc').style.display='block';
     fillFrOptions();
   }catch(e){}
@@ -781,18 +800,25 @@ function applyFreight(){
   if(!w||w<=0){document.getElementById('frOut').textContent='Введите вес в кг.';return;}
   const rs=_rates.rates||[], exact=rs.find(r=>r.cn===from&&r.ru===to);
   let kg, src;
-  if(exact){kg=exact.usd_kg;src=window.WL?'ставка '+(WL.name||'компании'):'ставка рынка на этом направлении ('+exact.n+' точ.)';}
+  if(exact){kg=exact.usd_kg;src=window.WL?'ставка '+(WL.name||'компании'):'средняя по рынку на этом направлении';}
   else{
     const v=rs.map(r=>r.usd_kg).sort((a,b)=>a-b);
     if(!v.length){document.getElementById('frOut').textContent='Ставки накапливаются — попробуйте позже.';return;}
-    kg=v[Math.floor(v.length/2)];src=window.WL?'средняя ставка '+(WL.name||'компании'):'средняя по рынку (по вашему направлению точек пока нет)';
+    kg=v[Math.floor(v.length/2)];src=window.WL?'средняя ставка '+(WL.name||'компании'):'средняя по рынку (по вашему направлению сигналов пока нет)';
   }
   const rub=Math.round(kg*w*fx);
   document.getElementById('freight').value=rub;
   window._frCustoms=cust;
   document.getElementById('frOut').innerHTML='≈ '+kg+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b><br>'+
-    from+' → '+to+', таможня: '+cust+' · '+src+'.<br><b>'+(window.WL?'Это ориентир — точную ставку подтвердит менеджер.':'Это ориентир — точную ставку уточните у брокера справа →')+'</b>';
+    from+' → '+to+', таможня: '+cust+' · '+src+'.<br><b>'+(window.WL?'Это ориентир — точную ставку подтвердит менеджер.':'Это средняя по рынку — точную цену уточните у брокера справа →')+'</b>';
   _chosen=null; calc();
+  // демо без входа: списываем попытку, после последней — замок
+  if(_rates.demo&&!window.WL){
+    localStorage.dd_frd=frDemoUsed()+1;
+    const left=FR_FREE-frDemoUsed(), el=document.getElementById('frLeft');
+    if(el)el.textContent=left;
+    if(left<=0)setTimeout(frLock,2500);
+  }
 }
 setTimeout(()=>initFreightBridge(), 350);
 // ── бесплатная проверка контрагента по реестру ФТС + наши данные ──
