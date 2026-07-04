@@ -125,8 +125,14 @@
   .altcard.sel .ac-duty{background:rgba(47,191,113,.16);color:var(--good)}
   .altcard .ac-nm{color:var(--mut);flex:1 1 100%;order:3}
   .altcard .ac-pick{margin-left:auto;white-space:nowrap;font-size:12px;color:#a9c2ff}
-  /* ── три колонки: ввод · расчёт · исполнители — всё на одном экране ── */
-  .calc-wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.12fr) minmax(0,.9fr);gap:16px;align-items:stretch}
+  /* ── ИИ-ассистент — полоса над всеми блоками (что · как · кто) ── */
+  .ai-bar{margin:0 0 16px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+  .ai-bar .ai-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .ai-bar .ai-input{display:flex;gap:10px}
+  .ai-bar .ai-input input{flex:1}
+  .ai-bar .ai-log:empty{display:none}
+  /* ── блоки: что везёте · как повезёте · сколько стоит · кто повезёт ── */
+  .calc-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.78fr) minmax(0,1.05fr) minmax(0,.9fr);gap:16px;align-items:stretch}
   .col{display:flex;flex-direction:column;gap:16px;min-width:0}
   .col>.glass{margin:0}
   .col>.glass:last-child{flex:1}
@@ -135,14 +141,28 @@
   @media(max-width:760px){.calc-wrap{grid-template-columns:1fr}.col-brok{grid-column:auto}}
   .res-card{padding:24px;position:relative;overflow:hidden;min-height:320px}
   .res-card h3{margin:0 0 2px;font-size:16px;font-weight:800}
-  /* закрепление панели: три карточки фиксируются по центру экрана */
+  /* блок «Как повезёте» */
+  .how-card{padding:20px}
+  .how-card .how-lead{font-size:13.5px;color:var(--mut);line-height:1.55;margin-bottom:12px}
+  /* варианты кода — выпадающее меню (не обрезаются в узком блоке) */
+  .alt-toggle{margin-top:12px;width:100%;padding:10px;border-radius:10px;border:1px solid rgba(240,176,58,.35);background:rgba(240,176,58,.07);color:#f6cd7a;font-size:13px;font-weight:700;cursor:pointer;text-align:left}
+  .alt-toggle.calm{border-color:rgba(91,140,255,.35);background:rgba(91,140,255,.08);color:#a9c2ff}
+  .alt-toggle:hover{filter:brightness(1.1)}
+  .altbox.pop{display:none;position:absolute;left:14px;right:14px;z-index:45;margin-top:6px;max-height:60vh;overflow-y:auto;box-shadow:0 18px 50px rgba(0,0,0,.6)}
+  .altbox.pop.open{display:block}
+  /* закрепление панели: блоки-экраны, колесо листает между ними */
   #pinBtn{margin-left:14px;padding:8px 14px;border-radius:10px;border:1px solid rgba(91,140,255,.4);background:rgba(91,140,255,.1);color:#bcd0ff;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
   #pinBtn:hover{background:rgba(91,140,255,.22)}
   #pinBtn.on{background:linear-gradient(100deg,#5b8cff,#7c5cff);color:#fff;border-color:transparent}
   body.pinned{overflow:hidden}
   body.pinned::before{content:"";position:fixed;inset:0;z-index:70;background:rgba(5,8,18,.82);backdrop-filter:blur(10px)}
-  body.pinned .calc-wrap{position:fixed;top:72px;bottom:12px;left:50%;transform:translateX(-50%);width:min(1520px,calc(100vw - 28px));z-index:80;margin:0}
-  body.pinned .col{height:100%;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(91,140,255,.4) transparent}
+  body.pinned .ai-bar{position:fixed;top:12px;left:50%;transform:translateX(-50%);width:min(1520px,calc(100vw - 28px));z-index:82;margin:0}
+  body.pinned .calc-wrap{position:fixed;top:150px;bottom:12px;left:50%;transform:translateX(-50%);width:min(1520px,calc(100vw - 28px));z-index:80;margin:0;
+    display:flex!important;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none}
+  body.pinned .calc-wrap::-webkit-scrollbar{display:none}
+  body.pinned .col{height:100%;overflow-y:auto;flex:0 0 min(600px,90vw);scroll-snap-align:center;scrollbar-width:thin;scrollbar-color:rgba(91,140,255,.4) transparent}
+  body.pinned .pin-hint{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:85;font-size:12px;color:#9fb4de;background:rgba(12,17,32,.9);border:1px solid rgba(91,140,255,.3);padding:7px 14px;border-radius:20px;pointer-events:none}
+  .pin-hint{display:none}
   /* всплывающее окно «Недавние расчёты» */
   .hist-btn{margin-top:12px;width:100%;padding:9px;border-radius:10px;border:1px dashed rgba(91,140,255,.35);background:transparent;color:#9fb4de;font-size:12.5px;cursor:pointer}
   .hist-btn:hover{background:rgba(91,140,255,.1)}
@@ -310,36 +330,24 @@
   <section id="calc" class="reveal">
     <h2 class="sec">Калькулятор себестоимости ввоза</h2>
     <p class="sec-sub">Код ТН ВЭД · пошлина ЕТТ ЕАЭС · НДС · полная себестоимость · риск классификации.</p>
-    <div class="calc-wrap">
-    <div class="col">
-    <div class="col-head">Что везёте</div>
-    <div class="glass ai-card">
-      <div class="ai-head"><span class="ai-badge">ИИ-ассистент</span> Опишите товар своими словами — подберу код ТН ВЭД и заполню расчёт за вас</div>
+    <div class="glass ai-bar">
+      <div class="ai-head"><span class="ai-badge">ИИ-ассистент</span> Опишите товар своими словами — подберу код ТН ВЭД, заполню расчёт, маршрут и подскажу, кто повезёт</div>
       <div class="ai-log" id="aiLog"></div>
       <div class="ai-input">
         <input id="aiMsg" placeholder="например: везу шоколадные конфеты из Китая, тонна" onkeydown="if(event.key==='Enter')aiSend()">
         <button onclick="aiSend()" id="aiBtn" title="Отправить">→</button>
       </div>
     </div>
-    <div class="glass calc-card">
+    <div class="calc-wrap">
+    <div class="col">
+    <div class="col-head">Что везёте</div>
+    <div class="glass calc-card" style="position:relative">
       <label>Наименование товара</label>
       <input id="term" placeholder="например: холодильник бытовой">
       <div class="row">
         <div><label>Стоимость товара, ₽</label><input id="goods" type="number" placeholder="например: 45 000"></div>
         <div><label>Фрахт до границы, ₽</label><input id="freight" type="number" placeholder="например: 8 000">
-          <div id="freightHelp" style="margin-top:5px;font-size:12px"></div>
-          <div id="freightCalc" style="display:none;margin-top:8px;padding:10px 12px;border:1px solid rgba(91,140,255,.3);border-radius:10px;background:rgba(91,140,255,.06)">
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
-              <div><label style="font-size:11px">Откуда (Китай)</label><select id="frFrom" style="width:100%;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
-              <div><label style="font-size:11px">Куда (РФ)</label><select id="frTo" style="width:100%;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
-              <div><label style="font-size:11px">Город таможни</label><select id="frCust" style="width:100%;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
-            </div>
-            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
-              <input id="frWeight" type="number" placeholder="вес, кг" style="width:110px;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
-              <button type="button" onclick="applyFreight()" style="padding:8px 14px;border:0;border-radius:8px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff);cursor:pointer">Подставить</button>
-            </div>
-            <div id="frOut" style="font-size:12px;color:var(--mut);margin-top:6px"></div>
-          </div>
+          <div style="margin-top:5px;font-size:11px;color:var(--mut)">Не знаете фрахт? Прикиньте в блоке <b style="color:#8fb4ff">«Как повезёте»</b> →</div>
         </div>
       </div>
       <div class="row">
@@ -349,10 +357,31 @@
       <div id="qtyWrap"><label id="qtyLabel">Количество</label><input id="qty" type="number" placeholder="для пошлины за единицу"></div>
       <button class="btn" id="go" onclick="calc()">Рассчитать себестоимость →</button>
       <div id="errbox" class="err"></div>
+      <button type="button" class="alt-toggle" id="altBtn" style="display:none" onclick="document.getElementById('altBox').classList.toggle('open')"></button>
+      <div class="altbox pop" id="altBox"></div>
+      <div id="clarifyBox" class="clarify" style="display:none"></div>
       <button type="button" class="hist-btn" id="histBtn" style="display:none" onclick="document.getElementById('histBox').classList.toggle('open')">🕘 Недавние расчёты ▾</button>
       <div class="hist hist-pop" id="histBox"></div>
-      <div class="altbox" id="altBox" style="display:none"></div>
-      <div id="clarifyBox" class="clarify" style="display:none"></div>
+    </div>
+    </div>
+    <div class="col">
+    <div class="col-head">Как повезёте</div>
+    <div class="glass how-card">
+      <div class="how-lead">Прикинем доставку по ставкам рынка: выберите откуда, куда и город таможни — посчитаем фрахт и подставим в расчёт.</div>
+      <div id="freightHelp" style="font-size:13px;margin-bottom:10px"></div>
+      <div id="freightCalc" style="display:none">
+        <div style="display:grid;grid-template-columns:1fr;gap:8px">
+          <div><label style="font-size:11px">Откуда (Китай)</label><select id="frFrom" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+          <div><label style="font-size:11px">Куда (РФ)</label><select id="frTo" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+          <div><label style="font-size:11px">Город таможни</label><select id="frCust" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+          <input id="frWeight" type="number" placeholder="вес, кг" style="flex:1;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
+          <button type="button" onclick="applyFreight()" style="padding:9px 16px;border:0;border-radius:8px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff);cursor:pointer">Посчитать →</button>
+        </div>
+        <div id="frOut" style="font-size:12.5px;color:var(--mut);margin-top:10px;line-height:1.5"></div>
+      </div>
+      <a href="/routes.html" style="display:inline-block;margin-top:14px;font-size:12.5px;color:#8fb4ff">Все маршруты и сроки Китай→РФ →</a>
     </div>
     </div>
     <div class="col">
@@ -596,13 +625,13 @@ if('IntersectionObserver' in window){
 }
 // карточки похожих кодов: варианты из альтернатив + уточнений ИИ, всегда когда есть что выбрать
 function renderAlts(d){
-  const box=document.getElementById('altBox'),cb=document.getElementById('clarifyBox');
-  cb.style.display='none';
+  const box=document.getElementById('altBox'),cb=document.getElementById('clarifyBox'),btn=document.getElementById('altBtn');
+  cb.style.display='none';box.classList.remove('open');
   const seen={},list=[];
   (d.alternatives||[]).forEach(a=>{if(a.code!==d.code&&!seen[a.code]){seen[a.code]=1;list.push(a);}});
   ((d.clarify&&d.clarify.options)||[]).forEach(o=>{if(o.code!==d.code&&!seen[o.code]){seen[o.code]=1;list.push({code:o.code,name:o.name,duty:null});}});
   if(!list.length){
-    box.style.display='none';
+    btn.style.display='none';
     if(d.clarify&&d.clarify.reason){cb.innerHTML='<b>Подсказка.</b> '+d.clarify.reason+' Опишите товар подробнее (материал, состав, назначение) — или спросите ИИ-ассистента выше.';cb.style.display='block';}
     return 0;
   }
@@ -614,11 +643,13 @@ function renderAlts(d){
       '<span class="ac-code">'+fmtCode(a.code)+'</span>'+
       (a.duty?'<span class="ac-duty">пошлина '+a.duty+'</span>':'')+
       '<span class="ac-pick">выбрать →</span><span class="ac-nm">'+human(a.name)+'</span></button>').join('');
-  box.className='altbox'+(hi?'':' calm');
+  box.className='altbox pop'+(hi?'':' calm');
   box.innerHTML='<div class="abt">'+(hi?'Похожие товары оформляют по-разному':'Похожие варианты кода')+'</div>'+
       '<div class="abs">'+((d.clarify&&d.clarify.reason)?d.clarify.reason+' ':'')+'Нажмите строку, которая точнее описывает ваш товар — пересчитаем сразу'+(hi?'. Ставка пошлины у вариантов может отличаться.':'.')+'</div>'+
       cur+cards;
-  box.style.display='block';
+  btn.className='alt-toggle'+(hi?'':' calm');
+  btn.innerHTML=(hi?'⚠️ ':'🔎 ')+'Похожие коды на выбор — '+list.length+' ▾';
+  btn.style.display='block';
   return list.length;
 }
 // одна кнопка «Поделиться»: системное окно (как на телефоне), фолбэк — меню
@@ -719,23 +750,27 @@ function loadHist(i){
 renderHist();
 // ── мостик: прикинуть фрахт из наших ставок рынка ($/кг × вес × курс) — за входом ──
 let _rates=null;
+function fillFrOptions(){
+  const CN=['Гуанчжоу','Иу','Шанхай','Нинбо','Шэньчжэнь','Пекин','Циндао','Гонконг'],
+        RU=['Москва','Владивосток','Екатеринбург','Новосибирск','Санкт-Петербург','Казань'],
+        CUST=['Владивосток','Москва','Находка','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
+  (_rates.rates||[]).forEach(r=>{if(!CN.includes(r.cn))CN.unshift(r.cn);if(!RU.includes(r.ru))RU.unshift(r.ru);});
+  const opt=a=>a.map(c=>'<option>'+c+'</option>').join('');
+  document.getElementById('frFrom').innerHTML=opt(CN);
+  document.getElementById('frTo').innerHTML=opt(RU);
+  document.getElementById('frCust').innerHTML=opt(CUST);
+}
 async function initFreightBridge(){
   const help=document.getElementById('freightHelp'),tok=localStorage.getItem('dd_token');
-  if(!tok){help.innerHTML='<a href="/routes.html" style="color:#8fb4ff">🚚 Не знаете фрахт? Прикинуть из ставок рынка →</a>';return;}
+  if(!tok){help.innerHTML='Доступ к ставкам рынка — после входа. <a href="/routes.html" style="color:#8fb4ff">Войти →</a>';return;}
   try{
     const m=await(await fetch(API+'/auth/me?t='+tok)).json();
-    if(!(m.auth&&m.active)){help.innerHTML='<a href="/routes.html" style="color:#8fb4ff">🚚 Прикинуть доставку из ставок рынка →</a>';return;}
+    if(!(m.auth&&m.active)){help.innerHTML='Ставки открываются после входа (14 дней бесплатно). <a href="/routes.html" style="color:#8fb4ff">Открыть →</a>';return;}
     _rates=await(await fetch(API+'/routes/rates?t='+tok)).json();
-    if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">🚚 Ставки рынка накапливаются</span>';return;}
-    help.innerHTML='<a href="#" onclick="document.getElementById(\'freightCalc\').style.display=\'block\';this.parentElement.style.display=\'none\';return false" style="color:#8fb4ff">🚚 Прикинуть доставку из ставок рынка →</a>';
-    const CN=['Гуанчжоу','Иу','Шанхай','Нинбо','Шэньчжэнь','Пекин','Циндао','Гонконг'],
-          RU=['Москва','Владивосток','Екатеринбург','Новосибирск','Санкт-Петербург','Казань'],
-          CUST=['Владивосток','Москва','Находка','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
-    _rates.rates.forEach(r=>{if(!CN.includes(r.cn))CN.unshift(r.cn);if(!RU.includes(r.ru))RU.unshift(r.ru);});
-    const opt=a=>a.map(c=>'<option>'+c+'</option>').join('');
-    document.getElementById('frFrom').innerHTML=opt(CN);
-    document.getElementById('frTo').innerHTML=opt(RU);
-    document.getElementById('frCust').innerHTML=opt(CUST);
+    if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">Ставки рынка накапливаются — скоро появятся.</span>';return;}
+    help.innerHTML='<span style="color:var(--good)">✓ Ставки рынка открыты</span> · курс '+(_rates.usd_rub||90)+' ₽/$';
+    document.getElementById('freightCalc').style.display='block';
+    fillFrOptions();
   }catch(e){}
 }
 function applyFreight(){
@@ -831,34 +866,55 @@ fetch('data/indices.json').then(r=>r.json()).then(d=>{
   if(d.comm&&d.comm.length)set('idxComm','комиссия: '+d.comm[d.comm.length-1].v+'%');
   if(d.cargo&&d.cargo.length)set('idxCargo','$'+d.cargo[d.cargo.length-1].v+'/кг');
 }).catch(()=>{});
-// ── закрепление панели: три карточки фиксируются на экране до первого скролла вне панели ──
+// ── закрепление панели: блоки-экраны (что · как · сколько · кто), колесо листает между ними ──
+let _pinLock=false;
 function togglePin(){document.body.classList.contains('pinned')?unpin():pin();}
 function pin(){
   document.body.classList.add('pinned');
   document.getElementById('pinBtn').classList.add('on');
-  window.addEventListener('wheel',unpinWheel,{passive:true});
-  window.addEventListener('touchmove',unpin,{passive:true});
+  // подсказка снизу
+  if(!document.getElementById('pinHint')){
+    const h=document.createElement('div');h.id='pinHint';h.className='pin-hint';
+    h.textContent='Колесо мыши листает блоки: Что → Как → Сколько → Кто · Esc — закрыть';
+    document.body.appendChild(h);
+  }
+  document.querySelector('.calc-wrap').scrollLeft=0;
+  window.addEventListener('wheel',pinWheel,{passive:false});
   window.addEventListener('keydown',unpinEsc);
   document.addEventListener('click',unpinClickOut,true);
 }
 function unpin(){
   document.body.classList.remove('pinned');
   document.getElementById('pinBtn').classList.remove('on');
-  window.removeEventListener('wheel',unpinWheel);
-  window.removeEventListener('touchmove',unpin);
+  const h=document.getElementById('pinHint'); if(h)h.remove();
+  window.removeEventListener('wheel',pinWheel,{passive:false});
   window.removeEventListener('keydown',unpinEsc);
   document.removeEventListener('click',unpinClickOut,true);
 }
 function unpinEsc(e){ if(e.key==='Escape')unpin(); }
-function unpinClickOut(e){ if(e.target.closest&&(e.target.closest('.calc-wrap')||e.target.closest('#pinBtn')))return; unpin(); }
-// колесо мыши: даём доскроллить колонку под курсором, на краю — сбрасываем закрепление
-function unpinWheel(e){
+function unpinClickOut(e){ if(e.target.closest&&(e.target.closest('.calc-wrap')||e.target.closest('.ai-bar')||e.target.closest('#pinBtn')))return; unpin(); }
+// колесо: сперва доскроллить блок под курсором по вертикали; на краю — листнуть к следующему блоку; за последним — открепить
+function pinWheel(e){
+  const wrap=document.querySelector('.calc-wrap'), cols=[...wrap.querySelectorAll('.col')];
+  const down=e.deltaY>0, up=e.deltaY<0;
   const col=e.target&&e.target.closest&&e.target.closest('.col');
   if(col){
-    const down=e.deltaY>0, up=e.deltaY<0;
-    if((down&&col.scrollTop+col.clientHeight<col.scrollHeight-2)||(up&&col.scrollTop>2))return;
+    if((down&&col.scrollTop+col.clientHeight<col.scrollHeight-2)||(up&&col.scrollTop>2))return; // есть куда скроллить внутри блока
   }
-  unpin();
+  e.preventDefault();
+  if(_pinLock)return; _pinLock=true; setTimeout(()=>_pinLock=false,420);
+  // текущий блок по позиции скролла
+  const w=cols[0].offsetWidth+16;
+  let idx=Math.round(wrap.scrollLeft/w);
+  if(down){
+    if(idx>=cols.length-1){unpin();return;}
+    idx++;
+  }else{
+    if(idx<=0){unpin();return;}
+    idx--;
+  }
+  cols[idx].scrollTop=0;
+  wrap.scrollTo({left:idx*w,behavior:'smooth'});
 }
 // ── глубокая ссылка: открыли расчёт из мессенджера/почты — заполняем и считаем ──
 (function(){
@@ -962,8 +1018,8 @@ function wlApply(){
   if(W.rates&&W.rates.length){
     window.initFreightBridge=async function(){
       _rates={usd_rub:W.usd_rub||90,rates:W.rates};
-      const help=document.getElementById('freightHelp');
-      help.innerHTML='<a href="#" onclick="document.getElementById(\'freightCalc\').style.display=\'block\';this.parentElement.style.display=\'none\';return false" style="color:#8fb4ff">🚚 Прикинуть доставку по нашим ставкам →</a>';
+      document.getElementById('freightHelp').innerHTML='<span style="color:var(--good)">✓ Наши ставки доставки</span>';
+      document.getElementById('freightCalc').style.display='block';
       const CN=[...new Set(W.rates.map(r=>r.cn))],RU=[...new Set(W.rates.map(r=>r.ru))],
             CUST=['Владивосток','Москва','Находка','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
       const opt=a=>a.map(c=>'<option>'+c+'</option>').join('');
