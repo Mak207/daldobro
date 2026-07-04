@@ -329,9 +329,13 @@
         <div><label>Фрахт до границы, ₽</label><input id="freight" type="number" placeholder="например: 8 000">
           <div id="freightHelp" style="margin-top:5px;font-size:12px"></div>
           <div id="freightCalc" style="display:none;margin-top:8px;padding:10px 12px;border:1px solid rgba(91,140,255,.3);border-radius:10px;background:rgba(91,140,255,.06)">
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-              <select id="frDir" style="flex:1;min-width:130px;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select>
-              <input id="frWeight" type="number" placeholder="вес, кг" style="width:100px;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px">
+              <div><label style="font-size:11px">Откуда (Китай)</label><select id="frFrom" style="width:100%;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+              <div><label style="font-size:11px">Куда (РФ)</label><select id="frTo" style="width:100%;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+              <div><label style="font-size:11px">Город таможни</label><select id="frCust" style="width:100%;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+              <input id="frWeight" type="number" placeholder="вес, кг" style="width:110px;padding:8px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
               <button type="button" onclick="applyFreight()" style="padding:8px 14px;border:0;border-radius:8px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff);cursor:pointer">Подставить</button>
             </div>
             <div id="frOut" style="font-size:12px;color:var(--mut);margin-top:6px"></div>
@@ -724,17 +728,35 @@ async function initFreightBridge(){
     _rates=await(await fetch(API+'/routes/rates?t='+tok)).json();
     if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">🚚 Ставки рынка накапливаются</span>';return;}
     help.innerHTML='<a href="#" onclick="document.getElementById(\'freightCalc\').style.display=\'block\';this.parentElement.style.display=\'none\';return false" style="color:#8fb4ff">🚚 Прикинуть доставку из ставок рынка →</a>';
-    document.getElementById('frDir').innerHTML=_rates.rates.map((r,i)=>'<option value="'+i+'">'+r.cn+' → '+r.ru+' (~$'+r.usd_kg+'/кг)</option>').join('');
+    const CN=['Гуанчжоу','Иу','Шанхай','Нинбо','Шэньчжэнь','Пекин','Циндао','Гонконг'],
+          RU=['Москва','Владивосток','Екатеринбург','Новосибирск','Санкт-Петербург','Казань'],
+          CUST=['Владивосток','Москва','Находка','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
+    _rates.rates.forEach(r=>{if(!CN.includes(r.cn))CN.unshift(r.cn);if(!RU.includes(r.ru))RU.unshift(r.ru);});
+    const opt=a=>a.map(c=>'<option>'+c+'</option>').join('');
+    document.getElementById('frFrom').innerHTML=opt(CN);
+    document.getElementById('frTo').innerHTML=opt(RU);
+    document.getElementById('frCust').innerHTML=opt(CUST);
   }catch(e){}
 }
 function applyFreight(){
   if(!_rates)return;
-  const r=_rates.rates[+document.getElementById('frDir').value], w=+document.getElementById('frWeight').value;
+  const from=document.getElementById('frFrom').value, to=document.getElementById('frTo').value,
+        cust=document.getElementById('frCust').value, w=+document.getElementById('frWeight').value;
   const fx=_rates.usd_rub||90;
   if(!w||w<=0){document.getElementById('frOut').textContent='Введите вес в кг.';return;}
-  const rub=Math.round(r.usd_kg*w*fx);
+  const rs=_rates.rates||[], exact=rs.find(r=>r.cn===from&&r.ru===to);
+  let kg, src;
+  if(exact){kg=exact.usd_kg;src='ставка рынка на этом направлении ('+exact.n+' точ.)';}
+  else{
+    const v=rs.map(r=>r.usd_kg).sort((a,b)=>a-b);
+    if(!v.length){document.getElementById('frOut').textContent='Ставки накапливаются — попробуйте позже.';return;}
+    kg=v[Math.floor(v.length/2)];src='средняя по рынку (по вашему направлению точек пока нет)';
+  }
+  const rub=Math.round(kg*w*fx);
   document.getElementById('freight').value=rub;
-  document.getElementById('frOut').innerHTML='≈ '+r.usd_kg+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b> (ориентир рынка). Пересчитываю…';
+  window._frCustoms=cust;
+  document.getElementById('frOut').innerHTML='≈ '+kg+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b><br>'+
+    from+' → '+to+', таможня: '+cust+' · '+src+'.<br><b>Это ориентир — точную ставку уточните у брокера справа →</b>';
   _chosen=null; calc();
 }
 setTimeout(initFreightBridge, 350);
@@ -768,7 +790,8 @@ function coName(s){
 }
 async function loadBrokers(code){
   try{
-    const r=await fetch(API+'/brokers/match?code='+encodeURIComponent(code));
+    const cust=window._frCustoms?'&customs='+encodeURIComponent(window._frCustoms):'';
+    const r=await fetch(API+'/brokers/match?code='+encodeURIComponent(code)+cust);
     const d=await r.json();
     if(!d.items||d.items.length<2)return;   // мало данных — оставляем статичный список
     document.getElementById('brokTitle').textContent='Кто повезёт ваш товар';
