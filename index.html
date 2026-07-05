@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ДалДобро — калькулятор и аналитика ввоза из Китая: код ТН ВЭД, пошлина, себестоимость</title>
 <meta name="description" content="Посчитайте себестоимость ввоза из Китая: код ТН ВЭД, ставка пошлины ЕТТ ЕАЭС, НДС, риск классификации. Плюс аналитика ВЭД: тренды, спорные коды, индексы рынка.">
-<link rel="canonical" href="https://daldobro.ru/">
+<link rel="canonical" href="https://www.daldobro.ru/">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta property="og:image" content="https://daldobro.ru/logo.png">
+<meta property="og:image" content="https://www.daldobro.ru/logo.png">
 <link rel="preconnect" href="https://api.201-51-30-177.sslip.io">
 <style>
   :root{
@@ -328,7 +328,7 @@
   @keyframes glowfield{0%,100%{box-shadow:0 0 0 3px rgba(91,140,255,.18)}50%{box-shadow:0 0 0 5px rgba(124,92,255,.28)}}
 </style>
 <script>document.documentElement.className+=' js'</script>
-<script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});</script><noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""/></div></noscript><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"ДалДобро","url":"https://daldobro.ru/","logo":"https://daldobro.ru/logo.png","description":"Независимый навигатор по ввозу из Китая: код ТН ВЭД, пошлина, НДС, себестоимость — по официальному тарифу, без проплат."},{"@type":"WebSite","name":"ДалДобро","url":"https://daldobro.ru/","potentialAction":{"@type":"SearchAction","target":"https://daldobro.ru/?q={query}","query-input":"required name=query"}}]}</script></head>
+<script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});</script><noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""/></div></noscript><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"ДалДобро","url":"https://www.daldobro.ru/","logo":"https://www.daldobro.ru/logo.png","description":"Независимый навигатор по ввозу из Китая: код ТН ВЭД, пошлина, НДС, себестоимость — по официальному тарифу, без проплат."},{"@type":"WebSite","name":"ДалДобро","url":"https://www.daldobro.ru/","potentialAction":{"@type":"SearchAction","target":"https://www.daldobro.ru/?q={query}","query-input":"required name=query"}}]}</script></head>
 <body>
 <div class="bg"></div><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div><div class="grid-ovl"></div><div class="cursor-glow" id="cg"></div>
 
@@ -436,7 +436,7 @@
         </table>
         <div class="hint" id="hint" style="display:none"></div>
         <div id="passBox" style="display:none;margin:14px 0 4px;padding:14px;background:rgba(58,215,200,.06);border:1px solid rgba(58,215,200,.3);border-radius:14px">
-          <div style="font-size:14.5px;color:#bfe9df;font-weight:700">📊 Проходная по коду <span id="passKg"></span></div>
+          <div style="font-size:14.5px;color:#bfe9df;font-weight:700">📊 Ориентир цены ввоза по коду <span id="passKg"></span></div>
           <div id="passStat" style="font-size:13px;color:var(--mut);margin:6px 0 10px"></div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
             <input id="passUsd" type="number" placeholder="стоимость партии, $" style="flex:1;min-width:120px;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
@@ -761,7 +761,7 @@ function buildUrl(){
   const qp=new URLSearchParams({term:term.value,goods:goods.value||0,freight:freight.value||0,insurance:insurance.value||0,vat:vat.value});
   const qv=document.getElementById('qty').value; if(qv)qp.set('qty',qv);
   if(_chosen)qp.set('code',_chosen);
-  return 'https://daldobro.ru/?'+qp.toString()+'#calc';
+  return 'https://www.daldobro.ru/?'+qp.toString()+'#calc';
 }
 function shareTg(){if(!window._lastD)return;window.open('https://t.me/share/url?url='+encodeURIComponent(buildUrl())+'&text='+encodeURIComponent(buildText(window._lastD)),'_blank');}
 function shareWa(){if(!window._lastD)return;window.open('https://wa.me/?text='+encodeURIComponent(buildText(window._lastD)+'\n'+buildUrl()),'_blank');}
@@ -966,7 +966,7 @@ async function loadTrade(code){
     const t=d.weight_kg/1000, tt=t>=1000?(Math.round(t/100)/10+' тыс. т'):(Math.round(t)+' т');
     const val=d.value_usd>=1e9?('$'+(Math.round(d.value_usd/1e8)/10)+' млрд'):('$'+Math.round(d.value_usd/1e6)+' млн');
     document.getElementById('passKg').innerHTML='≈ <b style="color:#5bffc0">$'+d.usd_per_kg+'/кг</b>';
-    document.getElementById('passStat').textContent='Официальный ввоз из Китая ('+d.year+'): '+tt+' на '+val+'. Таможня сравнивает вашу цену за кг с этим ориентиром.';
+    document.getElementById('passStat').innerHTML='Средняя цена ввоза из Китая ('+d.year+'): '+tt+' на '+val+'. Это оценка по зеркальной статистике — <b>ориентир, а не официальная «проходная» ФТС</b> (та засекречена).';
     passRender();
     box.style.display='block';
     box.classList.remove('mc-pulse'); void box.offsetWidth; box.classList.add('mc-pulse');
@@ -977,10 +977,11 @@ function passRender(){
   const usd=+document.getElementById('passUsd').value,w=+document.getElementById('passW').value;
   if(!usd||!w||w<=0){out.style.color='#c9d8ff';out.innerHTML='Введите стоимость ($) и вес (кг) вашей партии — сравним с проходной по коду.';return;}
   const my=usd/w,ref=d.usd_per_kg,ratio=my/ref;
+  const zkts='<div style="margin-top:7px;font-size:12.5px;color:#9aa8c6">Это не автоматическая доплата: по позиции Верховного Суда РФ (Пленум № 49 от 26.11.2019) доказывать занижение обязана таможня. Отбить корректировку помогают контракт, инвойс, прайс завода и подтверждение оплаты — подайте их на этапе доп. проверки.</div>';
   let msg;
   if(ratio>=0.9){out.style.color='#5bffc0';msg='🟢 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> в рынке (ориентир ≈ $'+ref+'/кг). Риск корректировки низкий.';}
-  else if(ratio>=0.6){out.style.color='#f0d03a';msg='🟡 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> ниже средней ($'+ref+'/кг). Возможен вопрос таможни — держите инвойс, прайс поставщика и подтверждение оплаты.';}
-  else{out.style.color='#ff8080';msg='🔴 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> сильно ниже проходной ($'+ref+'/кг). Высокий риск корректировки таможенной стоимости (КТС): пошлину и НДС могут доначислить исходя из ≈ $'+ref+'/кг.';}
+  else if(ratio>=0.6){out.style.color='#f0d03a';msg='🟡 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> ниже ориентира ($'+ref+'/кг) — таможня может запросить обоснование стоимости.'+zkts;}
+  else{out.style.color='#ff8080';msg='🔴 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> заметно ниже ориентира ($'+ref+'/кг) — повышенный риск проверки таможенной стоимости.'+zkts;}
   out.innerHTML=msg;
 }
 ['passUsd','passW'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',passRender);});
@@ -1256,7 +1257,7 @@ function wlApply(){
   // подвал: клиентский + «работает на ДалДобро»
   if(foot)foot.innerHTML='<b>'+(W.name||'')+'</b> — расчёт ориентировочный, точную ставку уточняйте у менеджера.<br>'+
     (W.contacts&&W.contacts.email?W.contacts.email+' · ':'')+
-    '<a href="https://daldobro.ru" style="color:#a9c2ff">работает на технологии ДалДобро</a>';
+    '<a href="https://www.daldobro.ru" style="color:#a9c2ff">работает на технологии ДалДобро</a>';
   // наши кнопки-продажи не показываем на чужой витрине
   const cl=document.querySelector('.bk-claim'); if(cl)cl.remove();
 }
