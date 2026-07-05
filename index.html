@@ -435,6 +435,15 @@
           <tr><td id="vatL">НДС</td><td id="vat_"></td></tr>
         </table>
         <div class="hint" id="hint" style="display:none"></div>
+        <div id="passBox" style="display:none;margin:14px 0 4px;padding:14px;background:rgba(58,215,200,.06);border:1px solid rgba(58,215,200,.3);border-radius:14px">
+          <div style="font-size:14.5px;color:#bfe9df;font-weight:700">📊 Проходная по коду <span id="passKg"></span></div>
+          <div id="passStat" style="font-size:13px;color:var(--mut);margin:6px 0 10px"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <input id="passUsd" type="number" placeholder="стоимость партии, $" style="flex:1;min-width:120px;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
+            <input id="passW" type="number" placeholder="вес партии, кг" style="flex:1;min-width:100px;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
+          </div>
+          <div id="passOut" style="margin-top:10px;font-size:13.5px;line-height:1.5;color:#c9d8ff"></div>
+        </div>
         <div class="acts" id="acts" style="display:none">
           <button class="prim" onclick="printDoc()">🖨 Распечатать / PDF</button>
           <button onclick="shareRes()">📤 Поделиться</button>
@@ -657,7 +666,7 @@ async function calc(chosen){
       rb.textContent=nAlts?'есть варианты — проверьте ниже':'код зависит от деталей — опишите товар точнее';
       rb.className='badge '+(d.risk_level==='высокий'&&nAlts?'b-high':'b-mid');
     }
-    window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code); loadMarket(d.code,d.term||term.value);
+    window._lastD=d; renderBd(d); saveHist(d); loadBrokers(d.code); loadMarket(d.code,d.term||term.value); loadTrade(d.code);
     if(!window.WL)ddTrack('calc',{c:d.code||'',q:(d.term||term.value||'').slice(0,60)});
     document.getElementById('acts').style.display='flex';
     document.getElementById('shareMenu').classList.remove('open');
@@ -946,6 +955,35 @@ function coName(s){
 let _mkt=null;
 function openReg(){document.getElementById('regModal').classList.add('show');}
 function closeReg(){document.getElementById('regModal').classList.remove('show');}
+// «Проходная» по коду: средняя цена ввоза из Китая (Comtrade) + интерактивная проверка своей цены за кг
+async function loadTrade(code){
+  const box=document.getElementById('passBox');
+  if(!code){box.style.display='none';return;}
+  try{
+    const d=await(await fetch(API+'/trade?code='+encodeURIComponent(code))).json();
+    if(!d||!d.usd_per_kg){box.style.display='none';return;}
+    window._trade=d;
+    const t=d.weight_kg/1000, tt=t>=1000?(Math.round(t/100)/10+' тыс. т'):(Math.round(t)+' т');
+    const val=d.value_usd>=1e9?('$'+(Math.round(d.value_usd/1e8)/10)+' млрд'):('$'+Math.round(d.value_usd/1e6)+' млн');
+    document.getElementById('passKg').innerHTML='≈ <b style="color:#5bffc0">$'+d.usd_per_kg+'/кг</b>';
+    document.getElementById('passStat').textContent='Официальный ввоз из Китая ('+d.year+'): '+tt+' на '+val+'. Таможня сравнивает вашу цену за кг с этим ориентиром.';
+    passRender();
+    box.style.display='block';
+    box.classList.remove('mc-pulse'); void box.offsetWidth; box.classList.add('mc-pulse');
+  }catch(e){box.style.display='none';}
+}
+function passRender(){
+  const d=window._trade,out=document.getElementById('passOut'); if(!d||!out)return;
+  const usd=+document.getElementById('passUsd').value,w=+document.getElementById('passW').value;
+  if(!usd||!w||w<=0){out.style.color='#c9d8ff';out.innerHTML='Введите стоимость ($) и вес (кг) вашей партии — сравним с проходной по коду.';return;}
+  const my=usd/w,ref=d.usd_per_kg,ratio=my/ref;
+  let msg;
+  if(ratio>=0.9){out.style.color='#5bffc0';msg='🟢 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> в рынке (ориентир ≈ $'+ref+'/кг). Риск корректировки низкий.';}
+  else if(ratio>=0.6){out.style.color='#f0d03a';msg='🟡 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> ниже средней ($'+ref+'/кг). Возможен вопрос таможни — держите инвойс, прайс поставщика и подтверждение оплаты.';}
+  else{out.style.color='#ff8080';msg='🔴 Ваша цена <b>$'+my.toFixed(2)+'/кг</b> сильно ниже проходной ($'+ref+'/кг). Высокий риск корректировки таможенной стоимости (КТС): пошлину и НДС могут доначислить исходя из ≈ $'+ref+'/кг.';}
+  out.innerHTML=msg;
+}
+['passUsd','passW'].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',passRender);});
 async function loadMarket(code,termq){
   const card=document.getElementById('marketCard');
   if(window.WL||(!code&&(!termq||termq.length<3))){card.style.display='none';return;}
