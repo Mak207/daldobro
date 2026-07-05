@@ -2,10 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://www.daldobro.ru/</loc><changefreq>daily</changefreq><priority>1.0</priority></url>
   <url><loc>https://www.daldobro.ru/rastamozhka/</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/guide/</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.daldobro.ru/routes.html</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
   <url><loc>https://www.daldobro.ru/widget.html</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
   <url><loc>https://www.daldobro.ru/claim.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.daldobro.ru/indices.html</loc><changefreq>daily</changefreq><priority>0.7</priority></url>
+  <url><loc>https://www.daldobro.ru/kalkulyator-rastamozhki-tovarov-iz-kitaya.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/poshlina-na-tovary-iz-kitaya-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/skolko-stoit-rastamozhka-iz-kitaya-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/kod-tn-ved-po-naimenovaniyu-tovara.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/tn-ved-chto-eto-rasshifrovka.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/poshlina-ozon-wb-fiz-lica-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka-avto-iz-kitaya-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://www.daldobro.ru/rastamozhka/holodilnik.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.daldobro.ru/rastamozhka/stiralnaya-mashina.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.daldobro.ru/rastamozhka/pylesos.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
@@ -39,12 +47,23 @@
   <url><loc>https://www.daldobro.ru/rastamozhka/avtomobilnye-shiny.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.daldobro.ru/rastamozhka/posuda.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.daldobro.ru/rastamozhka/kosmetika.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.daldobro.ru/rastamozhka/keramicheskaya-plitka.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://www.daldobro.ru/kalkulyator-rastamozhki-tovarov-iz-kitaya.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.daldobro.ru/poshlina-na-tovary-iz-kitaya-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.daldobro.ru/skolko-stoit-rastamozhka-iz-kitaya-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.daldobro.ru/kod-tn-ved-po-naimenovaniyu-tovara.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.daldobro.ru/tn-ved-chto-eto-rasshifrovka.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.daldobro.ru/poshlina-ozon-wb-fiz-lica-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
-  <url><loc>https://www.daldobro.ru/rastamozhka-avto-iz-kitaya-2026.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/keramicheskaya-plitkakrovati-medicinskie.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/holodilnik-bytovoy.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/shokoladnye-konfety.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/file-semgi-morozhenoe.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/chaynik-elektricheskiy.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/utyug.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/blender.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/mikser.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/toster.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/sokovyzhimalka.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/myasorubka-elektricheskaya.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/fen-dlya-volos.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/vypryamitel-dlya-volos.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/mashinka-dlya-strizhki-volos.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/elektrobritva.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/vesy-napolnye.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/proektor.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/monitor-kompyuternyy.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.daldobro.ru/rastamozhka/veb-kamera.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
