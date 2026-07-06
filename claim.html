@@ -28,6 +28,16 @@ h1{font-size:clamp(24px,5vw,34px);margin:32px 0 8px;font-weight:900}
 .plan .p{font-size:23px;font-weight:900;background:linear-gradient(90deg,#7db0ff,#3ad7c8);-webkit-background-clip:text;background-clip:text;color:transparent}
 .plan .d{color:var(--mut);font-size:12.5px;line-height:1.55;margin-top:8px}
 .plan .hit{position:absolute;top:-9px;right:12px;font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;background:linear-gradient(100deg,#5b8cff,#7c5cff);color:#fff}
+.grp{margin:24px 0 8px}
+.grp-h{font-size:16px;font-weight:800;color:#dbe6fb;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.grp-s{font-size:13px;color:var(--mut);margin:0 0 14px}
+.plan .p .per{font-size:13px;font-weight:600;color:var(--mut);-webkit-text-fill-color:var(--mut)}
+.plan .p .old{font-size:13px;color:#7787a5;text-decoration:line-through;font-weight:400;-webkit-text-fill-color:#7787a5}
+.plan .for{font-size:12.5px;color:#8fd7ff;margin:8px 0 10px;font-weight:700}
+.plan .feat{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px}
+.plan .feat li{font-size:12.5px;color:var(--mut);padding-left:18px;position:relative;line-height:1.42}
+.plan .feat li:before{content:"✓";position:absolute;left:0;color:var(--good);font-weight:800}
+.plan .note{font-size:11.5px;color:#8fa0bf;margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0}
 .card h2{margin:0 0 12px;font-size:18px}
 label{display:block;font-size:12.5px;color:var(--mut);margin:12px 0 6px}
@@ -87,15 +97,60 @@ input:focus{outline:none;border-color:var(--acc)}
 <nav><a class="logo" href="/"><img src="/logo.png" alt="">Дал<b>Добро</b></a><a class="back" href="/">← на главную</a></nav>
 
 <h1>Тарифы ДалДобро</h1>
-<p class="sub">Аудитория ДалДобро — импортёры в момент принятия решения: они уже посчитали себестоимость и выбирают, с кем везти. Подключение онлайн, активация после оплаты в течение рабочего дня.</p>
+<p class="sub">Расчёт себестоимости, подбор кода ТН ВЭД и калькулятор — <b>бесплатно и без регистрации</b>. Платные тарифы — для двух ролей. Выберите свою. Подключение онлайн, активация после оплаты в течение рабочего дня.</p>
 
-<div class="plans" id="plans">
-  <div class="plan" data-plan="card_month"><div class="t">Карточка исполнителя</div><div class="p">9 900 ₽/мес</div><div class="d">Ваша компания в панели расчёта: имя-ссылка на ваш профиль, факты из реестра ФТС, контакт. Показ рядом с каждым расчётом.</div></div>
-  <div class="plan" data-plan="card_year"><span class="hit">2 месяца в подарок</span><div class="t">Карточка · год</div><div class="p">99 000 ₽/год</div><div class="d">То же, на год. Дешевле в пересчёте на месяц + приоритет в категории.</div></div>
-  <div class="plan" data-plan="check_full"><div class="t">Полная проверка контрагента</div><div class="p">990 ₽</div><div class="d">Разовый отчёт: статус в реестре ФТС, финансы, возраст, история включений и сигналы рынка по компании.</div></div>
-  <div class="plan" data-plan="alerts_month"><div class="t">Алерты и мониторинг</div><div class="p">1 490 ₽/мес</div><div class="d">Пуш в Telegram при событиях по вашим направлениям: скачки индексов, изменения правил, статус брокера.</div></div>
-  <div class="plan" data-plan="whitelabel_month"><span class="hit">цена запуска — первым клиентам</span><div class="t">Калькулятор под вашим брендом</div><div class="p">1 990 ₽/мес <span style="font-size:13px;color:#7787a5;text-decoration:line-through;font-weight:400">14 900 ₽</span></div><div class="d">Наш калькулятор — под вашим брендом: ваша страница, ваши ставки доставки, ваш Telegram-бот, блок о вашей компании вместо чужих брокеров. Запуск за 2 минуты после оплаты, QR и вставка на ваш сайт.</div></div>
-  <div class="plan" data-plan="indices_pro"><div class="t">Индексы PRO</div><div class="p">4 900 ₽/мес</div><div class="d">Алерты «раньше всех» в Telegram, срезы по маршрутам (море/жд/авиа, порт→порт), выгрузка Excel и API. Все ставки — <b>средние по рынку</b> (ориентиры для переговоров, не точные котировки). Текущие значения — бесплатно на сайте.</div></div>
+<div class="grp">
+  <div class="grp-h">🧭 Импортёру — данные и защита сделки</div>
+  <div class="grp-s">Вы везёте товар из Китая и хотите не переплатить и не нарваться.</div>
+  <div class="plans" id="plansImp">
+    <div class="plan" data-plan="check_full">
+      <div class="t">Проверка контрагента</div>
+      <div class="p">990 ₽ <span class="per">разово</span></div>
+      <div class="for">Перед оплатой брокеру или поставщику</div>
+      <ul class="feat"><li>Статус в реестре таможенных представителей ФТС</li><li>Финансы, возраст, история включений</li><li>Рыночные сигналы по компании</li></ul>
+    </div>
+    <div class="plan" data-plan="alerts_month">
+      <div class="t">Алерты и мониторинг</div>
+      <div class="p">1 490 ₽ <span class="per">/мес</span></div>
+      <div class="for">Не пропустить важное по своим направлениям</div>
+      <ul class="feat"><li>Пуш в Telegram при событиях</li><li>Скачки индексов, изменения правил</li><li>Смена статуса вашего брокера</li></ul>
+      <div class="note">⚠️ Только уведомления-сигналы. Без самих данных и выгрузок — за ними в «Индексы PRO».</div>
+    </div>
+    <div class="plan" data-plan="indices_pro">
+      <div class="t">Индексы PRO</div>
+      <div class="p">4 900 ₽ <span class="per">/мес</span></div>
+      <div class="for">Работать со ставками как с цифрами</div>
+      <ul class="feat"><li>Ставки по маршрутам: море / жд / авиа, порт→порт</li><li>Выгрузка в Excel и доступ по API</li><li>Те же алерты, но «раньше всех»</li></ul>
+      <div class="note">Всё из «Алертов» + сами данные. Ставки — средние по рынку (ориентир для переговоров). Текущие значения видны на сайте бесплатно.</div>
+    </div>
+  </div>
+</div>
+
+<div class="grp">
+  <div class="grp-h">🤝 Исполнителю — попасть к клиентам в момент выбора</div>
+  <div class="grp-s">Вы брокер или логист. Наши пользователи уже посчитали себестоимость и выбирают, с кем везти — покажитесь им здесь.</div>
+  <div class="plans" id="plansExe">
+    <div class="plan" data-plan="card_month">
+      <div class="t">Карточка исполнителя</div>
+      <div class="p">9 900 ₽ <span class="per">/мес</span></div>
+      <div class="for">Быть в каждом расчёте себестоимости</div>
+      <ul class="feat"><li>Ваша компания в панели расчёта</li><li>Ссылка на профиль + факты из реестра ФТС</li><li>Контакт рядом с каждым расчётом клиента</li></ul>
+    </div>
+    <div class="plan" data-plan="card_year">
+      <span class="hit">2 месяца в подарок</span>
+      <div class="t">Карточка · на год</div>
+      <div class="p">99 000 ₽ <span class="per">/год</span></div>
+      <div class="for">То же выгоднее + приоритет</div>
+      <ul class="feat"><li>Всё из «Карточки», на 12 месяцев</li><li>Дешевле в пересчёте на месяц</li><li>Приоритет показа в своей категории</li></ul>
+    </div>
+    <div class="plan" data-plan="whitelabel_month">
+      <span class="hit">цена запуска</span>
+      <div class="t">Калькулятор под брендом</div>
+      <div class="p">1 990 ₽ <span class="per">/мес</span> <span class="old">14 900 ₽</span></div>
+      <div class="for">Свой калькулятор на свой сайт за 2 минуты</div>
+      <ul class="feat"><li>Ваш бренд, ваши ставки доставки</li><li>Ваш Telegram-бот, блок о вашей компании</li><li>Готовый QR и код для вставки на сайт</li></ul>
+    </div>
+  </div>
 </div>
 
 <div class="card">
