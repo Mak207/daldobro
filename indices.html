@@ -62,9 +62,21 @@ svg{width:100%;height:190px;display:block}
 
 <div class="card">
   <div class="now"><b id="cargoNow">—</b><span>медианная ставка карго, $/кг</span></div>
-  <h2>Карго-прайс-индекс <span class="badge b-acc">ряд накапливается</span></h2>
-  <p>Реальная стоимость доставки «карго» из Китая в $/кг — по ценовым сигналам рынка, а не по прайсам с сайтов. Точек пока немного: показываем последний замер, ряд пополняется ежедневным сбором.</p>
+  <h2>Карго-прайс-индекс</h2>
+  <p>Стоимость доставки «карго» из Китая в $/кг. Показываем текущее значение и тренд, обновляется ежедневно.</p>
   <svg id="chCargo" viewBox="0 0 900 190" preserveAspectRatio="none"></svg>
+</div>
+
+<div class="card">
+  <div class="now"><b id="railNow">—</b><span>ставка ЖД-доставки из Китая, за контейнер</span></div>
+  <h2>Железная дорога</h2>
+  <p>Во сколько обходится доставка контейнера из Китая по железной дороге. Обновляется ежедневно.</p>
+</div>
+
+<div class="card">
+  <div class="now"><b id="worldNow">—</b><span>мировой контейнерный фрахт, за 40 футов</span></div>
+  <h2>Мировой фрахт</h2>
+  <p>Общий уровень цен на морские контейнерные перевозки — фон для стоимости ввоза. Обновляется ежедневно.</p>
 </div>
 
 <div class="card" style="border-color:rgba(91,140,255,.3)">
@@ -82,7 +94,7 @@ svg{width:100%;height:190px;display:block}
   <a href="https://t.me/DalDobro_media" style="background:linear-gradient(100deg,#2f9cf5,#3ad7c8)">Подписаться на канал →</a>
 </div>
 
-<div class="foot"><b>ДалДобро</b> — независимый навигатор по ввозу из Китая. Индексы рассчитываются по собственной методике на агрегированных обезличенных данных рынка; значения навигационные и не являются офертой. © ДалДобро · <a href="/" style="color:#a9c2ff">daldobro.ru</a></div>
+<div class="foot"><b>ДалДобро</b> — независимый навигатор по ввозу из Китая. Значения навигационные и не являются офертой. © ДалДобро · <a href="/" style="color:#a9c2ff">daldobro.ru</a></div>
 </div>
 
 <script>
@@ -109,6 +121,9 @@ fetch('data/indices.json').then(r=>r.json()).then(d=>{
   if(pain.length){document.getElementById('painNow').textContent=pain[pain.length-1].v+'%';}
   if(comm.length){document.getElementById('commNow').textContent=comm[comm.length-1].v+'%';}
   if(cargo.length){document.getElementById('cargoNow').textContent='$'+cargo[cargo.length-1].v;}
+  const meta=d.meta||{};
+  if(meta.rail_erai){document.getElementById('railNow').textContent='$'+meta.rail_erai.toLocaleString('ru');}
+  if(meta.world_wci){document.getElementById('worldNow').textContent='$'+meta.world_wci.toLocaleString('ru');}
   // на сайте — бесплатно только текущее значение и тренд за полгода; полная история и срезы — в PRO
   chart('chPain',pain.slice(-6),'#ff6a5a','%');
   chart('chComm',comm.slice(-6),'#f0b03a','%');
