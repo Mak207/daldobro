@@ -1274,5 +1274,37 @@ wlApply();
     <button class="reg-close" onclick="closeReg()">Позже</button>
   </div>
 </div>
+<!-- виджет обратной связи -->
+<div id="fbBtn" onclick="fbOpen()" title="Сообщить об ошибке или предложить улучшение" style="position:fixed;right:20px;bottom:20px;z-index:9000;width:56px;height:56px;border-radius:50%;background:linear-gradient(100deg,#5b8cff,#7c5cff);box-shadow:0 8px 24px rgba(91,140,255,.45);display:flex;align-items:center;justify-content:center;font-size:26px;cursor:pointer;user-select:none">💬</div>
+<div id="fbModal" style="display:none;position:fixed;inset:0;z-index:9001;background:rgba(4,7,16,.7);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px" onclick="if(event.target===this)fbClose()">
+  <div style="max-width:440px;width:100%;background:#0e1424;border:1px solid rgba(120,140,190,.2);border-radius:18px;padding:22px">
+    <div style="font-size:18px;font-weight:800;color:#eaf0fb">Обратная связь</div>
+    <div style="font-size:13.5px;color:#9aa8c6;margin:8px 0 14px;line-height:1.5">Заметили ошибку, есть пожелание или недочёт? Напишите — <b style="color:#cfe0ff">всё принимаем в работу</b>. Это помогает делать сервис лучше.</div>
+    <textarea id="fbText" placeholder="Что не так или что улучшить…" style="width:100%;min-height:110px;padding:12px;background:rgba(10,15,28,.7);border:1px solid rgba(120,140,190,.2);border-radius:12px;color:#eaf0fb;font-size:14px;font-family:inherit;resize:vertical"></textarea>
+    <input id="fbEmail" placeholder="e-mail для ответа (по желанию)" style="width:100%;margin-top:10px;padding:11px 12px;background:rgba(10,15,28,.7);border:1px solid rgba(120,140,190,.2);border-radius:10px;color:#eaf0fb;font-size:13.5px">
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button onclick="fbClose()" style="flex:0 0 auto;padding:11px 18px;border:1px solid rgba(120,140,190,.25);background:transparent;color:#9aa8c6;border-radius:11px;font-weight:700;cursor:pointer">Отмена</button>
+      <button id="fbSendBtn" onclick="fbSend()" style="flex:1;padding:11px;border:0;background:linear-gradient(100deg,#5b8cff,#7c5cff);color:#fff;border-radius:11px;font-weight:800;cursor:pointer">Отправить →</button>
+    </div>
+    <div id="fbMsg" style="font-size:13px;margin-top:10px;min-height:18px"></div>
+  </div>
+</div>
+<script>
+function fbOpen(){document.getElementById('fbModal').style.display='flex';document.getElementById('fbText').focus();if(window.ddTrack)ddTrack('feedback_open');}
+function fbClose(){document.getElementById('fbModal').style.display='none';document.getElementById('fbMsg').textContent='';}
+async function fbSend(){
+  var t=document.getElementById('fbText').value.trim(),m=document.getElementById('fbMsg'),b=document.getElementById('fbSendBtn');
+  if(t.length<3){m.style.color='#ff8080';m.textContent='Напишите пару слов — что случилось или что улучшить.';return;}
+  b.disabled=true;b.textContent='Отправляю…';
+  try{
+    await fetch((typeof API!=='undefined'?API:'https://api.201-51-30-177.sslip.io')+'/feedback',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:t,email:document.getElementById('fbEmail').value.trim(),page:location.pathname})});
+    m.style.color='#5bffc0';m.textContent='Спасибо! Приняли в работу.';
+    document.getElementById('fbText').value='';document.getElementById('fbEmail').value='';
+    if(window.ddTrack)ddTrack('feedback_sent');
+    setTimeout(fbClose,1600);
+  }catch(e){m.style.color='#ff8080';m.textContent='Не отправилось. Попробуйте ещё раз или напишите hello@daldobro.ru';}
+  finally{b.disabled=false;b.textContent='Отправить →';}
+}
+</script>
 </body>
 </html>
