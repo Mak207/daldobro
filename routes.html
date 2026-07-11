@@ -37,7 +37,7 @@ tr:last-child td{border-bottom:0}
 .cta a{padding:12px 20px;border-radius:12px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff);white-space:nowrap}
 .foot{color:var(--mut);font-size:12.5px;border-top:1px solid var(--line);padding:20px 0 40px;line-height:1.7;margin-top:30px}
 .foot a{color:#a9c2ff}
-</style></head>
+.thold-port{min-height:132px}.thold-sea{min-height:447px}@media(max-width:820px){.thold-sea{min-height:643px}}</style></head>
 <body>
 <div class="bg"></div>
 <div class="wrap">
@@ -47,7 +47,7 @@ tr:last-child td{border-bottom:0}
 <p class="sub">Как реально едет груз из Китая — море, ЖД, авиа. Сроки и частота — по расписаниям перевозчиков, обновляются автоматически. Ставки по вашему направлению — в <a href="/claim.html?plan=indices_pro" style="color:#8fb4ff">Индексах PRO</a> (реальные цены «до РФ», которых нет в мировых индексах).</p>
 <span class="upd" id="upd">обновлено —</span>
 
-<div id="cciBox" style="display:none;margin:14px 0;padding:16px 18px;border:1px solid rgba(58,215,200,.35);border-radius:14px;background:rgba(58,215,200,.05)">
+<div id="cciBox" style="margin:14px 0;padding:16px 18px;border:1px solid rgba(58,215,200,.35);border-radius:14px;background:rgba(58,215,200,.05)">
   <div style="font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#7f92b8">Рыночный бенчмарк · обновляется ежемесячно</div>
   <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-top:6px">
     <b style="font-size:24px;color:#5bffc0" id="cciVal">—</b>
@@ -59,11 +59,11 @@ tr:last-child td{border-bottom:0}
 
 <h2>🚢 Море: ставки по портам входа в РФ <span style="font-size:13px;font-weight:400;color:var(--mut)">— тарифы FESCO, $/контейнер</span></h2>
 <p class="mut">Реальные датированные ставки океанского фрахта FESCO по портам прибытия. К фрахту добавляются THC и надбавки. Это ориентир — точную цену подтверждает перевозчик.</p>
-<table id="portTbl"><thead><tr><th>Порт входа в РФ</th><th>Направление</th><th>20′DC</th><th>40′HC</th><th>Действует</th></tr></thead><tbody id="portBody"><tr><td colspan="5" style="color:var(--mut)">загрузка…</td></tr></tbody></table>
+<div class="thold thold-port"><table id="portTbl"><thead><tr><th>Порт входа в РФ</th><th>Направление</th><th>20′DC</th><th>40′HC</th><th>Действует</th></tr></thead><tbody id="portBody"><tr><td colspan="5" style="color:var(--mut)">загрузка…</td></tr></tbody></table></div>
 
 <h2>🚢 Море: Китай → Владивосток</h2>
 <p class="mut">Основной маршрут для тяжёлых и объёмных грузов. Данные — по расписанию линий FESCO (China Direct Line), самого крупного оператора на Дальний Восток.</p>
-<table id="seaTbl"><thead><tr><th>Порт отправления (Китай)</th><th>Транзит до Владивостока</th><th>Частота</th><th>Ставка</th></tr></thead><tbody id="seaBody"><tr><td colspan="4" style="color:var(--mut)">загрузка…</td></tr></tbody></table>
+<div class="thold thold-sea"><table id="seaTbl"><thead><tr><th>Порт отправления (Китай)</th><th>Транзит до Владивостока</th><th>Частота</th><th>Ставка</th></tr></thead><tbody id="seaBody"><tr><td colspan="4" style="color:var(--mut)">загрузка…</td></tr></tbody></table></div>
 <p class="mut">Далее из Владивостока — таможенное оформление (Владивостокская / Находкинская таможня) и ЖД/авто по РФ.</p>
 
 <h2>🎯 Нужна точная цена доставки?</h2>
@@ -171,8 +171,9 @@ fetch('data/erai.json').then(r=>r.json()).then(e=>{
   if(e.west_usd_feu){const c=document.getElementById('eraiCell');if(c)c.innerHTML='<b style="color:#5bffc0">$'+Math.round(e.west_usd_feu)+'/FEU</b>';}
 }).catch(()=>{});
 // ЦЦИ — публичный контейнерный индекс Китай→РФ (бенчмарк)
+const _cciHide=()=>{const b=document.getElementById('cciBox');if(b)b.style.display='none';};
 fetch('data/cci.json').then(r=>r.json()).then(c=>{
-  if(!c.value_usd_feu)return;
+  if(!c.value_usd_feu){_cciHide();return;}
   document.getElementById('cciBox').style.display='block';
   document.getElementById('cciVal').textContent='$'+c.value_usd_feu.toLocaleString('ru-RU')+' / 40′';
   if(c.route)document.getElementById('cciRoute').textContent=c.route;
@@ -182,7 +183,7 @@ fetch('data/cci.json').then(r=>r.json()).then(c=>{
   if(c.mom_pct!=null)parts.push((c.mom_pct>=0?'+':'')+c.mom_pct+'% м/м');
   if(c.yoy_pct!=null)parts.push((c.yoy_pct>=0?'+':'')+c.yoy_pct+'% г/г');
   if(parts.length)d.innerHTML='<span style="color:'+(c.mom_pct>=0?'#ff9b6b':'#5bffc0')+'">'+parts.join(' · ')+'</span>';
-}).catch(()=>{});
+}).catch(()=>{_cciHide();});
 // FESCO — тарифы по портам входа в РФ (Новороссийск, СПб, …)
 fetch('data/fesco_tariffs.json').then(r=>r.json()).then(f=>{
   const b=document.getElementById('portBody'), ps=(f.ports||[]).filter(p=>p.ct40_usd);

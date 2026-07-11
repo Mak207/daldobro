@@ -22,7 +22,7 @@
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
   body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);overflow-x:hidden;-webkit-font-smoothing:antialiased}
-  a{color:var(--acc);text-decoration:none}p a,li a,td a,.trust a,footer a{text-decoration:underline;text-underline-offset:2px}a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #7db0ff;outline-offset:2px}
+  a{color:var(--acc);text-decoration:none}
   /* ── анимированный фон: плавающие светящиеся сферы + сетка ── */
   .bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(1200px 800px at 80% -10%,#12204a 0%,transparent 60%),radial-gradient(1000px 700px at -10% 20%,#1a1140 0%,transparent 55%),linear-gradient(180deg,#080b16,#0a1020)}
   .orb{position:fixed;border-radius:50%;filter:blur(70px);opacity:.5;z-index:-1;animation:float 18s ease-in-out infinite}
@@ -378,7 +378,7 @@
       </div>
       <div class="row">
         <div><label>Страховка, ₽</label><input id="insurance" type="number" placeholder="0, если без страховки"></div>
-        <div><label for="vat">Ставка НДС</label><select id="vat"><option value="22">22% (общая)</option><option value="10">10% (льготная)</option></select></div>
+        <div><label>Ставка НДС</label><select id="vat"><option value="22">22% (общая)</option><option value="10">10% (льготная)</option></select></div>
       </div>
       <div id="qtyWrap"><label id="qtyLabel">Количество</label><input id="qty" type="number" placeholder="для пошлины за единицу"></div>
       <button class="btn" id="go" onclick="calc()">Рассчитать себестоимость →</button>
@@ -397,10 +397,10 @@
       <div id="freightHelp" style="font-size:13px;margin-bottom:10px"></div>
       <div id="freightCalc" style="display:none">
         <div style="display:grid;grid-template-columns:1fr;gap:8px">
-          <div><label for="frFrom" style="font-size:11px">Откуда (Китай)</label><select id="frFrom" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
-          <div><label for="frPort" style="font-size:11px">Порт прибытия в РФ</label><select id="frPort" onchange="onPortChange()" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select><div id="frPortInfo" style="font-size:11px;color:var(--mut);margin-top:3px"></div></div>
-          <div><label for="frTo" style="font-size:11px">Куда (город РФ)</label><select id="frTo" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
-          <div><label for="frCust" style="font-size:11px">Город таможни</label><select id="frCust" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+          <div><label style="font-size:11px">Откуда (Китай)</label><select id="frFrom" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+          <div><label style="font-size:11px">Порт прибытия в РФ</label><select id="frPort" onchange="onPortChange()" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select><div id="frPortInfo" style="font-size:11px;color:var(--mut);margin-top:3px"></div></div>
+          <div><label style="font-size:11px">Куда (город РФ)</label><select id="frTo" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
+          <div><label style="font-size:11px">Город таможни</label><select id="frCust" style="width:100%;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px"></select></div>
         </div>
         <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
           <input id="frWeight" type="number" placeholder="вес, кг" style="flex:1;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
