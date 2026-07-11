@@ -425,6 +425,7 @@
         <div class="tot-hero"><span>Итого себестоимость ввоза</span><b id="total"></b></div>
         <div><span class="code" id="code"></span><span class="badge" id="risk"></span></div>
         <div class="code-nm" id="codeName"></div>
+        <div id="ftsBox"></div>
         <div class="src" id="name"></div>
         <div class="bd" id="bdBar" style="display:none"></div>
         <div class="bd-leg" id="bdLeg"></div>
@@ -635,6 +636,7 @@ async function calc(chosen){
     else{qw.style.display='none';qw.classList.remove('need');}
     document.getElementById('code').textContent=fmtCode(d.code);
     document.getElementById('codeName').textContent=human(d.code_name);
+    renderFts(d.code);
     const userPick=(d.code_source||'').includes('выбор');
     const ri=userPick?{t:'ваш выбор ✓',cls:'b-low'}:riskInfo(d.risk_level||''),rb=document.getElementById('risk');
     rb.textContent=ri.t; rb.className='badge '+ri.cls;
@@ -700,6 +702,19 @@ if('IntersectionObserver' in window){
   rio.observe(document.querySelector('.res-card'));
 }
 // карточки похожих кодов: варианты из альтернатив + уточнений ИИ, всегда когда есть что выбрать
+async function renderFts(code){
+  var box=document.getElementById('ftsBox'); if(!box)return; box.innerHTML='';
+  code=(''+(code||'')).replace(/[^0-9]/g,''); if(code.length<6)return;
+  try{
+    var d=await (await fetch(API+'/clasres?code='+code)).json();
+    var all=d.items||[];
+    var act=all.filter(function(x){return x.goods && x.goods.charAt(0)!=='(';});
+    var it=act.length?act:all;
+    if(!it.length)return;
+    var rows=it.slice(0,4).map(function(x){var g=document.createElement('div');g.textContent=x.goods;return '<div style="font-size:12px;color:var(--mut,#8aa2c4);padding:5px 0;border-top:1px solid rgba(255,255,255,.06);line-height:1.4">'+g.innerHTML+'</div>';}).join('');
+    box.innerHTML='<div style="font-size:12px;font-weight:700;color:#7fd1c4;margin:10px 0 2px">\uD83D\uDCCB Официально классифицировано ФТС под этим кодом:</div>'+rows;
+  }catch(e){}
+}
 function renderAlts(d){
   const box=document.getElementById('altBox'),cb=document.getElementById('clarifyBox'),btn=document.getElementById('altBtn');
   cb.style.display='none';box.classList.remove('open');
