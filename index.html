@@ -426,6 +426,7 @@
         <div><span class="code" id="code"></span><span class="badge" id="risk"></span></div>
         <div class="code-nm" id="codeName"></div>
         <div id="ftsBox"></div>
+        <div id="sudBox"></div>
         <div class="src" id="name"></div>
         <div class="bd" id="bdBar" style="display:none"></div>
         <div class="bd-leg" id="bdLeg"></div>
@@ -637,6 +638,7 @@ async function calc(chosen){
     document.getElementById('code').textContent=fmtCode(d.code);
     document.getElementById('codeName').textContent=human(d.code_name);
     renderFts(d.code);
+    renderSud(d.code);
     const userPick=(d.code_source||'').includes('выбор');
     const ri=userPick?{t:'ваш выбор ✓',cls:'b-low'}:riskInfo(d.risk_level||''),rb=document.getElementById('risk');
     rb.textContent=ri.t; rb.className='badge '+ri.cls;
@@ -713,6 +715,35 @@ async function renderFts(code){
     if(!it.length)return;
     var rows=it.slice(0,4).map(function(x){var g=document.createElement('div');g.textContent=x.goods;return '<div style="font-size:12px;color:var(--mut,#8aa2c4);padding:5px 0;border-top:1px solid rgba(255,255,255,.06);line-height:1.4">'+g.innerHTML+'</div>';}).join('');
     box.innerHTML='<div style="font-size:12px;font-weight:700;color:#7fd1c4;margin:10px 0 2px">\uD83D\uDCCB Официально классифицировано ФТС под этим кодом:</div>'+rows;
+  }catch(e){}
+}
+async function renderSud(code){
+  var box=document.getElementById('sudBox'); if(!box)return; box.innerHTML='';
+  code=(''+(code||'')).replace(/[^0-9]/g,'');
+  try{
+    var url=API+'/sudpract'+(code.length>=6?('?code='+code.slice(0,6)):'');
+    var d=await (await fetch(url)).json();
+    var s=d.summary||{}; if(!s.total)return;
+    var head='<div style="font-size:12px;font-weight:700;color:#e0b877;margin:12px 0 4px">⚖️ Таможенная стоимость: практика арбитражных судов</div>';
+    var lead;
+    if(d.matched && d.by_code){
+      var bc=d.by_code;
+      lead='<div style="font-size:12px;color:var(--mut,#8aa2c4);line-height:1.5">Споров по этому коду в практике: <b>'+bc.n+'</b>'
+        +(bc.declarant?(', в пользу импортёра — <b style="color:#7fd1c4">'+bc.declarant+'</b>'):'')+'.</div>';
+    } else {
+      lead='<div style="font-size:12px;color:var(--mut,#8aa2c4);line-height:1.5">В изученной практике по спорам о таможенной стоимости импортёры отстояли заявленную цену в <b style="color:#7fd1c4">'+s.declarant_share+'%</b> дел ('+s.declarant+' из '+s.total+').</div>';
+    }
+    var ex=(d.matched && d.by_code && d.by_code.cases && d.by_code.cases.length)?d.by_code.cases:(d.examples||[]);
+    var rows=ex.slice(0,3).map(function(x){
+      var win=x.outcome==='declarant';
+      var price=(x.declared!=null?('заявлено '+x.declared+' $/кг'):'')+(x.customs!=null?((x.declared!=null?', ':'')+'таможня '+x.customs+' $/кг'):'');
+      var g=document.createElement('span'); g.textContent=x.goods;
+      return '<div style="font-size:11px;color:var(--mut,#8aa2c4);padding:5px 0;border-top:1px solid rgba(255,255,255,.06);line-height:1.4">'
+        +g.innerHTML+(price?(' — '+price):'')
+        +' <b style="color:'+(win?'#7fd1c4':'#e08a8a')+'">→ '+(win?'в пользу импортёра':'в пользу таможни')+'</b></div>';
+    }).join('');
+    var foot='<div style="font-size:11px;color:var(--mut,#8aa2c4);margin-top:6px;opacity:.85">Корректировку стоимости (КТС) можно оспорить — бремя доказывания на таможне (Пленум ВС РФ № 49). Не гарантия исхода.</div>';
+    box.innerHTML=head+lead+rows+foot;
   }catch(e){}
 }
 function renderAlts(d){
