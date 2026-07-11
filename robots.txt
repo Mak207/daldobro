@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://www.daldobro.ru/sitemap.xml
+Sitemap: https://daldobro.ru/sitemap.xml

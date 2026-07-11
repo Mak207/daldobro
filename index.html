@@ -6,11 +6,11 @@
 <meta name="yandex-verification" content="2b8155be066c9d36">
 <title>ДалДобро — калькулятор и аналитика ввоза из Китая: код ТН ВЭД, пошлина, себестоимость</title>
 <meta name="description" content="Посчитайте себестоимость ввоза из Китая: код ТН ВЭД, ставка пошлины ЕТТ ЕАЭС, НДС, риск классификации. Плюс аналитика ВЭД: тренды, спорные коды, индексы рынка.">
-<link rel="canonical" href="https://www.daldobro.ru/">
+<link rel="canonical" href="https://daldobro.ru/">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<meta property="og:image" content="https://www.daldobro.ru/logo.png">
+<meta property="og:image" content="https://daldobro.ru/logo.png">
 <link rel="preconnect" href="https://api.201-51-30-177.sslip.io">
 <style>
   :root{
@@ -329,7 +329,7 @@
   @keyframes glowfield{0%,100%{box-shadow:0 0 0 3px rgba(91,140,255,.18)}50%{box-shadow:0 0 0 5px rgba(124,92,255,.28)}}
 </style>
 <script>document.documentElement.className+=' js'</script>
-<script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});</script><noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""/></div></noscript><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"ДалДобро","url":"https://www.daldobro.ru/","logo":"https://www.daldobro.ru/logo.png","description":"Независимый навигатор по ввозу из Китая: код ТН ВЭД, пошлина, НДС, себестоимость — по официальному тарифу, без проплат."},{"@type":"WebSite","name":"ДалДобро","url":"https://www.daldobro.ru/","potentialAction":{"@type":"SearchAction","target":"https://www.daldobro.ru/?q={query}","query-input":"required name=query"}}]}</script></head>
+<script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});</script><noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""/></div></noscript><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"ДалДобро","url":"https://daldobro.ru/","logo":"https://daldobro.ru/logo.png","description":"Независимый навигатор по ввозу из Китая: код ТН ВЭД, пошлина, НДС, себестоимость — по официальному тарифу, без проплат."},{"@type":"WebSite","name":"ДалДобро","url":"https://daldobro.ru/","potentialAction":{"@type":"SearchAction","target":"https://daldobro.ru/?q={query}","query-input":"required name=query"}}]}</script></head>
 <body>
 <div class="bg"></div><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div><div class="grid-ovl"></div><div class="cursor-glow" id="cg"></div>
 
@@ -808,7 +808,7 @@ function buildUrl(){
   const qp=new URLSearchParams({term:term.value,goods:goods.value||0,freight:freight.value||0,insurance:insurance.value||0,vat:vat.value});
   const qv=document.getElementById('qty').value; if(qv)qp.set('qty',qv);
   if(_chosen)qp.set('code',_chosen);
-  return 'https://www.daldobro.ru/?'+qp.toString()+'#calc';
+  return 'https://daldobro.ru/?'+qp.toString()+'#calc';
 }
 function shareTg(){if(!window._lastD)return;window.open('https://t.me/share/url?url='+encodeURIComponent(buildUrl())+'&text='+encodeURIComponent(buildText(window._lastD)),'_blank');}
 function shareWa(){if(!window._lastD)return;window.open('https://wa.me/?text='+encodeURIComponent(buildText(window._lastD)+'\n'+buildUrl()),'_blank');}
@@ -1304,7 +1304,7 @@ function wlApply(){
   // подвал: клиентский + «работает на ДалДобро»
   if(foot)foot.innerHTML='<b>'+(W.name||'')+'</b> — расчёт ориентировочный, точную ставку уточняйте у менеджера.<br>'+
     (W.contacts&&W.contacts.email?W.contacts.email+' · ':'')+
-    '<a href="https://www.daldobro.ru" style="color:#a9c2ff">работает на технологии ДалДобро</a>';
+    '<a href="https://daldobro.ru" style="color:#a9c2ff">работает на технологии ДалДобро</a>';
   // наши кнопки-продажи не показываем на чужой витрине
   const cl=document.querySelector('.bk-claim'); if(cl)cl.remove();
 }

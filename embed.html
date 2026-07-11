@@ -25,7 +25,7 @@ input:focus{outline:none;border-color:var(--acc)}
 .err{color:#ff6a5a;font-size:12.5px;margin-top:8px;min-height:1px}
 </style></head>
 <body><div class="w">
-<div class="h"><img src="https://www.daldobro.ru/logo.png" alt="">Калькулятор растаможки из Китая · <b>ДалДобро</b></div>
+<div class="h"><img src="https://daldobro.ru/logo.png" alt="">Калькулятор растаможки из Китая · <b>ДалДобро</b></div>
 <label>Наименование товара</label>
 <input id="t" placeholder="например: холодильник бытовой" onkeydown="if(event.key==='Enter')calc()">
 <div style="display:flex;gap:8px">
@@ -40,7 +40,7 @@ input:focus{outline:none;border-color:var(--acc)}
   <div class="row"><span id="vl">НДС</span><b id="va"></b></div>
   <div class="row tot"><span>Итого себестоимость</span><b id="to"></b></div>
 </div>
-<div class="foot"><a id="full" href="https://www.daldobro.ru/" target="_blank" rel="noopener">Полный расчёт с маршрутами и ставками на ДалДобро →</a></div>
+<div class="foot"><a id="full" href="https://daldobro.ru/" target="_blank" rel="noopener">Полный расчёт с маршрутами и ставками на ДалДобро →</a></div>
 </div>
 <script>
 var API='https://api.201-51-30-177.sslip.io';
@@ -55,7 +55,7 @@ async function calc(){
     var c=d.calc||{};
     document.getElementById('cd').textContent=(d.code||'').replace(/(\d{4})(\d{2})(\d{4})/,'$1 $2 $3');
     document.getElementById('dl').textContent='Пошлина'+(c.duty_note?' ('+c.duty_note.replace(' (ЕТТ)','')+')':'');
-    document.getElementById('full').href='https://www.daldobro.ru/?term='+encodeURIComponent(t)+'&goods='+g;
+    document.getElementById('full').href='https://daldobro.ru/?term='+encodeURIComponent(t)+'&goods='+g;
     if(c.duty!=null){
       document.getElementById('du').textContent=f(c.duty);
       document.getElementById('vl').textContent='НДС '+c.vat_rate+'%';
@@ -64,7 +64,7 @@ async function calc(){
     }else{
       document.getElementById('du').textContent='нужно кол-во';
       document.getElementById('vl').textContent='НДС '+c.vat_rate+'%';document.getElementById('va').textContent='—';
-      document.getElementById('to').innerHTML='<a href="https://www.daldobro.ru/?term='+encodeURIComponent(t)+'" target="_blank" style="color:#8fb4ff">указать на сайте →</a>';
+      document.getElementById('to').innerHTML='<a href="https://daldobro.ru/?term='+encodeURIComponent(t)+'" target="_blank" style="color:#8fb4ff">указать на сайте →</a>';
     }
     document.getElementById('r').classList.add('show');
   }catch(err){e.textContent='Сервис временно недоступен.';}
