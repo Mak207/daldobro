@@ -436,6 +436,7 @@
           <tr><td>Таможенная стоимость</td><td id="cv"></td></tr>
           <tr><td id="dutyL">Пошлина</td><td id="duty"></td></tr>
           <tr><td id="vatL">НДС</td><td id="vat_"></td></tr>
+          <tr><td>Сбор за оформление</td><td id="fee_"></td></tr>
         </table>
         <div class="hint" id="hint" style="display:none"></div>
         <div id="passBox" style="display:none;margin:14px 0 4px;padding:14px;background:rgba(58,215,200,.06);border:1px solid rgba(58,215,200,.3);border-radius:14px">
@@ -653,18 +654,18 @@ async function calc(chosen){
     if(c.duty!=null){
       document.getElementById('duty').textContent=f(c.duty);
       document.getElementById('vatL').textContent='НДС '+c.vat_rate+'%';
-      document.getElementById('vat_').textContent=f(c.vat);
+      document.getElementById('vat_').textContent=f(c.vat);document.getElementById('fee_').textContent=c.fee?f(c.fee):'—';
       document.getElementById('total').textContent=f(c.total);
     }else{
       // пошлина за единицу — нужен вес/количество, показываем ставку и ведём к вводу
       document.getElementById('dutyL').textContent='Пошлина: '+(c.duty_note||'').replace(/ — укажите.*/,'');
       document.getElementById('duty').textContent='нужно кол-во ↑';
       document.getElementById('vatL').textContent='НДС '+c.vat_rate+'%';
-      document.getElementById('vat_').textContent='после ввода кол-ва';
+      document.getElementById('vat_').textContent='после ввода кол-ва';document.getElementById('fee_').textContent=c.fee?f(c.fee):'—';
       document.getElementById('total').textContent='введите кол-во ↑';
     }
     const h=document.getElementById('hint');
-    if(c.vat_hint){h.style.display='block';h.textContent='⚠ '+c.vat_hint;}else h.style.display='none';
+    const hints=[c.vat_hint,c.adp_hint].filter(Boolean);if(hints.length){h.style.display='block';h.textContent='⚠ '+hints.join('  ⚠ ');}else h.style.display='none';
     const nAlts=renderAlts(d);
     // честный бейдж: пугаем «проверьте» ТОЛЬКО когда есть что проверить
     if(!userPick&&d.risk_level!=='низкий'){
@@ -788,7 +789,7 @@ async function shareRes(){
 function renderBd(d){
   const c=d.calc,bar=document.getElementById('bdBar'),leg=document.getElementById('bdLeg');
   if(c.total==null){bar.style.display='none';leg.innerHTML='';return;}
-  const parts=[['Товар',+goods.value||0,'#5b8cff'],['Доставка',(+freight.value||0)+(+insurance.value||0),'#7c5cff'],['Пошлина',c.duty||0,'#f0b03a'],['НДС',c.vat||0,'#3ad7c8']].filter(p=>p[1]>0);
+  const parts=[['Товар',+goods.value||0,'#5b8cff'],['Доставка',(+freight.value||0)+(+insurance.value||0),'#7c5cff'],['Пошлина',c.duty||0,'#f0b03a'],['Сбор',c.fee||0,'#9aa8c6'],['НДС',c.vat||0,'#3ad7c8']].filter(p=>p[1]>0);
   bar.innerHTML=parts.map(p=>'<i style="flex:'+p[1]+';background:'+p[2]+'"></i>').join('');
   leg.innerHTML=parts.map(p=>'<span><b style="background:'+p[2]+'"></b>'+p[0]+' — '+f(p[1])+' ('+Math.round(p[1]/c.total*100)+'%)</span>').join('');
   bar.style.display='flex';
@@ -800,6 +801,7 @@ function buildText(d){
   L.push('Код ТН ВЭД '+fmtCode(d.code)+' — '+human(d.code_name));
   L.push('Таможенная стоимость: '+f(c.customs_value));
   L.push('Пошлина'+(c.duty_note?' ('+c.duty_note.replace(' (ЕТТ)','')+')':'')+': '+(c.duty!=null?f(c.duty):'нужно количество'));
+  if(c.fee)L.push('Сбор за оформление: '+f(c.fee));
   L.push('НДС '+c.vat_rate+'%: '+(c.vat!=null?f(c.vat):'—'));
   if(c.total!=null)L.push('ИТОГО: '+f(c.total));
   return L.join('\n');
