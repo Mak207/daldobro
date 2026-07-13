@@ -105,20 +105,20 @@ input:focus{outline:none;border-color:var(--acc)}
   <div class="plans" id="plansImp">
     <div class="plan" data-plan="check_full">
       <div class="t">Проверка контрагента</div>
-      <div class="p">990 ₽ <span class="per">разово</span></div>
+      <div class="p">990&nbsp;₽ <span class="per">разово</span></div>
       <div class="for">Перед оплатой брокеру или поставщику</div>
       <ul class="feat"><li>Статус в реестре таможенных представителей ФТС</li><li>Финансы, возраст, история включений</li><li>Рыночные сигналы по компании</li></ul>
     </div>
     <div class="plan" data-plan="alerts_month">
       <div class="t">Алерты и мониторинг</div>
-      <div class="p">1 490 ₽ <span class="per">/мес</span></div>
+      <div class="p">1 490&nbsp;₽ <span class="per">/мес</span></div>
       <div class="for">Не пропустить важное по своим направлениям</div>
       <ul class="feat"><li>Пуш в Telegram при событиях</li><li>Скачки индексов, изменения правил</li><li>Смена статуса вашего брокера</li></ul>
       <div class="note">⚠️ Только уведомления-сигналы. Без самих данных и выгрузок — за ними в «Индексы PRO».</div>
     </div>
     <div class="plan" data-plan="indices_pro">
       <div class="t">Индексы PRO</div>
-      <div class="p">4 900 ₽ <span class="per">/мес</span></div>
+      <div class="p">4 900&nbsp;₽ <span class="per">/мес</span></div>
       <div class="for">Работать со ставками как с цифрами</div>
       <ul class="feat"><li>Ставки по маршрутам: море / жд / авиа, порт→порт</li><li>Выгрузка в Excel и доступ по API</li><li>Те же алерты, но «раньше всех»</li></ul>
       <div class="note">Всё из «Алертов» + сами данные. Ставки — средние по рынку (ориентир для переговоров). Текущие значения видны на сайте бесплатно.</div>
@@ -132,21 +132,21 @@ input:focus{outline:none;border-color:var(--acc)}
   <div class="plans" id="plansExe">
     <div class="plan" data-plan="card_month">
       <div class="t">Карточка исполнителя</div>
-      <div class="p">9 900 ₽ <span class="per">/мес</span></div>
+      <div class="p">9 900&nbsp;₽ <span class="per">/мес</span></div>
       <div class="for">Быть в каждом расчёте себестоимости</div>
       <ul class="feat"><li>Ваша компания в панели расчёта</li><li>Ссылка на профиль + факты из реестра ФТС</li><li>Контакт рядом с каждым расчётом клиента</li></ul>
     </div>
     <div class="plan" data-plan="card_year">
       <span class="hit">2 месяца в подарок</span>
       <div class="t">Карточка · на год</div>
-      <div class="p">99 000 ₽ <span class="per">/год</span></div>
+      <div class="p">99 000&nbsp;₽ <span class="per">/год</span></div>
       <div class="for">То же выгоднее + приоритет</div>
       <ul class="feat"><li>Всё из «Карточки», на 12 месяцев</li><li>Дешевле в пересчёте на месяц</li><li>Приоритет показа в своей категории</li></ul>
     </div>
     <div class="plan" data-plan="whitelabel_month">
       <span class="hit">цена запуска</span>
       <div class="t">Калькулятор под брендом</div>
-      <div class="p">1 990 ₽ <span class="per">/мес</span> <span class="old">14 900 ₽</span></div>
+      <div class="p">1 990&nbsp;₽ <span class="per">/мес</span> <span class="old">14 900&nbsp;₽</span></div>
       <div class="for">Свой калькулятор на свой сайт за 2 минуты</div>
       <ul class="feat"><li>Ваш бренд, ваши ставки доставки</li><li>Ваш Telegram-бот, блок о вашей компании</li><li>Готовый QR и код для вставки на сайт</li></ul>
     </div>
@@ -268,7 +268,8 @@ function printInvoice(){
   document.getElementById('invoiceArea').innerHTML=
     '<div class="ih"><img src="/logo.png"><div><h1>Счёт-оферта № '+num+' от '+dt+'</h1>'+
     '<div class="mut">Сервис ДалДобро · daldobro.ru · hello@daldobro.ru · оплата через ЮKassa (ООО «ЮМани»)</div></div></div>'+
-    '<table><tr><td>Плательщик</td><td>'+org+(inn?' · ИНН '+inn:'')+'</td></tr>'+
+    '<table><tr><td>Исполнитель</td><td>ИП Руденко Филипп Сергеевич, ИНН 253600303874, ОГРНИП 313254331000066, г. Владивосток</td></tr>'+
+    '<tr><td>Плательщик</td><td>'+org+(inn?' · ИНН '+inn:'')+'</td></tr>'+
     '<tr><td>Услуга</td><td>'+t+'</td></tr>'+
     '<tr><td>E-mail для чека и доступа</td><td>'+email+'</td></tr>'+
     '<tr class="tot"><td>К оплате</td><td>'+Number(_lastPay.amount).toLocaleString('ru-RU')+' ₽ (НДС не облагается)</td></tr></table>'+
@@ -276,7 +277,7 @@ function printInvoice(){
     '<div><b>Как оплатить:</b><br>1. Отсканируйте QR из приложения банка (в т.ч. бизнес-приложения)<br>'+
     'или откройте ссылку: '+_lastPay.url.slice(0,60)+'…<br>'+
     '2. Оплатите картой организации или через СБП.<br>3. Кассовый чек придёт на e-mail, услуга активируется автоматически.</div></div>'+
-    '<div class="disc">Оплата счёта означает согласие с публичной офертой: daldobro.ru/oferta.html. Услуга информационная. Счёт действителен 3 банковских дня. Вопросы: hello@daldobro.ru</div>';
+    '<div class="disc">Оплата счёта означает согласие с публичной офертой (daldobro.ru/oferta.html) и обработкой персональных данных согласно 152-ФЗ. Услуга информационная. Счёт действителен 3 банковских дня. Вопросы: hello@daldobro.ru</div>';
   window.print();
 }
 </script>
