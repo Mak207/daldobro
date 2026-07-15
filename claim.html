@@ -227,6 +227,7 @@ async function pay(){
   err.textContent='';ok.textContent='';
   const email=document.getElementById('email').value.trim(),inn=document.getElementById('inn').value.trim();
   if(!email||email.indexOf('@')<0){err.textContent='Укажите e-mail — на него придёт чек и доступ.';return;}
+  if(plan==='check_full'&&(!inn||inn.length<10)){err.textContent='Для полной проверки укажите ИНН компании (10 или 12 цифр) — иначе некого проверять.';return;}
   btn.disabled=true;btn.textContent='Создаю счёт…';
   try{
     const r=await fetch(API+'/pay/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:plan,inn:inn,email:email})});
