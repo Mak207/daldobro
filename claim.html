@@ -202,12 +202,13 @@ selPlan(plan);
   if(pin){var iel=document.getElementById('inn');iel.value=pin;
     iel.dispatchEvent(new Event('input'));}
 })();
-// пришёл с готовым планом (из проверки/CTA) — сразу к оплате, витрину тарифов прячем
+// пришёл с готовым планом (из проверки/CTA) — форму оплаты НАВЕРХ, тарифы остаются ниже
 (function(){if(new URLSearchParams(location.search).has('plan')){
-  document.querySelectorAll('.grp').forEach(function(g){g.style.display='none';});
-  var h1=document.querySelector('h1'),sub=document.querySelector('p.sub');
-  if(h1)h1.style.display='none'; if(sub)sub.style.display='none';
-  var card=document.querySelector('.card'); if(card)setTimeout(function(){card.scrollIntoView({block:'start',behavior:'instant'});},50);
+  var card=document.querySelector('.card'),wrap=document.querySelector('.wrap'),
+      h1=document.querySelector('h1');
+  if(card&&wrap&&h1&&card.previousElementSibling!==h1){
+    wrap.insertBefore(card, h1.nextElementSibling);  // форма сразу под заголовком, тарифы ниже
+  }
 }})();
 let lookTimer=null;
 document.getElementById('inn').addEventListener('input',e=>{
