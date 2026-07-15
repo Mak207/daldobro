@@ -202,6 +202,13 @@ selPlan(plan);
   if(pin){var iel=document.getElementById('inn');iel.value=pin;
     iel.dispatchEvent(new Event('input'));}
 })();
+// пришёл с готовым планом (из проверки/CTA) — сразу к оплате, витрину тарифов прячем
+(function(){if(new URLSearchParams(location.search).has('plan')){
+  document.querySelectorAll('.grp').forEach(function(g){g.style.display='none';});
+  var h1=document.querySelector('h1'),sub=document.querySelector('p.sub');
+  if(h1)h1.style.display='none'; if(sub)sub.style.display='none';
+  var card=document.querySelector('.card'); if(card)setTimeout(function(){card.scrollIntoView({block:'start',behavior:'instant'});},50);
+}})();
 let lookTimer=null;
 document.getElementById('inn').addEventListener('input',e=>{
   clearTimeout(lookTimer);const v=e.target.value.trim();

@@ -553,8 +553,8 @@
     <p class="sec-sub">Собираетесь заплатить фирме за растаможку или доставку из Китая? Сначала проверьте её — бесплатно. Покажем главное: есть ли у компании официальный допуск таможни (реестр ФТС), сколько лет она работает и какого масштаба. Нет допуска — она не вправе оформлять ваш груз, каким бы убедительным ни был её сайт.</p>
     <div class="glass" style="padding:22px 24px;margin-bottom:16px">
       <div class="row" style="display:flex;gap:12px;flex-wrap:wrap">
-        <input id="chkQ" placeholder="ИНН или название компании — например: Юнитрейд" style="flex:1;min-width:230px;padding:13px 15px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:15px" onkeydown="if(event.key==='Enter')doCheck()">
-        <button class="btn" style="margin:0;width:auto;padding:13px 26px" onclick="doCheck()">Проверить →</button>
+        <input id="chkQ" oninput="resetChkBtn()" placeholder="ИНН или название компании — например: Юнитрейд" style="flex:1;min-width:230px;padding:13px 15px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:15px" onkeydown="if(event.key==='Enter')doCheck()">
+        <button id="chkBtn" class="btn" style="margin:0;width:auto;padding:13px 26px" onclick="doCheck()">Проверить →</button>
       </div>
       <div id="chkRes" style="margin-top:6px"></div>
     </div>
@@ -973,12 +973,16 @@ function applyFreight(){
 }
 setTimeout(()=>initFreightBridge(), 350);
 // ── бесплатная проверка контрагента по реестру ФТС + наши данные ──
+function resetChkBtn(){var b=document.getElementById("chkBtn");if(b){b.textContent="Проверить →";b.onclick=doCheck;}}
 async function doCheck(){
   const q=document.getElementById('chkQ').value.trim(),box=document.getElementById('chkRes');
   if(q.length<3){box.innerHTML='<div class="err">Введите ИНН или минимум 3 буквы названия.</div>';return;}
   box.innerHTML='<div style="color:var(--mut);font-size:13.5px;padding:10px 0">Проверяю по реестру ФТС и нашим данным…</div>';
   try{
     const r=await fetch(API+'/check?q='+encodeURIComponent(q));const d=await r.json();
+    if(d.items&&d.items.length){var _c=d.items[0];var _b=document.getElementById('chkBtn');
+      if(_b&&_c.inn){_b.textContent='Заказать полную проверку →';
+        _b.onclick=function(){location.href='/claim.html?plan=check_full&inn='+_c.inn+'&org='+encodeURIComponent(_c.name||'');};}}
     if(!d.items||!d.items.length){
       box.innerHTML='<div style="margin-top:10px;padding:14px;border:1px solid rgba(255,106,90,.4);border-radius:12px;background:rgba(255,106,90,.07);font-size:14px;line-height:1.6">🚩 <b>Не найден в реестре таможенных представителей ФТС.</b> '+(d.note||'')+'<br><span style="color:var(--mut);font-size:12.5px">Компания может работать как посредник без статуса — но декларацию за вас она подавать не вправе.</span></div>';
       return;
