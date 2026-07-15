@@ -194,6 +194,14 @@ function selPlan(p){plan=p;document.querySelectorAll('.plan').forEach(el=>el.cla
   const t=document.querySelector('.plan[data-plan="'+p+'"] .t');if(t)document.getElementById('formTitle').textContent='Подключение: '+t.textContent;}
 document.querySelectorAll('.plan').forEach(el=>el.onclick=()=>{if(window.ddTrack)ddTrack('plan_select',{c:el.dataset.plan});selPlan(el.dataset.plan);});
 selPlan(plan);
+// проброс компании из проверки на главной (?inn=&org=) — чтобы клиент не вводил заново
+(function(){var qp2=new URLSearchParams(location.search);
+  var pin=(qp2.get('inn')||'').replace(/\D/g,'').slice(0,12);
+  var porg=qp2.get('org')||'';
+  if(porg){var oel=document.getElementById('orgName');if(oel)oel.value=porg;}
+  if(pin){var iel=document.getElementById('inn');iel.value=pin;
+    iel.dispatchEvent(new Event('input'));}
+})();
 let lookTimer=null;
 document.getElementById('inn').addEventListener('input',e=>{
   clearTimeout(lookTimer);const v=e.target.value.trim();

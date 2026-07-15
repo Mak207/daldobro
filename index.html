@@ -990,7 +990,7 @@ async function doCheck(){
       '<span>'+(x.active?'действует':'⚠ статус неактивен')+'</span>'+
       '<span>'+(x.region||'')+'</span><span>масштаб: '+(x.scale||'н/д')+'</span>'+
       (x.company_since?'<span>компания с '+x.company_since+'</span>':'')+'</div>'+
-      '<div style="margin-top:10px"><a href="/claim.html?plan=check_full" style="color:#a9c2ff;font-size:13px;font-weight:700">Полный отчёт: финансы, история, сигналы рынка — 990&nbsp;₽ →</a></div></div>').join('');
+      '<div style="margin-top:10px"><a href="/claim.html?plan=check_full&inn='+x.inn+'&org='+encodeURIComponent(x.name||'')+'" style="color:#a9c2ff;font-size:13px;font-weight:700">Полный отчёт: финансы, история, сигналы рынка — 990&nbsp;₽ →</a></div></div>').join('');
   }catch(e){box.innerHTML='<div class="err">Сервис проверки временно недоступен.</div>';}
 }
 // ── подбор исполнителей под товар: после расчёта колонка перестраивается ──
