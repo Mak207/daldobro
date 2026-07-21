@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бесплатный калькулятор растаможки для вашего сайта — виджет ДалДобро</title>
+<meta name="description" content="Встройте бесплатный калькулятор растаможки из Китая (код ТН ВЭД, пошлина, НДС, себестоимость) на свой сайт одной строкой. Виджет ДалДобро.">
+<link rel="canonical" href="https://daldobro.ru/widget.html"><link rel="icon" href="/favicon.ico">
+<style>
+:root{--bg:#080b16;--card:rgba(23,30,48,.55);--line:rgba(120,140,190,.14);--txt:#eaf0fb;--mut:#9aa8c6;--acc:#5b8cff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;line-height:1.7}
+.bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(1000px 700px at 85% -10%,#12204a 0,transparent 60%),linear-gradient(180deg,#080b16,#0a1020)}
+a{color:var(--acc);text-decoration:none}p a,li a,td a,.trust a,footer a{text-decoration:underline;text-underline-offset:2px}a:focus-visible,button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid #7db0ff;outline-offset:2px}.wrap{max-width:820px;margin:0 auto;padding:0 20px 70px}
+nav{padding:18px 0;border-bottom:1px solid var(--line);display:flex;gap:18px}nav a{color:var(--mut);font-weight:700;font-size:14.5px}nav a b{background:linear-gradient(90deg,#7db0ff,#7c5cff);-webkit-background-clip:text;color:transparent}
+h1{font-size:clamp(25px,5vw,36px);font-weight:900;margin:28px 0 8px}.sub{color:var(--mut);font-size:16px;max-width:640px}
+h2{font-size:22px;margin:30px 0 10px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;margin-top:20px}
+@media(max-width:720px){.cols{grid-template-columns:1fr}}
+pre{background:rgba(10,15,28,.8);border:1px solid var(--line);border-radius:12px;padding:14px;overflow-x:auto;font-size:13px;color:#cfe0ff;white-space:pre-wrap;word-break:break-all}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.copy{margin-top:8px;padding:9px 16px;border:1px solid var(--line);border-radius:9px;background:rgba(91,140,255,.12);color:#bcd0ff;font-weight:700;cursor:pointer;font-size:13px}
+ul{color:#c9d8ff}li{margin:6px 0}
+footer{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--mut);font-size:13px}
+</style></head>
+<body><div class="bg"></div><div class="wrap">
+<nav><a href="/">← Дал<b>Добро</b></a><a href="/rastamozhka/">Растаможка</a><a href="/routes.html">Маршруты</a></nav>
+<h1>Калькулятор растаможки — бесплатно на ваш сайт</h1>
+<p class="sub">Встройте калькулятор ввоза из Китая (код ТН ВЭД, пошлина, НДС, себестоимость) одной строкой. Бесплатно, без регистрации. Полезно вашим посетителям — импортёрам и логистам.</p>
+
+<div class="cols">
+  <div>
+    <h2>Как встроить</h2>
+    <p><b>Вариант 1 — скрипт</b> (сам вставится там, где стоит):</p>
+    <pre id="c1">&lt;div id="daldobro-calc"&gt;&lt;/div&gt;
+&lt;script src="https://daldobro.ru/widget.js" async&gt;&lt;/script&gt;</pre>
+    <button class="copy" onclick="cp('c1')">Скопировать</button>
+    <p style="margin-top:18px"><b>Вариант 2 — iframe:</b></p>
+    <pre id="c2">&lt;iframe src="https://daldobro.ru/embed.html"
+  style="width:100%;max-width:460px;height:460px;border:0"
+  title="Калькулятор растаможки из Китая — ДалДобро"&gt;&lt;/iframe&gt;</pre>
+    <button class="copy" onclick="cp('c2')">Скопировать</button>
+    <h2 style="margin-top:26px">Что внутри</h2>
+    <ul>
+      <li>Наименование товара → код ТН ВЭД</li>
+      <li>Пошлина ЕТТ ЕАЭС, НДС, полная себестоимость</li>
+      <li>Кнопка к полному расчёту с маршрутами и ставками</li>
+      <li>Данные обновляются автоматически — код на вашей стороне не трогать</li>
+    </ul>
+    <p style="color:var(--mut);font-size:13.5px">Виджет бесплатный. Просим сохранить ссылку-подпись «ДалДобро» — это единственное условие.</p>
+  </div>
+  <div>
+    <h2>Как выглядит</h2>
+    <div class="card"><div id="daldobro-calc"></div></div>
+  </div>
+</div>
+
+<footer>© ДалДобро · <a href="/">daldobro.ru</a> — навигатор по ввозу из Китая: код ТН ВЭД, пошлина, НДС, маршруты, ставки.</footer>
+</div>
+<script src="/widget.js" async></script>
+<script>function cp(id){var t=document.getElementById(id).innerText;navigator.clipboard&&navigator.clipboard.writeText(t);event.target.textContent='Скопировано ✓';setTimeout(function(){event.target.textContent='Скопировать';},1500);}</script>
+</body></html>

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Тарифы и подключение — ДалДобро</title>
+<meta name="description" content="Карточка исполнителя на ДалДобро, полная проверка контрагента, алерты и Индексы PRO. Подключение онлайн.">
+<link rel="icon" href="/favicon.ico">
+<link rel="canonical" href="https://daldobro.ru/claim.html">
+<style>
+:root{--bg:#080b16;--card:rgba(23,30,48,.55);--line:rgba(120,140,190,.14);--txt:#eaf0fb;--mut:#9aa8c6;--acc:#5b8cff;--good:#2fbf71;--warn:#f0b03a;--bad:#ff6a5a}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--txt);-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;z-index:-2;background:radial-gradient(1200px 800px at 80% -10%,#12204a 0%,transparent 60%),radial-gradient(1000px 700px at -10% 20%,#1a1140 0%,transparent 55%),linear-gradient(180deg,#080b16,#0a1020)}
+.wrap{max-width:920px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:14px 0;backdrop-filter:blur(14px);background:rgba(8,11,22,.7);border-bottom:1px solid var(--line)}
+.logo{font-size:20px;font-weight:900;display:flex;align-items:center;gap:10px;color:var(--txt);text-decoration:none}
+.logo img{height:30px;width:30px}
+.logo b{background:linear-gradient(90deg,#7db0ff,#7c5cff);-webkit-background-clip:text;background-clip:text;color:transparent}
+nav a.back{margin-left:auto;color:var(--mut);text-decoration:none;font-size:14px}
+h1{font-size:clamp(24px,5vw,34px);margin:32px 0 8px;font-weight:900}
+.sub{color:var(--mut);font-size:15px;line-height:1.6;max-width:720px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:26px 0}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;transition:.15s;position:relative}
+.plan:hover{border-color:var(--acc);transform:translateY(-2px)}
+.plan.sel{border-color:var(--good);background:rgba(47,191,113,.07)}
+.plan .t{font-weight:800;font-size:15px;margin-bottom:6px}
+.plan .p{font-size:23px;font-weight:900;background:linear-gradient(90deg,#7db0ff,#3ad7c8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.plan .d{color:var(--mut);font-size:12.5px;line-height:1.55;margin-top:8px}
+.plan .hit{position:absolute;top:-9px;right:12px;font-size:10px;font-weight:800;padding:3px 10px;border-radius:10px;background:linear-gradient(100deg,#5b8cff,#7c5cff);color:#fff}
+.grp{margin:24px 0 8px}
+.grp-h{font-size:16px;font-weight:800;color:#dbe6fb;margin:0 0 4px;display:flex;align-items:center;gap:8px}
+.grp-s{font-size:13px;color:var(--mut);margin:0 0 14px}
+.plan .p .per{font-size:13px;font-weight:600;color:var(--mut);-webkit-text-fill-color:var(--mut)}
+.plan .p .old{font-size:13px;color:#7787a5;text-decoration:line-through;font-weight:400;-webkit-text-fill-color:#7787a5}
+.plan .for{font-size:12.5px;color:#8fd7ff;margin:8px 0 10px;font-weight:700}
+.plan .feat{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:5px}
+.plan .feat li{font-size:12.5px;color:var(--mut);padding-left:18px;position:relative;line-height:1.42}
+.plan .feat li:before{content:"✓";position:absolute;left:0;color:var(--good);font-weight:800}
+.plan .note{font-size:11.5px;color:#8fa0bf;margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;margin:18px 0}
+.card h2{margin:0 0 12px;font-size:18px}
+label{display:block;font-size:12.5px;color:var(--mut);margin:12px 0 6px}
+input{width:100%;padding:12px 14px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:12px;color:var(--txt);font-size:15px}
+input:focus{outline:none;border-color:var(--acc)}
+.row{display:flex;gap:12px}.row>div{flex:1}
+.btn{margin-top:16px;width:100%;padding:14px;border:0;border-radius:12px;font-size:15px;font-weight:800;cursor:pointer;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff)}
+.btn:disabled{opacity:.6}
+.prev{margin-top:14px;padding:14px;border:1px solid rgba(47,191,113,.4);border-radius:13px;background:rgba(47,191,113,.06);display:none}
+.prev b{font-size:15px}
+.prev .f{display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:var(--mut)}
+.prev .f span:last-child{color:#dbe6fb;font-weight:700}
+.err{color:var(--bad);font-size:13.5px;margin-top:10px}
+.ok{color:var(--good);font-size:13.5px;margin-top:10px}
+.foot{color:var(--mut);font-size:12.5px;border-top:1px solid var(--line);padding:20px 0 40px;line-height:1.7;margin-top:26px}
+.paykind{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.pk{flex:1 1 240px;display:block;padding:12px 14px;border:1px solid var(--line);border-radius:13px;cursor:pointer;font-size:14px;font-weight:700;background:rgba(10,15,28,.4)}
+.pk span{display:block;font-weight:400;font-size:12px;color:var(--mut);margin-top:3px}
+.pk input{display:none}
+.pk.sel{border-color:var(--acc);background:rgba(91,140,255,.1)}
+.qrbox{display:none;margin-top:16px;padding:16px;border:1px solid rgba(47,191,113,.4);border-radius:14px;background:rgba(47,191,113,.05);gap:18px;align-items:center;flex-wrap:wrap}
+.qrbox.show{display:flex}
+.qr-l #qrCanvas{background:#fff;padding:10px;border-radius:10px}
+.qr-r{flex:1;min-width:240px}
+.qr-r b{font-size:15px}
+.qr-r p{color:var(--mut);font-size:13px;line-height:1.6;margin:8px 0}
+.qr-r a{color:#8fd7ff}
+.qr-btns{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.qr-btns button{padding:10px 16px;border-radius:11px;border:1px solid rgba(91,140,255,.4);background:rgba(23,30,48,.6);color:#cfe0ff;font-weight:700;cursor:pointer;font-size:13px}
+#payState{font-size:12.5px;color:var(--warn)}
+#payState.ok{color:var(--good);font-weight:800}
+#invoiceArea{display:none}
+@media print{
+  body{background:#fff!important}
+  .bg{display:none!important}
+  body>*{display:none!important}
+  body>#invoiceArea{display:block!important;color:#111;background:#fff;font-family:Arial;font-size:13px;line-height:1.55;padding:8px}
+  #invoiceArea *{color:#111}
+  #invoiceArea h1{color:#12235c!important}
+  #invoiceArea .mut,#invoiceArea .disc{color:#667!important}
+  #invoiceArea .ih{display:flex;gap:14px;align-items:center;border-bottom:2px solid #1a3fa8;padding-bottom:10px;margin-bottom:16px}
+  #invoiceArea .ih img{width:58px;height:58px}
+  #invoiceArea h1{font-size:19px;margin:0;color:#12235c}
+  #invoiceArea .mut{color:#556;font-size:11.5px}
+  #invoiceArea table{width:100%;border-collapse:collapse;margin:12px 0}
+  #invoiceArea td{padding:7px 4px;border-bottom:1px solid #ccd}
+  #invoiceArea td:last-child{text-align:right;white-space:nowrap}
+  #invoiceArea .tot td{font-weight:bold;font-size:16px;color:#12235c;border-bottom:0}
+  #invoiceArea .qrrow{display:flex;gap:18px;align-items:center;margin-top:14px}
+  #invoiceArea .qrrow img{width:150px;height:150px}
+  #invoiceArea .disc{margin-top:18px;padding-top:8px;border-top:1px solid #ccd;color:#667;font-size:10.5px}
+}
+</style></head>
+<body>
+<div class="bg"></div>
+<div class="wrap">
+<nav><a class="logo" href="/"><img src="/logo.png" alt="">Дал<b>Добро</b></a><a class="back" href="/">← на главную</a></nav>
+
+<h1>Тарифы ДалДобро</h1>
+<p class="sub">Расчёт себестоимости, подбор кода ТН ВЭД и калькулятор — <b>бесплатно и без регистрации</b>. Платные тарифы — для двух ролей. Выберите свою. Подключение онлайн, активация после оплаты в течение рабочего дня.</p>
+
+<div class="grp">
+  <div class="grp-h">🧭 Импортёру — данные и защита сделки</div>
+  <div class="grp-s">Вы везёте товар из Китая и хотите не переплатить и не нарваться.</div>
+  <div class="plans" id="plansImp">
+    <div class="plan" data-plan="check_full">
+      <div class="t">Проверка контрагента</div>
+      <div class="p">990 ₽ <span class="per">разово</span></div>
+      <div class="for">Перед оплатой брокеру или поставщику</div>
+      <ul class="feat"><li>Статус в реестре таможенных представителей ФТС</li><li>Финансы, возраст, история включений</li><li>Рыночные сигналы по компании</li></ul>
+    </div>
+    <div class="plan" data-plan="alerts_month">
+      <div class="t">Алерты и мониторинг</div>
+      <div class="p">1 490 ₽ <span class="per">/мес</span></div>
+      <div class="for">Не пропустить важное по своим направлениям</div>
+      <ul class="feat"><li>Пуш в Telegram при событиях</li><li>Скачки индексов, изменения правил</li><li>Смена статуса вашего брокера</li></ul>
+      <div class="note">⚠️ Только уведомления-сигналы. Без самих данных и выгрузок — за ними в «Индексы PRO».</div>
+    </div>
+    <div class="plan" data-plan="indices_pro">
+      <div class="t">Индексы PRO</div>
+      <div class="p">4 900 ₽ <span class="per">/мес</span></div>
+      <div class="for">Работать со ставками как с цифрами</div>
+      <ul class="feat"><li>Ставки по маршрутам: море / жд / авиа, порт→порт</li><li>Выгрузка в Excel и доступ по API</li><li>Те же алерты, но «раньше всех»</li></ul>
+      <div class="note">Всё из «Алертов» + сами данные. Ставки — средние по рынку (ориентир для переговоров). Текущие значения видны на сайте бесплатно.</div>
+    </div>
+  </div>
+</div>
+
+<div class="grp">
+  <div class="grp-h">🤝 Исполнителю — попасть к клиентам в момент выбора</div>
+  <div class="grp-s">Вы брокер или логист. Наши пользователи уже посчитали себестоимость и выбирают, с кем везти — покажитесь им здесь.</div>
+  <div class="plans" id="plansExe">
+    <div class="plan" data-plan="card_month">
+      <div class="t">Карточка исполнителя</div>
+      <div class="p">9 900 ₽ <span class="per">/мес</span></div>
+      <div class="for">Быть в каждом расчёте себестоимости</div>
+      <ul class="feat"><li>Ваша компания в панели расчёта</li><li>Ссылка на профиль + факты из реестра ФТС</li><li>Контакт рядом с каждым расчётом клиента</li></ul>
+    </div>
+    <div class="plan" data-plan="card_year">
+      <span class="hit">2 месяца в подарок</span>
+      <div class="t">Карточка · на год</div>
+      <div class="p">99 000 ₽ <span class="per">/год</span></div>
+      <div class="for">То же выгоднее + приоритет</div>
+      <ul class="feat"><li>Всё из «Карточки», на 12 месяцев</li><li>Дешевле в пересчёте на месяц</li><li>Приоритет показа в своей категории</li></ul>
+    </div>
+    <div class="plan" data-plan="whitelabel_month">
+      <span class="hit">цена запуска</span>
+      <div class="t">Калькулятор под брендом</div>
+      <div class="p">1 990 ₽ <span class="per">/мес</span> <span class="old">14 900 ₽</span></div>
+      <div class="for">Свой калькулятор на свой сайт за 2 минуты</div>
+      <ul class="feat"><li>Ваш бренд, ваши ставки доставки</li><li>Ваш Telegram-бот, блок о вашей компании</li><li>Готовый QR и код для вставки на сайт</li></ul>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h2 id="formTitle">Подключение</h2>
+  <div class="row">
+    <div><label>ИНН компании (для карточки — автозаполним из реестра)</label><input id="inn" inputmode="numeric" placeholder="например: 7701719519" maxlength="12"></div>
+    <div><label>E-mail (чек и доступ)</label><input id="email" type="email" placeholder="you@company.ru"></div>
+  </div>
+  <div class="prev" id="prev"></div>
+  <div class="paykind" id="payKind">
+    <label class="pk sel" data-k="card"><input type="radio" name="pk" checked> 💳 Оплатить онлайн <span>карта · для ИП и физлиц</span></label>
+    <label class="pk" data-k="qr"><input type="radio" name="pk"> 🧾 Счёт + QR для юрлица <span>оплата из бизнес-приложения банка, счёт для бухгалтерии</span></label>
+  </div>
+  <div class="row" id="orgRow" style="display:none">
+    <div><label>Название компании-плательщика (для счёта)</label><input id="orgName" placeholder="ООО «Ромашка Импорт»"></div>
+  </div>
+  <button class="btn" id="payBtn" onclick="pay()">Перейти к оплате →</button>
+  <div class="err" id="err"></div>
+  <div class="ok" id="okmsg"></div>
+  <div class="qrbox" id="qrBox">
+    <div class="qr-l"><div id="qrCanvas"></div></div>
+    <div class="qr-r">
+      <b>Счёт сформирован — оплатите по QR</b>
+      <p>Отсканируйте QR из приложения банка (в т.ч. бизнес-приложения) или откройте <a href="#" id="qrLink" target="_blank" rel="noopener">страницу оплаты</a>. Кассовый чек придёт на указанный e-mail. Услуга активируется автоматически после оплаты.</p>
+      <div class="qr-btns">
+        <button type="button" onclick="printInvoice()">🖨 Распечатать счёт</button>
+        <span id="payState">ожидаем оплату…</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="foot">Оплата через ЮKassa (карты, СБП). Нажимая «Перейти к оплате», вы соглашаетесь с <a href="/oferta.html" style="color:#8fb4ff">публичной офертой</a>: услуга информационная, активация — после подтверждения платежа, чек придёт на e-mail. Вопросы: <a href="mailto:hello@daldobro.ru" style="color:#a9c2ff">hello@daldobro.ru</a> · <a href="https://t.me/daldobro_bot" style="color:#a9c2ff">@daldobro_bot</a></div>
+</div>
+
+<script>
+const API='https://api.201-51-30-177.sslip.io';
+(function(){try{var aid=localStorage.dd_aid;if(!aid){aid='a'+Math.abs(Date.now()^(performance.now()*1e6|0)).toString(36)+Math.floor(1e6*Math.random()).toString(36);localStorage.dd_aid=aid;}var sid=sessionStorage.dd_sid;if(!sid){sid='s'+Date.now().toString(36);sessionStorage.dd_sid=sid;}var qp=new URLSearchParams(location.search);var utm=qp.get('utm_source')||qp.get('utm')||'';var ref='';try{var rh=document.referrer?new URL(document.referrer).hostname:'';if(rh&&rh.indexOf('daldobro')<0)ref=rh;}catch(e){}var dev=matchMedia('(max-width:820px)').matches?'mobile':'desktop';window._ddQ=[];window.ddTrack=function(t,x){try{window._ddQ.push({t:t,a:aid,s:sid,p:location.pathname,d:dev,r:ref,u:utm,c:(x&&x.c)||'',q:(x&&x.q)||'',x:(x&&x.x)||undefined});if(window._ddQ.length>=8)ddFlush();}catch(e){}};window.ddFlush=function(){if(!window._ddQ.length)return;var b=JSON.stringify(window._ddQ);window._ddQ=[];try{navigator.sendBeacon?navigator.sendBeacon(API+'/ev',new Blob([b],{type:'text/plain'})):fetch(API+'/ev',{method:'POST',headers:{'Content-Type':'text/plain'},body:b,keepalive:true});}catch(e){}};setInterval(ddFlush,4000);addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')ddFlush();});addEventListener('pagehide',ddFlush);ddTrack('claim_view');}catch(e){window.ddTrack=function(){};window.ddFlush=function(){};}})();
+let plan=new URLSearchParams(location.search).get('plan')||'card_month';
+function selPlan(p){plan=p;document.querySelectorAll('.plan').forEach(el=>el.classList.toggle('sel',el.dataset.plan===p));
+  const t=document.querySelector('.plan[data-plan="'+p+'"] .t');if(t)document.getElementById('formTitle').textContent='Подключение: '+t.textContent;}
+document.querySelectorAll('.plan').forEach(el=>el.onclick=()=>{if(window.ddTrack)ddTrack('plan_select',{c:el.dataset.plan});selPlan(el.dataset.plan);});
+selPlan(plan);
+let lookTimer=null;
+document.getElementById('inn').addEventListener('input',e=>{
+  clearTimeout(lookTimer);const v=e.target.value.trim();
+  if(v.length!==10&&v.length!==12)return;
+  lookTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(API+'/claim/lookup?inn='+v);const d=await r.json();
+      const p=document.getElementById('prev');
+      if(d.found){
+        p.innerHTML='<b>'+d.name+'</b><div class="f"><span>Реестр таможенных представителей ФТС</span><span>'+(d.in_fts_registry?'✓ с '+d.fts_since:'нет')+'</span></div>'+
+          '<div class="f"><span>Регион</span><span>'+(d.region||'—')+'</span></div>'+
+          '<div class="f"><span>Масштаб</span><span>'+(d.scale||'—')+'</span></div>'+
+          '<div class="f"><span>Компания с</span><span>'+(d.company_since||'—')+'</span></div>'+
+          '<div style="font-size:12px;color:#8fd7ff;margin-top:8px">Так будет выглядеть основа вашей карточки — данные подтянули из наших баз, менять ничего не нужно.</div>';
+        p.style.display='block';
+      }else{p.innerHTML='<b>ИНН '+v+'</b><div style="font-size:12.5px;color:#f0b03a;margin-top:6px">'+(d.note||'Не найден в реестре ФТС')+'</div>';p.style.display='block';}
+    }catch(e){}
+  },350);
+});
+// способ оплаты: онлайн (редирект) или счёт+QR для юрлица
+let payKind='card';
+document.querySelectorAll('.pk').forEach(el=>el.addEventListener('click',()=>{
+  payKind=el.dataset.k;
+  document.querySelectorAll('.pk').forEach(x=>x.classList.toggle('sel',x===el));
+  document.getElementById('orgRow').style.display=payKind==='qr'?'flex':'none';
+  document.getElementById('payBtn').textContent=payKind==='qr'?'Сформировать счёт и QR →':'Перейти к оплате →';
+}));
+let _lastPay=null,_pollT=null;
+async function pay(){
+  const err=document.getElementById('err'),ok=document.getElementById('okmsg'),btn=document.getElementById('payBtn');
+  err.textContent='';ok.textContent='';
+  const email=document.getElementById('email').value.trim(),inn=document.getElementById('inn').value.trim();
+  if(!email||email.indexOf('@')<0){err.textContent='Укажите e-mail — на него придёт чек и доступ.';return;}
+  btn.disabled=true;btn.textContent='Создаю счёт…';
+  try{
+    const r=await fetch(API+'/pay/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:plan,inn:inn,email:email})});
+    const d=await r.json();
+    if(!d.url){err.textContent=d.detail||'Не удалось создать счёт. Напишите нам: hello@daldobro.ru';return;}
+    if(payKind==='card'){ok.textContent='Переходим на защищённую страницу оплаты ЮKassa…';location.href=d.url;return;}
+    // ── юрлицо: QR + счёт ──
+    _lastPay=d;
+    document.getElementById('qrLink').href=d.url;
+    const qc=document.getElementById('qrCanvas');qc.innerHTML='';
+    new QRCode(qc,{text:d.url,width:170,height:170,correctLevel:QRCode.CorrectLevel.M});
+    document.getElementById('qrBox').classList.add('show');
+    ok.textContent='';
+    // поллинг статуса: как оплатят — покажем «Дал добро!»
+    clearInterval(_pollT);
+    _pollT=setInterval(async()=>{
+      try{
+        const s=await(await fetch(API+'/pay/status?yk='+encodeURIComponent(d.yk_id))).json();
+        if(s.paid||s.status==='succeeded'){
+          clearInterval(_pollT);
+          const st=document.getElementById('payState');st.textContent='✓ Оплачено — дал добро! Услуга активируется автоматически.';st.className='ok';
+        }
+      }catch(e){}
+    },7000);
+  }catch(e){err.textContent='Ошибка сети. Попробуйте ещё раз или напишите hello@daldobro.ru';}
+  finally{btn.disabled=false;btn.textContent=payKind==='qr'?'Сформировать счёт и QR →':'Перейти к оплате →';}
+}
+// печатный счёт для бухгалтерии (QR внутри)
+function printInvoice(){
+  if(!_lastPay)return;
+  const t=document.querySelector('.plan[data-plan="'+plan+'"] .t').textContent;
+  const org=document.getElementById('orgName').value.trim()||'—';
+  const inn=document.getElementById('inn').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const dt=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  const num=(_lastPay.yk_id||'').slice(0,8).toUpperCase();
+  const qrImg=document.querySelector('#qrCanvas img,#qrCanvas canvas');
+  const qrSrc=qrImg?(qrImg.tagName==='IMG'?qrImg.src:qrImg.toDataURL()):'';
+  document.getElementById('invoiceArea').innerHTML=
+    '<div class="ih"><img src="/logo.png"><div><h1>Счёт-оферта № '+num+' от '+dt+'</h1>'+
+    '<div class="mut">Сервис ДалДобро · daldobro.ru · hello@daldobro.ru · оплата через ЮKassa (ООО «ЮМани»)</div></div></div>'+
+    '<table><tr><td>Плательщик</td><td>'+org+(inn?' · ИНН '+inn:'')+'</td></tr>'+
+    '<tr><td>Услуга</td><td>'+t+'</td></tr>'+
+    '<tr><td>E-mail для чека и доступа</td><td>'+email+'</td></tr>'+
+    '<tr class="tot"><td>К оплате</td><td>'+Number(_lastPay.amount).toLocaleString('ru-RU')+' ₽ (НДС не облагается)</td></tr></table>'+
+    '<div class="qrrow">'+(qrSrc?'<img src="'+qrSrc+'">':'')+
+    '<div><b>Как оплатить:</b><br>1. Отсканируйте QR из приложения банка (в т.ч. бизнес-приложения)<br>'+
+    'или откройте ссылку: '+_lastPay.url.slice(0,60)+'…<br>'+
+    '2. Оплатите картой организации или через СБП.<br>3. Кассовый чек придёт на e-mail, услуга активируется автоматически.</div></div>'+
+    '<div class="disc">Оплата счёта означает согласие с публичной офертой: daldobro.ru/oferta.html. Услуга информационная. Счёт действителен 3 банковских дня. Вопросы: hello@daldobro.ru</div>';
+  window.print();
+}
+</script>
+<script src="/qr.js"></script>
+<div id="invoiceArea"></div>
+</body></html>

@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Индексы рынка ВЭД — ДалДобро</title>
-<meta name="description" content="Индекс проблем в ВЭД, платёжный барометр и карго-прайс-индекс — уникальные индикаторы рынка ввоза из Китая по собственным данным ДалДобро. Обновляются ежедневно.">
+<title>Индексы рынка ВЭД 2026: Барометр, карго, жд, фрахт — ДалДобро</title>
+<meta name="description" content="Барометр ВЭД — опережающий индекс: пошлины, маркировка, санкции за 30–90 дней до того, как их ощутит рынок. Плюс индекс проблем, карго, жд и фрахт. Значения бесплатно, обновляются ежедневно.">
 <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://daldobro.ru/indices.html">
+<meta property="og:updated_time" content="2026-07-20">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"Индексы рынка ВЭД","description":"Живые индикаторы рынка ввоза из Китая: Барометр ВЭД, индекс проблем, ставки карго/жд, мировой фрахт.","dateModified":"2026-07-20","publisher":{"@type":"Organization","name":"ДалДобро","url":"https://daldobro.ru/"}}</script>
 <style>
 :root{--bg:#080b16;--card:rgba(23,30,48,.55);--line:rgba(120,140,190,.14);--txt:#eaf0fb;--mut:#9aa8c6;--acc:#5b8cff;--good:#2fbf71;--warn:#f0b03a;--bad:#ff6a5a;--cyan:#3ad7c8}
 *{box-sizing:border-box}
@@ -36,7 +38,20 @@ svg{width:100%;height:190px;display:block}
 .cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:26px 0;padding:18px 20px;background:rgba(91,140,255,.07);border:1px solid rgba(91,140,255,.3);border-radius:16px}
 .cta span{color:#c9d8ff;font-size:14.5px;flex:1;min-width:240px;line-height:1.55}
 .cta a{padding:12px 20px;border-radius:12px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff);white-space:nowrap}
-</style></head>
+.short{background:rgba(91,140,255,.07);border:1px solid rgba(91,140,255,.22);border-radius:14px;padding:16px 18px;margin:18px 0 4px;font-size:14.5px;line-height:1.6;color:#d3e0ff}
+.short b{color:#fff}
+.faq{margin:30px 0 0}.faq h2{font-size:20px;margin:0 0 12px}
+.faq details{border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:8px 0;background:rgba(10,15,28,.4)}
+.faq summary{cursor:pointer;font-weight:700;color:#c9d8ff;font-size:14.5px}
+.faq details p{margin:8px 0 0;font-size:13.5px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"Что такое Барометр ВЭД?","acceptedAnswer":{"@type":"Answer","text":"Опережающий индекс рынка ввоза из Китая по шкале 0–100. Считает регуляторную нагрузку (пошлины, маркировку, санкции) с будущей датой вступления на ближайшие 30–90 дней и показывает её до того, как рынок её ощутит."}},
+{"@type":"Question","name":"Индексы ДалДобро платные?","acceptedAnswer":{"@type":"Answer","text":"Текущие значения и тренд за полгода — бесплатно. Полная история, точные даты изменений, срезы по маршрутам, фильтр по коду ТН ВЭД и алерты — в тарифе Индексы PRO."}},
+{"@type":"Question","name":"Как часто обновляются индексы?","acceptedAnswer":{"@type":"Answer","text":"Ежедневно, по собственным данным ДалДобро: рыночные сигналы, ставки карго и жд, мировой фрахт, календарь регуляторных изменений."}}]}</script>
+<script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,webvisor:false});</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""></div></noscript>
+</head>
 <body>
 <div class="bg"></div>
 <div class="wrap">
@@ -44,12 +59,27 @@ svg{width:100%;height:190px;display:block}
 
 <h1>Индексы рынка ВЭД</h1>
 <p class="sub">Живые индикаторы рынка ввоза из Китая, которых нет в официальной статистике. Здесь — текущие значения и тренд за полгода, бесплатно. Полная история, срезы по маршрутам и алерты — в <a href="/claim.html?plan=indices_pro" style="color:#8fb4ff">Индексах PRO</a>.</p>
-<span class="upd" id="upd">обновлено —</span>
+<div class="short"><b>Коротко:</b> пять индикаторов ввоза из Китая, обновляются ежедневно. <b>Барометр ВЭД</b> — что регуляторно надвигается на 30–90 дней вперёд; <b>Индекс проблем</b> — сколько трения на таможне сейчас; <b>карго</b>, <b>жд</b> и <b>мировой фрахт</b> — сколько стоит довезти. Текущие значения — бесплатно.</div>
+<span class="upd" id="upd">обновляется ежедневно</span>
+
+<div class="card" id="baroCard" style="border-color:rgba(58,215,200,.35);background:linear-gradient(180deg,rgba(58,215,200,.06),rgba(23,30,48,.55))">
+  <div class="now"><b id="baroNow" style="font-size:42px">—</b><span>Барометр ВЭД · шкала 0–100</span></div>
+  <h2>🌡️ Барометр ВЭД <span class="badge" id="baroStatus" style="background:rgba(47,191,113,.15);color:var(--good)">—</span></h2>
+  <p style="max-width:730px"><b style="color:#c9d8ff">Опережающий индекс.</b> Считает регуляторную «непогоду», уже назначенную на ближайшие 30–90 дней — пошлины, маркировку, санкции с будущей датой вступления. Показывает боль <b>до</b> того, как рынок её почувствовал: пока «Индекс проблем» ниже отражает то, что обсуждают сегодня, Барометр смотрит вперёд. Чем выше — тем плотнее фронт изменений впереди.</p>
+  <div style="position:relative;height:14px;border-radius:8px;background:linear-gradient(90deg,#2fbf71,#f0b03a,#ff6a5a);margin:36px 0 8px" role="img" aria-label="Шкала Барометра ВЭД от 0 (ясно) до 100 (шторм)">
+    <div id="baroBubble" style="position:absolute;top:-30px;left:0%;transform:translateX(-50%);font-size:12px;font-weight:800;color:#fff;background:rgba(10,15,28,.92);border:1px solid var(--line);border-radius:8px;padding:2px 8px;transition:left .7s ease-out;white-space:nowrap">—</div>
+    <div id="baroMark" style="position:absolute;top:-5px;left:0%;width:4px;height:24px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.85);transition:left .7s ease-out"></div>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:16px"><span>🟢 ясно</span><span>🟠 пасмурно</span><span>🔴 шторм</span></div>
+  <div id="baroForecast" style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(10,15,28,.45);font-size:14.5px;line-height:1.6;color:#c9d8ff">Метеосводка загружается…</div>
+  <p style="margin:14px 0 0;font-size:13px;color:var(--mut)">📅 Фронтов на радаре за 90 дней: <b id="baroCount" style="color:#c9d8ff">—</b>. Детальная метеосводка — каждое изменение с точной датой, фильтр по <b>вашему коду ТН ВЭД</b> и подсказка «что успеть сделать до даты».</p>
+  <a href="/claim.html?plan=indices_pro" style="display:inline-block;margin-top:14px;padding:11px 20px;border-radius:11px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#2f9cf5,#3ad7c8)">Смотреть детальный прогноз →</a>
+</div>
 
 <div class="card">
   <div class="now"><b id="painNow">—</b><span>сейчас, доля проблемных сигналов</span></div>
   <h2>Индекс проблем в ВЭД</h2>
-  <p>Сколько из рыночных сигналов месяца — о проблемах: задержки, заторы, блокировки, ужесточения. Опережающий индикатор трения на таможне: растёт — готовьтесь к срывам сроков и закладывайте запас.</p>
+  <p>Сколько из рыночных сигналов месяца — о проблемах: задержки, заторы, блокировки, ужесточения. <b>Совпадающий</b> индикатор трения на таможне — что рынок ощущает прямо сейчас (в паре с опережающим Барометром выше). Растёт — закладывайте запас по срокам.</p>
   <svg id="chPain" viewBox="0 0 900 190" preserveAspectRatio="none"></svg>
 </div>
 
@@ -94,12 +124,20 @@ svg{width:100%;height:190px;display:block}
   <a href="https://t.me/DalDobro_media" style="background:linear-gradient(100deg,#2f9cf5,#3ad7c8)">Подписаться на канал →</a>
 </div>
 
+<div class="faq">
+  <h2>Частые вопросы</h2>
+  <details><summary>Что такое Барометр ВЭД?</summary><p>Опережающий индекс рынка ввоза из Китая по шкале 0–100. Считает регуляторную нагрузку (пошлины, маркировку, санкции) с будущей датой вступления на 30–90 дней вперёд и показывает её <b>до</b> того, как её ощутит рынок.</p></details>
+  <details><summary>Индексы платные?</summary><p>Текущие значения и тренд за полгода — бесплатно. Полная история, точные даты изменений, срезы по маршрутам, фильтр по коду ТН ВЭД и алерты — в <a href="/claim.html?plan=indices_pro">Индексах PRO</a>.</p></details>
+  <details><summary>Как часто обновляются?</summary><p>Ежедневно, по собственным данным ДалДобро: рыночные сигналы, ставки карго и жд, мировой фрахт, календарь регуляторных изменений.</p></details>
+</div>
+
 <div class="foot"><b>ДалДобро</b> — независимый навигатор по ввозу из Китая. Значения навигационные и не являются офертой. © ДалДобро · <a href="/" style="color:#a9c2ff">daldobro.ru</a></div>
 </div>
 
 <script>
-function chart(id,ser,color,unit){
+function chart(id,ser,color,unit,name){
   const el=document.getElementById(id); if(!ser||!ser.length){el.outerHTML='<div style="color:#7f92b8;font-size:13px;padding:20px 0">Недостаточно точек для графика — ряд накапливается.</div>';return;}
+  el.setAttribute('role','img'); el.setAttribute('aria-label',(name||'Тренд')+': тренд за полгода, последнее значение '+ser[ser.length-1].v+unit);
   const W=900,H=190,P=28,vs=ser.map(p=>p.v),mn=Math.min(...vs),mx=Math.max(...vs),rg=(mx-mn)||1;
   const x=i=>P+ (W-2*P)*i/Math.max(ser.length-1,1), y=v=>H-P-(H-2*P)*(v-mn)/rg;
   let d='M'+ser.map((p,i)=>x(i)+','+y(p.v)).join(' L');
@@ -115,6 +153,17 @@ function chart(id,ser,color,unit){
   s+='<text class="axis" x="6" y="'+(y(mx)+4)+'">'+mx+unit+'</text><text class="axis" x="6" y="'+(y(mn)+4)+'">'+mn+unit+'</text>';
   el.innerHTML=s;
 }
+// Барометр ВЭД — опережающий индекс
+fetch('data/leading_index.json').then(r=>r.json()).then(d=>{
+  const idx=d.index||0, c = idx<33?'var(--good)':(idx<66?'var(--warn)':'var(--bad)');
+  const n=document.getElementById('baroNow'); n.textContent=idx; n.style.background='none'; n.style.webkitTextFillColor=c; n.style.color=c;
+  const st=document.getElementById('baroStatus'); st.textContent=d.status||'—'; st.style.color=c; st.style.background='rgba(120,140,190,.12)';
+  const pos=Math.max(1,Math.min(98,idx))+'%';
+  document.getElementById('baroMark').style.left=pos;
+  const bub=document.getElementById('baroBubble'); bub.style.left=pos; bub.textContent=idx; bub.style.borderColor=c; bub.style.color=c;
+  document.getElementById('baroForecast').textContent=d.forecast||'';
+  document.getElementById('baroCount').textContent=(d.count&&d.count.d90)||0;
+}).catch(()=>{document.getElementById('baroCard').style.display='none';});
 fetch('data/indices.json').then(r=>r.json()).then(d=>{
   document.getElementById('upd').textContent='обновлено '+d.updated;
   const pain=d.pain||[],comm=d.comm||[],cargo=d.cargo||[];
@@ -125,9 +174,9 @@ fetch('data/indices.json').then(r=>r.json()).then(d=>{
   if(meta.rail_erai){document.getElementById('railNow').textContent='$'+meta.rail_erai.toLocaleString('ru');}
   if(meta.world_wci){document.getElementById('worldNow').textContent='$'+meta.world_wci.toLocaleString('ru');}
   // на сайте — бесплатно только текущее значение и тренд за полгода; полная история и срезы — в PRO
-  chart('chPain',pain.slice(-6),'#ff6a5a','%');
-  chart('chComm',comm.slice(-6),'#f0b03a','%');
-  chart('chCargo',cargo.slice(-6),'#3ad7c8','$');
+  chart('chPain',pain.slice(-6),'#ff6a5a','%','Индекс проблем в ВЭД');
+  chart('chComm',comm.slice(-6),'#f0b03a','%','Платёжный барометр');
+  chart('chCargo',cargo.slice(-6),'#3ad7c8','$','Карго-прайс-индекс');
 }).catch(()=>{document.getElementById('upd').textContent='данные временно недоступны';});
 </script>
-</body></html>
+<!--dd-analytics-patch--><div id="ddCk" style="display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;background:#1f2937;color:#e5e7eb;padding:12px 16px;border-radius:10px;font:14px/1.45 system-ui,Arial;box-shadow:0 6px 24px rgba(0,0,0,.35);max-width:720px;margin:0 auto">Мы используем cookie и Яндекс.Метрику для аналитики. Оставаясь на сайте, вы соглашаетесь с <a href="/oferta.html" style="color:#93c5fd">условиями</a>.<button onclick="try{localStorage.dd_cookie_ok='1'}catch(e){};document.getElementById('ddCk').style.display='none'" style="margin-left:12px;background:#2563eb;color:#fff;border:0;padding:7px 16px;border-radius:8px;cursor:pointer">Принять</button></div><script>/*dd-patch*/(function(){try{var b=document.getElementById("ddCk");if(b&&!localStorage.dd_cookie_ok)b.style.display="block";}catch(e){}try{var _o=window.ddTrack;if(typeof _o==="function"&&!_o._ym){var w=function(t,x){try{if(window.ym)ym(110327454,"reachGoal",t,(x&&x.c)?{plan:x.c}:undefined);}catch(e){}return _o.apply(this,arguments);};w._ym=1;window.ddTrack=w;}}catch(e){}})();</script></body></html>
