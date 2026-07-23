@@ -329,8 +329,8 @@
   @keyframes glowfield{0%,100%{box-shadow:0 0 0 3px rgba(91,140,255,.18)}50%{box-shadow:0 0 0 5px rgba(124,92,255,.28)}}
 </style>
 <script>document.documentElement.className+=' js'</script>
-<script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});</script><noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""/></div></noscript><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"ДалДобро","url":"https://daldobro.ru/","logo":"https://daldobro.ru/logo.png","description":"Независимый навигатор по ввозу из Китая: код ТН ВЭД, пошлина, НДС, себестоимость — по официальному тарифу, без проплат."},{"@type":"WebSite","name":"ДалДобро","url":"https://daldobro.ru/","potentialAction":{"@type":"SearchAction","target":"https://daldobro.ru/?q={query}","query-input":"required name=query"}}]}</script><meta property="og:updated_time" content="2026-07-22">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"ДалДобро — растаможка из Китая","dateModified":"2026-07-22"}</script>
+<script type="text/javascript">(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true});</script><noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""/></div></noscript><script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"ДалДобро","url":"https://daldobro.ru/","logo":"https://daldobro.ru/logo.png","description":"Независимый навигатор по ввозу из Китая: код ТН ВЭД, пошлина, НДС, себестоимость — по официальному тарифу, без проплат."},{"@type":"WebSite","name":"ДалДобро","url":"https://daldobro.ru/","potentialAction":{"@type":"SearchAction","target":"https://daldobro.ru/?q={query}","query-input":"required name=query"}}]}</script><meta property="og:updated_time" content="2026-07-23">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":"ДалДобро — растаможка из Китая","dateModified":"2026-07-23"}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
 {"@type":"Question","name":"Как рассчитать растаможку товара из Китая?","acceptedAnswer":{"@type":"Answer","text":"Определите код ТН ВЭД товара, затем сложите ввозную пошлину по ЕТТ ЕАЭС, НДС (20% или льготные 10%) и таможенные сборы от таможенной стоимости. Быстрее — в калькуляторе ДалДобро: вводите товар, получаете код, ставку и итоговую себестоимость ввоза."}},
 {"@type":"Question","name":"Какая пошлина на товары из Китая в 2026 году?","acceptedAnswer":{"@type":"Answer","text":"Ставка зависит от кода ТН ВЭД — обычно от 0 до 20% и выше, плюс НДС 20% (для части продуктов и товаров 10%) и таможенные сборы. Для посылок физлицам действует свой порог беспошлинного ввоза."}},
@@ -635,9 +635,10 @@ const fmtCode=c=>c&&c.length===10?c.slice(0,4)+' '+c.slice(4,6)+' '+c.slice(6):c
 function srcInfo(s){
   s=s||'';
   if(s.includes('выбор'))    return {t:'✓ Вы уточнили товар — расчёт по вашему выбору',ok:1};
+  if(s.includes('устарел'))  return {t:'Код требует уточнения — опишите товар точнее',ok:0};
+  if(s.includes('контролёр'))return {t:'Код подобран ИИ и перепроверен вторым ИИ',ok:0};
   if(s.includes('якорь'))    return {t:'✓ Код из проверенного справочника ДалДобро',ok:1};
   if(s.includes('практика')) return {t:'✓ Код подтверждён практикой реальных деклараций',ok:1};
-  if(s.includes('контролёр'))return {t:'Код подобран ИИ и перепроверен вторым ИИ',ok:0};
   return {t:'Код подобран ИИ по описанию товара',ok:0};
 }
 function riskInfo(rl){
@@ -668,12 +669,14 @@ async function calc(chosen){
     else{qw.style.display='none';qw.classList.remove('need');}
     document.getElementById('code').textContent=fmtCode(d.code);
     document.getElementById('codeName').textContent=human(d.code_name);
-    renderFts(d.code);
+    if(d.clarify&&d.clarify.needed){var _fb=document.getElementById("ftsBox");if(_fb)_fb.innerHTML="";}else renderFts(d.code);
     renderSud(d.code);
     const userPick=(d.code_source||'').includes('выбор');
     const ri=userPick?{t:'ваш выбор ✓',cls:'b-low'}:riskInfo(d.risk_level||''),rb=document.getElementById('risk');
     rb.textContent=ri.t; rb.className='badge '+ri.cls;
-    const si=srcInfo(d.code_source),sn=document.getElementById('name');
+    let si=srcInfo(d.code_source);
+    if(d.clarify&&d.clarify.needed) si={t:'Код нужно уточнить — выберите точный вариант ниже',ok:0};
+    const sn=document.getElementById('name');
     sn.textContent=si.t; sn.className='src'+(si.ok?' ok':'');
     document.getElementById('cv').textContent=f(c.customs_value);
     // разбивка таможенной стоимости: показываем доставку отдельной графой, если посчитана
@@ -681,7 +684,10 @@ async function calc(chosen){
     if(_fr>0){document.getElementById('freightCell').textContent=f(_fr);frR.style.display='';gdR.style.display='';document.getElementById('goodsCell').textContent=f(_gd);}
     else{frR.style.display='none';gdR.style.display='none';}
     document.getElementById('dutyL').textContent='Пошлина'+(c.duty_note&&c.duty!=null?' ('+c.duty_note.replace(' (ЕТТ)','')+')':'');
-    if(c.duty!=null){
+    const uncertain=!!(d.clarify&&d.clarify.needed)&&!userPick;
+    if(uncertain){
+      document.getElementById('duty').textContent='—';document.getElementById('vatL').textContent='НДС';document.getElementById('vat_').textContent='—';document.getElementById('fee_').textContent='—';document.getElementById('total').textContent='уточните код ↓';
+    }else if(c.duty!=null){
       document.getElementById('duty').textContent=f(c.duty);
       document.getElementById('vatL').textContent='НДС '+c.vat_rate+'%';
       document.getElementById('vat_').textContent=f(c.vat);document.getElementById('fee_').textContent=c.fee?f(c.fee):'—';
@@ -713,7 +719,7 @@ async function calc(chosen){
     const fx=document.getElementById('stampFx'),ring=document.getElementById('stampRing'),card=document.querySelector('.res-card');
     [fx,ring].forEach(el=>el.classList.remove('go'));card.classList.remove('thud');tot.classList.remove('bump');nav.classList.remove('hit');
     void fx.offsetWidth;
-    fx.classList.add('go');ring.classList.add('go');card.classList.add('thud');tot.classList.add('bump');nav.classList.add('hit');
+    if(!uncertain){fx.classList.add('go');ring.classList.add('go');card.classList.add('thud');tot.classList.add('bump');nav.classList.add('hit');}
     setTimeout(()=>nav.classList.remove('hit'),700);
     document.getElementById('stickyTotal').textContent=tot.textContent;
     document.getElementById('stickyBar').classList.add('show');
