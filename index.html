@@ -345,7 +345,7 @@
     <div class="logo"><img src="/logo.png" alt="ДалДобро"><span>Дал<b>Добро</b></span></div>
     <div class="links">
       <a href="#calc">Калькулятор</a><a href="#analytics">Аналитика</a>
-      <a href="#data">Индексы</a><a href="#check">Проверка</a><a href="/routes.html">Маршруты</a><a href="/rastamozhka/">Растаможка</a><a href="/claim.html">Тарифы</a><a href="https://t.me/DalDobro_media" style="color:#5bb8ff">Telegram-канал</a>
+      <a href="#data">Индексы</a><a href="/zakony.html">Барометр законов</a><a href="#check">Проверка</a><a href="/routes.html">Маршруты</a><a href="/rastamozhka/">Растаможка</a><a href="/claim.html">Тарифы</a><a href="https://t.me/DalDobro_media" style="color:#5bb8ff">Telegram-канал</a>
     </div>
   </nav>
 
@@ -583,7 +583,7 @@
       <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M6 9a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 004 0"/></svg></div><span class="tag soon">Скоро</span><h3>Алерты и мониторинг</h3><p>Правило вступает завтра · канал платежей упал · брокер вылетел — узнай раньше всех. 1 490&nbsp;₽/мес.</p></div>
       <div class="glass tile"><div class="ico"><svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7zM12 9a3 3 0 100 6 3 3 0 000-6z"/></svg></div><span class="tag soon">Скоро</span><h3>Фейк-радар</h3><p>Что сегодня НЕ правда на рынке: разоблачение ложных паник.</p></div>
     </div>
-    <div class="early"><span>Нужен полный отчёт с финансами, историей и сигналами рынка? 990&nbsp;₽ за компанию.</span><a href="/claim.html?plan=check_full">Заказать полную проверку →</a></div>
+    <div class="early"><span>Нужен полный отчёт с финансами, историей и сигналами рынка? 490&nbsp;₽ за компанию.</span><a href="/claim.html?plan=check_full">Заказать полную проверку →</a></div>
   </section>
 
   <section id="faq" class="reveal">
@@ -598,7 +598,7 @@
 
   <div class="foot">
     <b>ДалДобро</b> — навигатор по ввозу из Китая. Оценки навигационные: коды и ставки — по официальному классификатору и ЕТТ ЕАЭС. Пломбу ставит лицензированный декларант; при высоком риске — предварительное решение ФТС.<br>
-    © ДалДобро · daldobro.ru · <a href="https://t.me/DalDobro_media" style="color:#5bb8ff">Telegram-канал</a> · <a href="https://t.me/daldobro_bot" style="color:#5bb8ff">бот с калькулятором</a> · <a href="/claim.html" style="color:#a9c2ff">тарифы</a> · <a href="/routes.html" style="color:#a9c2ff">маршруты</a> · <a href="/rastamozhka/" style="color:#a9c2ff">растаможка товаров</a> · <a href="/widget.html" style="color:#a9c2ff">виджет для сайта</a> · <a href="/oferta.html" style="color:#a9c2ff">оферта</a><br><span style="opacity:.7;font-size:12px">ИП Руденко Филипп Сергеевич, ИНН 253600303874, ОГРНИП 313254331000066, г. Владивосток</span> · <a href="mailto:hello@daldobro.ru" style="color:#a9c2ff">hello@daldobro.ru</a>
+    © ДалДобро · daldobro.ru · <a href="https://t.me/DalDobro_media" style="color:#5bb8ff">Telegram-канал</a> · <a href="https://t.me/daldobro_bot" style="color:#5bb8ff">бот с калькулятором</a> · <a href="/claim.html" style="color:#a9c2ff">тарифы</a> · <a href="/routes.html" style="color:#a9c2ff">маршруты</a> · <a href="/zakony.html" style="color:#a9c2ff">барометр законов</a> · <a href="/rastamozhka/" style="color:#a9c2ff">растаможка товаров</a> · <a href="/widget.html" style="color:#a9c2ff">виджет для сайта</a> · <a href="/oferta.html" style="color:#a9c2ff">оферта</a><br><span style="opacity:.7;font-size:12px">ИП Руденко Филипп Сергеевич, ИНН 253600303874, ОГРНИП 313254331000066, г. Владивосток</span> · <a href="mailto:hello@daldobro.ru" style="color:#a9c2ff">hello@daldobro.ru</a>
   </div>
 </div>
 
@@ -1030,7 +1030,7 @@ async function doCheck(){
       '<span>'+(x.active?'действует':'⚠ статус неактивен')+'</span>'+
       '<span>'+(x.region||'')+'</span><span>масштаб: '+(x.scale||'н/д')+'</span>'+
       (x.company_since?'<span>компания с '+x.company_since+'</span>':'')+'</div>'+
-      '<div style="margin-top:10px"><a href="/claim.html?plan=check_full&inn='+x.inn+'&org='+encodeURIComponent(x.name||'')+'" style="color:#a9c2ff;font-size:13px;font-weight:700">Полный отчёт: финансы, история, сигналы рынка — 990&nbsp;₽ →</a></div></div>').join('');
+      '<div style="margin-top:10px"><a href="/claim.html?plan=check_full&inn='+x.inn+'&org='+encodeURIComponent(x.name||'')+'" style="color:#a9c2ff;font-size:13px;font-weight:700">Полный отчёт: финансы, история, сигналы рынка — 490&nbsp;₽ →</a></div></div>').join('');
   }catch(e){box.innerHTML='<div class="err">Сервис проверки временно недоступен.</div>';}
 }
 // ── подбор исполнителей под товар: после расчёта колонка перестраивается ──
