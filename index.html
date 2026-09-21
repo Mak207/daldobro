@@ -336,7 +336,18 @@
 {"@type":"Question","name":"Какая пошлина на товары из Китая в 2026 году?","acceptedAnswer":{"@type":"Answer","text":"Ставка зависит от кода ТН ВЭД — обычно от 0 до 20% и выше, плюс НДС 20% (для части продуктов и товаров 10%) и таможенные сборы. Для посылок физлицам действует свой порог беспошлинного ввоза."}},
 {"@type":"Question","name":"Как узнать код ТН ВЭД по названию товара?","acceptedAnswer":{"@type":"Answer","text":"Введите наименование товара в подбор кода ТН ВЭД на ДалДобро — сервис предложит подходящий код. От кода зависят ставка пошлины и требования по сертификации, поэтому важно подобрать его точно."}},
 {"@type":"Question","name":"Как проверить компанию, которая растамаживает груз?","acceptedAnswer":{"@type":"Answer","text":"Проверьте, есть ли у неё официальный допуск таможни — она должна быть в реестре таможенных представителей ФТС. Без допуска компания не вправе оформлять ваш груз. Бесплатная проверка по ИНН — на ДалДобро."}}]}</script>
-</head>
+<style id="adaptive-zoom-reflow-css" data-rollout="adaptive-zoom-reflow-rollout-20260921">:root{--az-font-factor:1;--az-control-font-factor:1;--az-space-factor:1;--az-touch:44px}
+html[data-az-zoom]:not([data-az-zoom="100"]) [data-az-scale-text="1"]{font-size:calc(var(--az-font-base)*var(--az-font-factor))!important;line-height:calc(var(--az-line-base)*var(--az-font-factor))!important;overflow-wrap:anywhere}
+html[data-az-zoom]:not([data-az-zoom="100"]) [data-az-scale-control="1"]{min-height:max(var(--az-touch),calc(var(--az-height-base)*var(--az-space-factor)))!important;padding-top:calc(var(--az-pt-base)*var(--az-space-factor))!important;padding-bottom:calc(var(--az-pb-base)*var(--az-space-factor))!important;padding-left:calc(var(--az-pl-base)*var(--az-space-factor))!important;padding-right:calc(var(--az-pr-base)*var(--az-space-factor))!important;box-sizing:border-box;white-space:normal}
+html[data-az-zoom]:not([data-az-zoom="100"]) :is(input:not([type="checkbox"]):not([type="radio"]),select,textarea)[data-az-scale-text="1"]{font-size:calc(var(--az-font-base)*var(--az-control-font-factor))!important;line-height:1.25!important;min-height:var(--az-touch)!important}
+html[data-az-zoom="175"] :is(.grid.two,.grid.cols-2,.cards.two,.columns.two,.two-columns,.form-grid){grid-template-columns:1fr!important}
+html[data-az-zoom="200"] :is(.grid,.cards,.columns,.metrics,.stats,.form-grid){grid-template-columns:1fr!important}
+html[data-az-zoom]:not([data-az-zoom="100"]) :is(main,.page,.screen,.view,.content,.card,.panel,.section){min-width:0;max-width:100%}
+.az-panel{position:fixed;z-index:2147483000;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);width:min(430px,calc(100% - 20px));padding:14px;border:1px solid rgba(127,127,127,.28);border-radius:20px;background:Canvas;color:CanvasText;box-shadow:0 18px 55px rgba(0,0,0,.24);font-family:inherit;box-sizing:border-box}
+.az-panel[hidden]{display:none!important}.az-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:12px}.az-head b{display:block;font-size:16px;line-height:1.2}.az-head span{display:block;margin-top:4px;font-size:12px;line-height:1.4;opacity:.72}.az-close{flex:0 0 auto;width:44px;height:44px;border:1px solid rgba(127,127,127,.3);border-radius:13px;background:transparent;color:inherit;font-size:22px}.az-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.az-controls button{min-height:56px;border:1px solid rgba(127,127,127,.3);border-radius:15px;background:rgba(127,127,127,.08);color:inherit;font-size:24px;font-weight:800}.az-reset{width:100%;min-height:48px;margin-top:8px;border:0;border-radius:14px;background:rgba(127,127,127,.12);color:inherit;font:inherit;font-weight:700}.az-hint{margin:9px 2px 0;font-size:11px;line-height:1.45;opacity:.7}.az-toast{position:fixed;z-index:2147483001;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translateX(-50%);padding:10px 14px;border-radius:999px;background:#172033;color:#fff;font:700 12px/1.2 system-ui,sans-serif;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none;opacity:0;transition:opacity .16s}.az-toast.show{opacity:1}
+[data-adaptive-zoom-open]{touch-action:manipulation}
+@media(max-width:760px){html,body{max-width:100%;overflow-x:hidden}html[data-az-zoom]:not([data-az-zoom="100"]) body{letter-spacing:.005em}}
+</style></head>
 <body>
 <div class="bg"></div><div class="orb a"></div><div class="orb b"></div><div class="orb c"></div><div class="grid-ovl"></div><div class="cursor-glow" id="cg"></div>
 
@@ -1395,5 +1406,108 @@ async function fbSend(){
   finally{b.disabled=false;b.textContent='Отправить →';}
 }
 </script>
-<!--dd-analytics-patch--><div id="ddCk" style="display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;background:#1f2937;color:#e5e7eb;padding:7px 12px;border-radius:9px;font:12.5px/1.35 system-ui,Arial;box-shadow:0 4px 16px rgba(0,0,0,.3);max-width:520px;margin:0 auto">Cookie и Яндекс.Метрика · <a href="/oferta.html" style="color:#93c5fd">условия</a> · <a href="/politika.html" style="color:#93c5fd">политика</a>. <button onclick="try{localStorage.dd_cookie_ok='1'}catch(e){};document.getElementById('ddCk').style.display='none'" style="margin-left:8px;background:#2563eb;color:#fff;border:0;padding:5px 14px;border-radius:7px;cursor:pointer">OK</button></div><script>/*dd-patch*/(function(){try{var b=document.getElementById("ddCk");if(b&&!localStorage.dd_cookie_ok)b.style.display="block";}catch(e){}try{var _o=window.ddTrack;if(typeof _o==="function"&&!_o._ym){var w=function(t,x){try{if(window.ym)ym(110327454,"reachGoal",t,(x&&x.c)?{plan:x.c}:undefined);}catch(e){}return _o.apply(this,arguments);};w._ym=1;window.ddTrack=w;}}catch(e){}})();</script></body>
+<!--dd-analytics-patch--><div id="ddCk" style="display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:99999;background:#1f2937;color:#e5e7eb;padding:7px 12px;border-radius:9px;font:12.5px/1.35 system-ui,Arial;box-shadow:0 4px 16px rgba(0,0,0,.3);max-width:520px;margin:0 auto">Cookie и Яндекс.Метрика · <a href="/oferta.html" style="color:#93c5fd">условия</a> · <a href="/politika.html" style="color:#93c5fd">политика</a>. <button onclick="try{localStorage.dd_cookie_ok='1'}catch(e){};document.getElementById('ddCk').style.display='none'" style="margin-left:8px;background:#2563eb;color:#fff;border:0;padding:5px 14px;border-radius:7px;cursor:pointer">OK</button></div><script>/*dd-patch*/(function(){try{var b=document.getElementById("ddCk");if(b&&!localStorage.dd_cookie_ok)b.style.display="block";}catch(e){}try{var _o=window.ddTrack;if(typeof _o==="function"&&!_o._ym){var w=function(t,x){try{if(window.ym)ym(110327454,"reachGoal",t,(x&&x.c)?{plan:x.c}:undefined);}catch(e){}return _o.apply(this,arguments);};w._ym=1;window.ddTrack=w;}}catch(e){}})();</script><script id="adaptive-zoom-reflow-js" data-rollout="adaptive-zoom-reflow-rollout-20260921">(()=>{
+'use strict';
+if(window.AdaptiveZoomReflow)return;
+const script=document.currentScript;
+const LEVELS=[100,125,150,175,200];
+const key=(script&&script.dataset.storageKey)||('adaptive_zoom_'+location.host+location.pathname.replace(/[^a-z0-9]+/gi,'_'));
+let level=100,panel=null,toast=null,toastTimer=null,pinchDistance=0,pinchActive=false,scanTimer=null,observer=null;const pendingRoots=new Set();
+const nearest=v=>LEVELS.reduce((a,b)=>Math.abs(b-v)<Math.abs(a-v)?b:a,100);
+const hasDirectText=e=>[...e.childNodes].some(n=>n.nodeType===3&&n.textContent.trim());
+const isControl=e=>{
+  if(e.matches('input[type="checkbox"],input[type="radio"]'))return false;
+  return e.matches('button,input,select,textarea,summary,label,a[href],[role="button"],[role="link"],.btn,.button,.chip,.tab');
+};
+const ignored=e=>e.matches('script,style,noscript,template,canvas')||!!e.closest('svg')||e.hasAttribute('data-az-ignore');
+const scrollRoot=()=>document.scrollingElement||document.documentElement;
+function stored(){try{const v=Number(localStorage.getItem(key));return LEVELS.includes(v)?v:100}catch(e){return 100}}
+function factors(n){
+  return n===125?[1.22,1.12,1.08,48]:
+         n===150?[1.42,1.25,1.16,52]:
+         n===175?[1.62,1.40,1.25,56]:
+         n===200?[1.80,1.55,1.34,60]:[1,1,1,44];
+}
+function scan(scope=document.body){
+  if(!scope)return;
+  const root=document.documentElement,prior=root.dataset.azZoom||'100',sr=scrollRoot(),oldMax=Math.max(0,sr.scrollHeight-sr.clientHeight),ratio=oldMax?sr.scrollTop/oldMax:0;
+  root.dataset.azZoom='100';
+  const nodes=[];if(scope instanceof HTMLElement)nodes.push(scope);if(scope.querySelectorAll)nodes.push(...scope.querySelectorAll('*'));
+  for(const e of nodes){
+    if(!(e instanceof HTMLElement)||ignored(e)||e.dataset.azScaleReady==='1')continue;
+    const txt=hasDirectText(e),ctl=isControl(e);
+    if(!txt&&!ctl)continue;
+    const cs=getComputedStyle(e),fs=parseFloat(cs.fontSize),lh=parseFloat(cs.lineHeight),r=e.getBoundingClientRect();
+    if(fs>0)e.style.setProperty('--az-font-base',fs+'px');
+    if(lh>0)e.style.setProperty('--az-line-base',lh+'px');
+    e.dataset.azScaleText='1';
+    if(ctl){
+      e.dataset.azScaleControl='1';
+      e.style.setProperty('--az-height-base',Math.max(0,r.height)+'px');
+      e.style.setProperty('--az-width-base',Math.max(0,r.width)+'px');
+      e.style.setProperty('--az-pt-base',(parseFloat(cs.paddingTop)||0)+'px');
+      e.style.setProperty('--az-pb-base',(parseFloat(cs.paddingBottom)||0)+'px');
+      e.style.setProperty('--az-pl-base',(parseFloat(cs.paddingLeft)||0)+'px');
+      e.style.setProperty('--az-pr-base',(parseFloat(cs.paddingRight)||0)+'px');
+    }
+    e.dataset.azScaleReady='1';
+  }
+  root.dataset.azZoom=prior;
+  if(ratio>0){const max=Math.max(0,sr.scrollHeight-sr.clientHeight);sr.scrollTop=Math.round(max*ratio)}
+}
+function scheduleScan(){clearTimeout(scanTimer);scanTimer=setTimeout(()=>{const roots=[...pendingRoots];pendingRoots.clear();for(const root of roots)scan(root)},0)}
+function startCoverage(){
+  scan(document.body);
+  observer=new MutationObserver(mutations=>{for(const m of mutations){if(m.type==='characterData'){const p=m.target.parentElement;if(p)pendingRoots.add(p);continue}for(const n of m.addedNodes){if(n instanceof HTMLElement)pendingRoots.add(n)}}if(pendingRoots.size)scheduleScan()});
+  observer.observe(document.body,{subtree:true,childList:true,characterData:true});
+}
+function showToast(t){if(!toast)return;toast.textContent=t;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast&&toast.classList.remove('show'),1000)}
+function updatePanel(){
+  if(!panel)return;
+  const d=panel.querySelector('[data-az-down]'),u=panel.querySelector('[data-az-up]');
+  if(d)d.disabled=level===LEVELS[0];
+  if(u)u.disabled=level===LEVELS[LEVELS.length-1];
+}
+function apply(v,opt={}){
+  v=nearest(Number(v)||100);
+  const sr=scrollRoot(),oldMax=Math.max(0,sr.scrollHeight-sr.clientHeight),ratio=oldMax?sr.scrollTop/oldMax:0,[ff,cf,sf,touch]=factors(v);
+  level=v;
+  const de=document.documentElement;
+  de.dataset.azZoom=String(v);
+  de.style.setProperty('--az-font-factor',ff);
+  de.style.setProperty('--az-control-font-factor',cf);
+  de.style.setProperty('--az-space-factor',sf);
+  de.style.setProperty('--az-touch',touch+'px');
+  if(opt.persist!==false){try{localStorage.setItem(key,String(v))}catch(e){}}
+  updatePanel();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{const r=scrollRoot(),max=Math.max(0,r.scrollHeight-r.clientHeight);if(ratio>0)r.scrollTop=Math.round(max*ratio)}));
+  if(opt.announce)showToast(v===100?'Обычный размер':'Размер интерфейса изменён');
+  window.dispatchEvent(new CustomEvent('adaptive-zoom-change',{detail:{level:v}}));
+  return v;
+}
+function step(dir){const i=LEVELS.indexOf(level),n=Math.max(0,Math.min(LEVELS.length-1,i+(dir>0?1:-1)));return apply(LEVELS[n],{announce:true})}
+function closePanel(){if(panel)panel.hidden=true}
+function openPanel(){if(!panel)return;panel.hidden=false;updatePanel();panel.querySelector('[data-az-up]:not(:disabled),[data-az-down]:not(:disabled),[data-az-reset]')?.focus()}
+function buildPanel(){
+  panel=document.createElement('section');
+  panel.className='az-panel';panel.hidden=true;panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Размер интерфейса');
+  panel.innerHTML='<div class="az-head"><div><b>Размер интерфейса</b><span>Текст, кнопки и расположение элементов подстраиваются вместе.</span></div><button type="button" class="az-close" data-az-close aria-label="Закрыть">×</button></div><div class="az-controls"><button type="button" data-az-down aria-label="Уменьшить интерфейс">−</button><button type="button" data-az-up aria-label="Увеличить интерфейс">+</button></div><button type="button" class="az-reset" data-az-reset>Обычный размер</button><p class="az-hint">Можно также развести или свести два пальца. Выбор сохранится на этом устройстве.</p>';
+  document.body.appendChild(panel);
+  toast=document.createElement('div');toast.className='az-toast';toast.setAttribute('role','status');toast.setAttribute('aria-live','polite');document.body.appendChild(toast);
+  panel.querySelector('[data-az-close]').addEventListener('click',closePanel);
+  panel.querySelector('[data-az-up]').addEventListener('click',()=>step(1));
+  panel.querySelector('[data-az-down]').addEventListener('click',()=>step(-1));
+  panel.querySelector('[data-az-reset]').addEventListener('click',()=>apply(100,{announce:true}));
+  document.addEventListener('click',e=>{const opener=e.target.closest('[data-adaptive-zoom-open]');if(opener){e.preventDefault();openPanel();return}if(!panel.hidden&&!panel.contains(e.target)&&!opener)closePanel()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closePanel();return}if(!e.ctrlKey)return;if(e.key==='+'||e.key==='='){e.preventDefault();step(1)}else if(e.key==='-'){e.preventDefault();step(-1)}else if(e.key==='0'){e.preventDefault();apply(100,{announce:true})}});
+}
+const dist=t=>Math.hypot(t[0].clientX-t[1].clientX,t[0].clientY-t[1].clientY);
+document.addEventListener('touchstart',e=>{if(e.touches.length!==2)return;pinchDistance=dist(e.touches);pinchActive=pinchDistance>24},{passive:true});
+document.addEventListener('touchmove',e=>{if(!pinchActive||e.touches.length!==2)return;const d=dist(e.touches);if(!d||!pinchDistance)return;const ratio=d/pinchDistance;if(ratio>1.14){e.preventDefault();step(1);pinchDistance=d}else if(ratio<.88){e.preventDefault();step(-1);pinchDistance=d}},{passive:false});
+document.addEventListener('touchend',e=>{if(e.touches.length<2){pinchActive=false;pinchDistance=0}},{passive:true});
+document.addEventListener('touchcancel',()=>{pinchActive=false;pinchDistance=0},{passive:true});
+function init(){buildPanel();startCoverage();level=stored();apply(level,{persist:false})}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
+window.AdaptiveZoomReflow={levels:LEVELS.slice(),get:()=>level,set:v=>apply(v,{announce:true}),step,openPanel,closePanel,rescan:()=>scan(document.body)};
+})();</script></body>
 </html>
