@@ -44,7 +44,37 @@ input:focus{outline:none;border-color:var(--acc)}
 </div>
 <script>
 var API='https://api.201-51-30-177.sslip.io';
+var EV='https://app.daldobro.ru';
 function f(n){return new Intl.NumberFormat('ru-RU').format(Math.round(n))+' ₽';}
+function acquisitionContext(){
+  var ctx={a:'embed',s:'embed',p:'/embed',d:/Mobi/i.test(navigator.userAgent)?'mobile':'desktop',r:'',u:''};
+  try{
+    if(window.parent&&window.parent!==window){
+      ctx.a=window.parent.localStorage.dd_aid||ctx.a;
+      ctx.s=window.parent.sessionStorage.dd_sid||ctx.s;
+      ctx.p=window.parent.location.pathname||ctx.p;
+      var qp=new URLSearchParams(window.parent.location.search||'');
+      ctx.u=qp.get('utm_source')||qp.get('utm')||'';
+      try{
+        var rh=window.parent.document.referrer?new URL(window.parent.document.referrer).hostname:'';
+        if(rh&&rh.indexOf('daldobro')<0)ctx.r=rh;
+      }catch(_){}
+    }
+  }catch(_){}
+  return ctx;
+}
+function track(t,x){
+  try{
+    var c=acquisitionContext(),extra=x||{};
+    var row={t:t,a:c.a,s:c.s,p:c.p,d:c.d,r:c.r,u:c.u,c:extra.c||'',q:extra.q||''};
+    var body=JSON.stringify([row]);
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(EV+'/ev',new Blob([body],{type:'text/plain'}));
+    }else{
+      fetch(EV+'/ev',{method:'POST',headers:{'Content-Type':'text/plain'},body:body,keepalive:true});
+    }
+  }catch(_){}
+}
 async function calc(){
   var t=document.getElementById('t').value.trim(),g=document.getElementById('g').value||0,fr=document.getElementById('f').value||0,e=document.getElementById('e');
   e.textContent='';
@@ -67,9 +97,10 @@ async function calc(){
       document.getElementById('to').innerHTML='<a href="https://daldobro.ru/?term='+encodeURIComponent(t)+'" target="_blank" style="color:#8fb4ff">указать на сайте →</a>';
     }
     document.getElementById('r').classList.add('show');
+    track('calc',{c:d.code||'',q:(d.term||t||'').slice(0,60)});
   }catch(err){e.textContent='Сервис временно недоступен.';}
 }
 // префилл товара из ?term= (для встраивания на товарные страницы) + автосчёт
 (function(){try{var q=new URLSearchParams(location.search);var tm=q.get('term');if(tm){document.getElementById('t').value=tm;if(q.get('goods'))document.getElementById('g').value=q.get('goods');setTimeout(calc,300);}}catch(e){}})();
-try{fetch(API+'/ev',{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify([{t:'visit',a:'embed',s:'embed',p:'/embed',d:'embed',r:(document.referrer||'').replace(/^https?:\/\//,'').split('/')[0]}])});}catch(e){}
+track('visit');
 </script></body></html>
