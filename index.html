@@ -624,6 +624,38 @@ const API='https://api.201-51-30-177.sslip.io';
     var sid=sessionStorage.dd_sid; if(!sid){sid='s'+Date.now().toString(36);sessionStorage.dd_sid=sid;}
     var qp=new URLSearchParams(location.search);
     var utm=qp.get('utm_source')||qp.get('utm')||'';
+    // Capture campaign and publication together. Legacy source-only traffic
+    // keeps its original plain string. Anonymous session attribution lasts 30m.
+    var ddUtmKeys=['utm_source','utm','utm_medium','utm_campaign','utm_content'];
+    var ddHasExplicitUtm=ddUtmKeys.some(function(k){return qp.has(k);});
+    var ddUtmCampaign=qp.get('utm_campaign')||'';
+    var ddUtmContent=qp.get('utm_content')||'';
+    var ddUtmMedium=qp.get('utm_medium')||'';
+    var ddUtmSessionKey='dd_acq_utm_scope_v1';
+    if(ddHasExplicitUtm){
+      sessionStorage.removeItem(ddUtmSessionKey);
+      if(ddUtmCampaign||ddUtmContent||ddUtmMedium){
+        utm=JSON.stringify({utm_source:utm,utm_medium:ddUtmMedium,utm_campaign:ddUtmCampaign,utm_content:ddUtmContent});
+        if(ddUtmCampaign&&ddUtmContent){
+          sessionStorage.setItem(ddUtmSessionKey,JSON.stringify({value:utm,ts:Date.now()}));
+        }
+      }
+    } else {
+      var ddPrevious=sessionStorage.getItem(ddUtmSessionKey);
+      if(ddPrevious){
+        try{
+          var ddSaved=JSON.parse(ddPrevious);
+          var ddAge=Date.now()-ddSaved.ts;
+          if(typeof ddSaved.value==='string' && ddAge>=0 && ddAge<=1800000){
+            utm=ddSaved.value;
+          } else {
+            sessionStorage.removeItem(ddUtmSessionKey);
+          }
+        }catch(_){
+          sessionStorage.removeItem(ddUtmSessionKey);
+        }
+      }
+    }
     var ref=''; try{var rh=document.referrer?new URL(document.referrer).hostname:'';if(rh&&rh.indexOf('daldobro')<0)ref=rh;}catch(e){}
     var dev=matchMedia('(max-width:820px)').matches?'mobile':'desktop';
     window._ddQ=[];
