@@ -1,14 +1,18 @@
 {
- "updated": "2026-11-01",
- "checked_at": "2026-11-01T05:40:32.855191+00:00",
- "n": 3,
- "usd_rub": 80.56,
- "cargo_usd_per_kg": 2.06,
+ "updated": null,
+ "source_as_of": null,
+ "checked_at": "2026-11-01T09:34:15.781642+00:00",
+ "usd_rub": null,
+ "cargo_usd_per_kg": null,
  "by_mode_usd_per_kg": {
-  "air": 4.07,
-  "rail": 2.03,
-  "sea": 1.61
+  "air": null,
+  "rail": null,
+  "sea": null
  },
  "rail_erai_usd_feu": null,
- "world_wci_usd_40ft": 4429
+ "world_wci_usd_40ft": null,
+ "n": 0,
+ "data_status": "unknown",
+ "period_verified": false,
+ "reason": "source_period_and_price_basis_not_verified"
 }

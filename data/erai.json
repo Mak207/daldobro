@@ -1,9 +1,40 @@
 {
- "updated": "2026-11-01",
+ "schema_version": 2,
+ "updated": "2026-09-30",
+ "as_of": "2026-09-30",
+ "source_date": "2026-09-30",
+ "source_date_kind": "period_end",
+ "valid_from": null,
+ "valid_until": null,
+ "period_verified": true,
+ "period_applies_to": [
+  "west_usd_feu",
+  "east_usd_feu"
+ ],
+ "transit_period_verified": false,
+ "observation_period_start": "2026-09-01",
+ "observation_period_end": "2026-09-30",
+ "observation_period": "2026-09",
+ "period_source_url": "https://index1520.com/en/index/quotes/",
+ "period_evidence": "East and West popup-dynamics: matching value + explicit month/year",
+ "data_status": "dated_observation",
+ "is_current": false,
+ "source_url": "https://index1520.com/en/index/quotes/",
  "src": "ERAI (index1520.com)",
- "west_usd_feu": 4084.0,
- "east_usd_feu": 2601.0,
- "transit_days": 0.0,
- "note": "Индекс стоимости FEU по колее 1520 Азия↔Европа транзитом через ЕАЭС/РФ. Публичный.",
- "checked_at": "2026-11-01T05:40:27.669452+00:00"
+ "checked_at": "2026-11-01T09:34:08.990671+00:00",
+ "last_success_checked_at": "2026-11-01T09:34:08.990671+00:00",
+ "fetch_status": "ok",
+ "reason": "monthly_observation_not_a_current_quote",
+ "west_usd_feu": null,
+ "east_usd_feu": null,
+ "transit_days": null,
+ "observed_values": {
+  "west_usd_feu": 4084.0,
+  "east_usd_feu": 2601.0,
+  "transit_days": 7.0
+ },
+ "page_last_change": "2026-10-19",
+ "page_last_change_scope": "page_or_composite; not verified for East/West",
+ "error": null,
+ "note": "Месячное наблюдение ERAI East/West; не является текущей котировкой."
 }
