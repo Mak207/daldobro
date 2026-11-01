@@ -413,7 +413,7 @@ html[data-az-zoom]:not([data-az-zoom="100"]) :is(main,.page,.screen,.view,.conte
     <div class="col">
     <div class="col-head">Как повезёте</div>
     <div class="glass how-card">
-      <div class="how-lead">Прикинем доставку по <b>датированным наблюдениям ставок</b>, если для выбранного направления есть данные за последние 7 дней. Фрахт также можно ввести вручную.</div>
+      <div class="how-lead">Укажите стоимость доставки из предложения перевозчика для вашей партии.</div>
       <div id="freightHelp" style="font-size:13px;margin-bottom:10px"></div>
       <div id="freightCalc" style="display:none">
         <div style="display:grid;grid-template-columns:1fr;gap:8px">
@@ -1001,116 +1001,39 @@ function ddRouteRateEntries(data){
 }
 // END route-rate freshness.
 let _rates=null;
-// морские ворота Китай→РФ: срок (морем+до таможни), город растаможки, поправка плеча к $/кг
-const PORTS=[
-  {name:'Владивосток (Дальний Восток)',days:'18–25 сут',cust:'Владивосток',k:1.0,
-   note:'короткое морское плечо + ЖД/авто вглубь РФ'},
-  {name:'Новороссийск (Чёрное море)',days:'35–45 сут',cust:'Новороссийск',k:1.12,
-   note:'через Суэц; удобно для юга РФ'},
-  {name:'Санкт-Петербург (Балтика)',days:'40–50 сут',cust:'Санкт-Петербург',k:1.15,
-   note:'через Суэц; удобно для СЗ и центра'},
-  {name:'Авиа / экспресс',days:'3–8 сут',cust:'Москва',k:3.2,
-   note:'быстро и дорого — для срочных и лёгких грузов'},
-];
-function fillFrOptions(){
-  const rs=ddRouteRateEntries(_rates).filter(e=>e.state.current).map(e=>e.row);
-  const CN=[...new Set(rs.map(r=>r.cn))], RU=[...new Set(rs.map(r=>r.ru))],
-        CUST=['Владивосток','Москва','Находка','Новороссийск','Санкт-Петербург','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
-  const opt=a=>a.map(c=>'<option>'+ddRateEscape(c)+'</option>').join('');
-  document.getElementById('frFrom').innerHTML=opt(CN);
-  document.getElementById('frPort').innerHTML=PORTS.map((p,i)=>'<option value="'+i+'">'+p.name+'</option>').join('');
-  document.getElementById('frTo').innerHTML=opt(RU);
-  document.getElementById('frCust').innerHTML=opt(CUST);
-  onPortChange();
-}
-function onPortChange(){
-  const sel=document.getElementById('frPort'); if(!sel||!sel.value&&sel.value!=='0')return;
-  const p=PORTS[+sel.value];
-  document.getElementById('frPortInfo').innerHTML='🕒 срок ≈ '+p.days+' · '+p.note;
-  // подставляем город таможни под порт (пользователь может изменить)
-  const cust=document.getElementById('frCust');
-  for(const o of cust.options){if(o.value===p.cust){cust.value=p.cust;break;}}
-}
-const FR_FREE=3;   // бесплатных демо-расчётов без входа
-function frDemoUsed(){return +(localStorage.dd_frd||0);}
-function frLock(){
-  document.getElementById('freightCalc').style.display='none';
-  document.getElementById('freightHelp').innerHTML=
-    '<div style="padding:12px;border:1px solid rgba(240,176,58,.35);border-radius:10px;background:rgba(240,176,58,.07);line-height:1.6">'+
-    '🔒 <b>Бесплатные расчёты закончились.</b> Дальше — после входа: <b>14 дней бесплатно</b>, без карты.<br>'+
-    '<a href="/routes.html" style="color:#8fb4ff;font-weight:700">Войти и продолжить →</a></div>';
-}
 function frUnavailable(reason){
   document.getElementById('freightCalc').style.display='none';
   document.getElementById('frOut').textContent='';
-  const archive=ddRouteRateEntries(_rates).find(e=>!e.state.current);
-  document.getElementById('freightHelp').textContent=(reason||'Нет подтверждённых ставок за последние 7 дней.')+
-    (archive?' Последнее доступное наблюдение: '+archive.state.label+' (архив).':'')+
-    ' Введите фрахт вручную или запросите текущую ставку у перевозчика.';
+  document.getElementById('freightHelp').textContent=reason||'Для автооценки нужна котировка с подтверждёнными условиями вашей партии и видом перевозки. Введите фрахт вручную.';
 }
-function showFreightBridge(message){
-  if(!ddRouteRateEntries(_rates).some(e=>e.state.current)){frUnavailable();return false;}
-  if(typeof _rates.usd_rub!=='number'||!Number.isFinite(_rates.usd_rub)||_rates.usd_rub<=0){
-    frUnavailable('Для пересчёта в рубли нужен подтверждённый курс.');return false;
-  }
-  document.getElementById('freightHelp').innerHTML=message;
-  document.getElementById('frOut').textContent='';
-  document.getElementById('freightCalc').style.display='block';
-  fillFrOptions();return true;
+function showFreightBridge(){
+  // This endpoint supplies route aggregates, not a cargo-specific quotation.
+  // A fresh timestamp or an identical pair of cities does not prove compatibility.
+  frUnavailable();
+  return false;
 }
+function onPortChange(){frUnavailable();}
 async function freightJSON(path,tok){
   const r=await fetch(AUTH_API+path,{headers:tok?{Authorization:'Bearer '+tok}:{},cache:'no-store'});
   if(!r.ok)throw new Error('FreightHTTPError');
   return r.json();
 }
 async function initFreightBridge(){
+  frUnavailable();
   const tok=localStorage.getItem('dd_token');
-  document.getElementById('freightCalc').style.display='none';
+  if(!tok)return;
   try{
-    if(tok){
-      const m=await freightJSON('/auth/me',tok);
-      window._intelActive=!!(m.auth&&m.active);
-      if(window._lastD)loadMarket(window._lastD.code,window._lastD.term||term.value);
-      if(m.auth&&m.active){
-        _rates=await freightJSON('/routes/rates',tok);
-        showFreightBridge('<span style="color:var(--good)">✓ Есть наблюдения ставок за последние 7 дней</span> · курс '+_rates.usd_rub+' ₽/$');
-        return;
-      }
-    }
-    if(frDemoUsed()>=FR_FREE){frLock();return;}
-    _rates=await freightJSON('/routes/rates/demo');
-    showFreightBridge('<span style="color:var(--good)">✓ Есть наблюдения ставок за последние 7 дней</span> · бесплатно: <b id="frLeft">'+(FR_FREE-frDemoUsed())+'</b> из '+FR_FREE+' расчётов');
-  }catch(e){_rates=null;frUnavailable('Ставки сейчас недоступны.');}
+    const m=await freightJSON('/auth/me',tok);
+    window._intelActive=!!(m.auth&&m.active);
+    if(window._lastD)loadMarket(window._lastD.code,window._lastD.term||term.value);
+  }catch(e){window._intelActive=false;}
 }
 function applyFreight(){
-  const out=document.getElementById('frOut');
-  const from=document.getElementById('frFrom').value, to=document.getElementById('frTo').value,
-        cust=document.getElementById('frCust').value, w=+document.getElementById('frWeight').value;
-  if(!Number.isFinite(w)||w<=0){out.textContent='Введите вес в кг.';return;}
-  // Recheck at the moment of use: a page may have stayed open past the freshness window.
-  const exact=ddRouteRateEntries(_rates).find(e=>e.state.current&&e.row.cn===from&&e.row.ru===to);
-  if(!exact){out.textContent='Нет подтверждённой свежей ставки по этому направлению. Введите фрахт вручную или запросите текущую ставку у перевозчика.';return;}
-  const fx=_rates.usd_rub,port=PORTS[+(document.getElementById('frPort').value||0)];
-  if(typeof fx!=='number'||!Number.isFinite(fx)||fx<=0||!port){out.textContent='Недостаточно данных для расчёта. Введите фрахт вручную или запросите текущую ставку у перевозчика.';return;}
-  const kgP=Math.round(exact.state.price*port.k*100)/100;
-  const rub=Math.round(kgP*w*fx);
-  if(!Number.isFinite(rub)||rub<=0){out.textContent='Проверьте вес и данные ставки; фрахт можно ввести вручную.';return;}
-  document.getElementById('freight').value=rub;
-  window._frCustoms=cust;
-  if(!window.WL)ddTrack('freight_apply',{x:{from:from,to:to,port:port.name.replace(/ \(.*/,''),rub:rub}});
-  const portNote=port.k!==1?(' (плечо через '+port.name.replace(/ \(.*/,'')+', ×'+port.k+')'):'';
-  const src=window.WL?'ставка '+(WL.name||'компании'):'наблюдение по этому направлению';
-  out.innerHTML='≈ '+kgP+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b>'+portNote+'<br>'+
-    ddRateEscape(from)+' → '+ddRateEscape(to)+' · порт: '+port.name.replace(/ \(.*/,'')+' 🕒'+port.days+' · таможня: '+ddRateEscape(cust)+'<br>'+ddRateEscape(src)+' · данные на '+exact.state.label+'.<br><b>Это ориентир — точную ставку подтвердит перевозчик.</b>';
-  _chosen=null; calc();
-  if(_rates.demo&&!window.WL){
-    localStorage.dd_frd=frDemoUsed()+1;
-    const left=FR_FREE-frDemoUsed(), el=document.getElementById('frLeft');
-    if(el)el.textContent=left;
-    if(left<=0)setTimeout(frLock,2500);
-  }
+  // Preserve the user's amount: no transport/port multiplier is evidence.
+  document.getElementById('frOut').textContent='Нет котировки, подтверждённой для условий этой партии. Введите согласованную с перевозчиком стоимость в поле «Фрахт».';
+  return false;
 }
-setTimeout(()=>initFreightBridge(), 350);
+setTimeout(()=>initFreightBridge(),350);
 // ── бесплатная проверка контрагента по реестру ФТС + наши данные ──
 function resetChkBtn(){var b=document.getElementById("chkBtn");if(b){b.textContent="Проверить →";b.onclick=doCheck;}}
 async function doCheck(){
@@ -1282,33 +1205,47 @@ fetch(API+'/brokers/live').then(r=>r.json()).then(d=>{
       (x.region?'<div class="bk-fact"><span class="k">Регион</span><span class="v">'+x.region+'</span></div>':'')+
       '</div>';}).join('');
 }).catch(()=>{});
-// Даты относятся к исходным наблюдениям каждого ряда, а не к пересборке JSON.
-function homeIndexDate(value){
-  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:$|T)/.test(value))return null;
+// BEGIN index-source eligibility.
+function ddIndexDate(value,now=Date.now()){
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:$|T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$)/.test(value))return null;
   const iso=value.slice(0,10),stamp=Date.parse(iso+'T00:00:00Z');
   if(!Number.isFinite(stamp)||new Date(stamp).toISOString().slice(0,10)!==iso)return null;
-  const age=Math.floor((Date.now()-stamp)/86400000);
-  return age<0?null:{iso:iso,age:age,label:iso.split('-').reverse().join('.')};
+  if(value.length>10&&(!Number.isFinite(Date.parse(value))||Date.parse(value)>now))return null;
+  const age=Math.floor((now-stamp)/86400000);
+  return age<0?null:{iso,age,label:iso.split('-').reverse().join('.')};
 }
+function ddIndexSeriesState(data,key,source){
+  data=data&&typeof data==='object'?data:{};
+  const dates=data.source_updated&&typeof data.source_updated==='object'?data.source_updated:{};
+  const rows=Array.isArray(data[key])?data[key]:[],last=rows.length?rows[rows.length-1]:null;
+  const live=!!(last&&last.live===true),sourceKey=live?'live_cargo':source;
+  // Live page retrieval time is not the date of the quoted source.
+  const proof=!live||last.period_verified===true;
+  const rawDate=live?(proof&&(last.source_as_of||last.source_date)):dates[sourceKey];
+  const date=ddIndexDate(rawDate);
+  const period=last&&typeof last.m==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(last.m)?last.m:null;
+  const value=last&&typeof last.v==='number'&&Number.isFinite(last.v)&&last.v>=0?last.v:null;
+  const count=last&&typeof last.n==='number'&&Number.isFinite(last.n)&&last.n>0?last.n:null;
+  const state=(data.source_status&&data.source_status[sourceKey])||(last&&last.data_status)||data.data_status;
+  const current=!!(proof&&date&&date.age<=4&&period===date.iso.slice(0,7)&&value!==null&&count!==null&&(!state||state==='current'));
+  const reason=current?'':(state==='unavailable'?'Данные недоступны':(!proof||!date?'Дата источника не подтверждена':(state==='stale'||date.age>4?'Данные устарели':(period!==date.iso.slice(0,7)?'Архивный период':'Недостаточно подтверждённых наблюдений'))));
+  let label=date?'Данные на '+date.label:'Дата источника не подтверждена';
+  if(period)label+=' · период '+period;
+  if(count!==null)label+=' · наблюдений: '+count;
+  if(!current&&reason!==label)label+=' · '+reason.toLowerCase();
+  return {current,value:current?value:null,date,period,count,reason,label};
+}
+function ddIndexHistory(rows){
+  return (Array.isArray(rows)?rows:[]).filter(row=>row&&typeof row.m==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(row.m)&&row.m<=new Date().toISOString().slice(0,7)&&typeof row.v==='number'&&Number.isFinite(row.v)&&row.v>=0&&Number.isFinite(row.n)&&row.n>0&&(row.live!==true||(row.period_verified===true&&ddIndexDate(row.source_as_of||row.source_date)&&row.m===ddIndexDate(row.source_as_of||row.source_date).iso.slice(0,7))));
+}
+// END index-source eligibility.
 function renderHomeIndices(d){
-  d=d&&typeof d==='object'?d:{};
-  const dates=d.source_updated&&typeof d.source_updated==='object'?d.source_updated:{};
-  const state=d.data_status;
   [['idxPain','pain','news','проблемы: ','%'],['idxComm','comm','pay','комиссия: ','%'],['idxCargo','cargo','cargo','$','/кг']].forEach(([id,key,source,before,after])=>{
-    const rows=Array.isArray(d[key])?d[key]:[],last=rows.length?rows[rows.length-1]:null;
-    const sourceKey=key==='cargo'&&last&&last.live===true?'live_cargo':source;
-    const date=homeIndexDate(dates[sourceKey]),snapshot=homeIndexDate(d.updated);
-    const period=last&&typeof last.m==='string'&&/^\d{4}-(0[1-9]|1[0-2])$/.test(last.m)?last.m:null;
-    const value=last&&typeof last.v==='number'&&Number.isFinite(last.v)&&last.v>=0?last.v:null;
-    const fresh=!!(date&&date.age<=4&&period===date.iso.slice(0,7)&&value!==null&&(!state||state==='current')&&!(Number.isFinite(last.n)&&last.n<=0));
-    const el=document.getElementById(id),meta=document.getElementById(id+'Date');
+    const state=ddIndexSeriesState(d,key,source),el=document.getElementById(id),meta=document.getElementById(id+'Date');
     if(!el||!meta)return;
-    el.classList.toggle('live',fresh);
-    el.textContent=fresh?before+value+after:(state==='unavailable'?'данные недоступны':(state==='stale'||date&&date.age>4?'данные устарели':(date&&period&&period!==date.iso.slice(0,7)?'архивный период':'данные не подтверждены')));
-    let label=date?'Данные на '+date.label:(snapshot?'Снимок на '+snapshot.label+' · дата источника не подтверждена':'Дата исходных данных не подтверждена');
-    if(period)label+=' · период '+period;
-    if(last&&Number.isFinite(last.n))label+=' · наблюдений: '+last.n;
-    meta.textContent=label;
+    el.classList.toggle('live',state.current);
+    el.textContent=state.current?before+state.value+after:state.reason;
+    meta.textContent=state.label;
   });
 }
 fetch('data/indices.json',{cache:'no-store'}).then(r=>{

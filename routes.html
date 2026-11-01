@@ -58,7 +58,7 @@ tr:last-child td{border-bottom:0}
 </div>
 
 <h2>🚢 Море: ставки по портам входа в РФ <span style="font-size:13px;font-weight:400;color:var(--mut)">— тарифы FESCO, $/контейнер</span></h2>
-<p class="mut">Реальные датированные ставки океанского фрахта FESCO по портам прибытия. К фрахту добавляются THC и надбавки. Это ориентир — точную цену подтверждает перевозчик.</p>
+<p class="mut">Показаны только тарифы FESCO с подтверждённым действующим периодом. К фрахту добавляются THC и надбавки. Состав услуг и цену вашей партии подтвердите у перевозчика.</p>
 <div class="thold thold-port"><table id="portTbl"><thead><tr><th>Порт входа в РФ</th><th>Направление</th><th>20′DC</th><th>40′HC</th><th>Действует</th></tr></thead><tbody id="portBody"><tr><td colspan="5" style="color:var(--mut)">загрузка…</td></tr></tbody></table></div>
 
 <h2>🚢 Море: Китай → Владивосток</h2>
@@ -72,26 +72,26 @@ tr:last-child td{border-bottom:0}
   <div id="carrierSlot" style="color:var(--mut);font-size:14px">Вы перевозчик? Это место свободно — ваша компания и кнопка расчёта будут здесь. <a href="mailto:hello@daldobro.ru?subject=Карточка%20перевозчика%20на%20маршрутах" style="color:#8fb4ff">Занять место →</a></div>
 </div>
 
-<h2>💰 Ставки по направлениям <span style="font-size:13px;font-weight:400;color:var(--mut)">— датированные наблюдения</span></h2>
-<p class="mut">Наблюдения ставок Китай→РФ по сигналам рынка (карго, авто, авиа). Дата указана для каждого направления. Наблюдения старше 7 дней и ставки без подтверждённой актуальности отмечены как архив; в калькулятор они не подставляются. Текущую котировку подтверждает перевозчик. Доступные наблюдения открываются после входа. Если свежих наблюдений нет, доступны только архивные данные; актуальную цену запросите у перевозчика.</p>
-<table><thead><tr><th>Откуда</th><th>Куда</th><th>Ставка</th><th>Точек</th><th>Дата наблюдения</th></tr></thead><tbody id="ratesBody"><tr><td colspan="5" style="color:var(--mut)">войдите, чтобы увидеть →</td></tr></tbody></table>
+<h2>💰 Ставки по направлениям <span style="font-size:13px;font-weight:400;color:var(--mut)">— текущие датированные наблюдения</span></h2>
+<p class="mut">Здесь показаны только наблюдения за последние 7 дней с подтверждённой датой. Они помогают ориентироваться в рынке, но условия вашей партии и состав услуг нужно подтвердить у перевозчика. Старые и недатированные цены в эту таблицу не включаются.</p>
+<table><thead><tr><th>Откуда</th><th>Куда</th><th>Ставка</th><th>Точек</th><th>Дата наблюдения</th></tr></thead><tbody id="ratesBody"><tr><td colspan="5" style="color:var(--mut)">проверяем доступные наблюдения…</td></tr></tbody></table>
 
 <h2>🚂 ЖД: Китай → Россия</h2>
 <p class="mut">Компромисс цена/срок для центральной РФ. Контейнерные поезда через погранпереходы.</p>
 <table><thead><tr><th>Маршрут</th><th>Транзит</th><th>Через</th><th>Ставка</th></tr></thead><tbody>
-<tr><td class="d">Китай → РФ (прямые переходы)</td><td class="d">~12–18 сут</td><td>Забайкальск · Гродеково</td><td class="rate">в PRO</td></tr>
-<tr><td class="d">Китай → РФ (через Казахстан)</td><td class="d">~14–22 сут</td><td>Достык / Алтынколь</td><td class="rate">в PRO</td></tr>
+<tr><td class="d">Китай → РФ (прямые переходы)</td><td class="d">~12–18 сут</td><td>Забайкальск · Гродеково</td><td class="rate">запросите котировку</td></tr>
+<tr><td class="d">Китай → РФ (через Казахстан)</td><td class="d">~14–22 сут</td><td>Достык / Алтынколь</td><td class="rate">запросите котировку</td></tr>
 <tr><td class="d">Индекс ставки ж/д (Азия→Европа, транзит РФ)</td><td class="d">~7 сут (участок ЕАЭС)</td><td>ERAI · публичный</td><td class="rate" id="eraiCell"><a href="https://index1520.com/en/" target="_blank" rel="noopener">index1520</a></td></tr>
 </tbody></table>
 
 <h2>✈️ Авиа: Китай → Москва</h2>
 <p class="mut">Для срочных, лёгких и дорогих грузов. Карго из Гуанчжоу / Шанхая / Гонконга.</p>
 <table><thead><tr><th>Направление</th><th>Транзит</th><th>Прибытие</th><th>Ставка</th></tr></thead><tbody>
-<tr><td class="d">Китай → Москва (карго)</td><td class="d">~3–7 сут</td><td>Шереметьево · Домодедово (авиа-таможня)</td><td class="rate">в PRO</td></tr>
+<tr><td class="d">Китай → Москва (карго)</td><td class="d">~3–7 сут</td><td>Шереметьево · Домодедово (авиа-таможня)</td><td class="rate">запросите котировку</td></tr>
 </tbody></table>
 
 <div class="cta">
-  <span><b>Нужны наблюдения по вашему маршруту?</b> В Индексах PRO доступны датированные данные по направлениям. Проверьте дату и период каждого набора. Если свежих наблюдений нет, раздел содержит только архив; актуальную цену запросите у перевозчика.</span>
+  <span><b>Нужна цена для вашей партии?</b> Запросите котировку у перевозчика. Доступ к Индексам PRO не создаёт свежую ставку, если её нет в источниках.</span>
   <a href="/claim.html?plan=indices_pro">Подключить PRO →</a>
 </div>
 <div class="cta" style="background:rgba(58,215,200,.06);border-color:rgba(58,215,200,.25)">
@@ -104,7 +104,7 @@ tr:last-child td{border-bottom:0}
 
 <div id="authBar" style="margin:8px 0 18px;padding:14px 18px;border:1px solid rgba(91,140,255,.3);border-radius:14px;background:rgba(91,140,255,.07);display:flex;flex-wrap:wrap;gap:12px;align-items:center">
   <span id="authMsg" style="flex:1;min-width:220px;color:#c9d8ff;font-size:14px">После входа можно просмотреть доступные датированные наблюдения. Проверьте дату и период: свежая котировка может отсутствовать.</span>
-  <a id="authBtn" href="/login.html" style="padding:11px 20px;border-radius:11px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff)">Войти, чтобы видеть цены →</a>
+  <a id="authBtn" href="/login.html" style="padding:11px 20px;border-radius:11px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#5b8cff,#7c5cff)">Войти →</a>
 </div>
 <script>
 const API='https://api.201-51-30-177.sslip.io';
@@ -149,18 +149,11 @@ function ddRouteRateEntries(data){
 }
 // END route-rate freshness.
 let RATES={}, AUTH={active:false};
-function rateFor(cnRu){
-  // This table is China → Vladivostok; do not substitute another destination's price.
-  return ddRouteRateEntries(RATES).find(e=>e.row.ru==='Владивосток'&&cnRu.indexOf(e.row.cn)>=0)||null;
+function rateFor(){
+  // A route aggregate does not confirm the sea mode or FESCO service scope.
+  return null;
 }
-function rateCell(cnRu){
-  if(!AUTH.active)return '<a href="/login.html" style="color:#8fb4ff">войти →</a>';
-  const entry=rateFor(cnRu);
-  if(!entry)return 'запросите текущую ставку';
-  const s=entry.state;
-  return (s.current?'<b style="color:#5bffc0">~$'+s.price+'/кг</b>':'<span style="color:var(--mut)">Архив: ~$'+s.historical+'/кг</span>')+
-    '<br><small style="color:var(--mut)">данные на '+s.label+'</small>';
-}
+function rateCell(){return 'запросите котировку по условиям груза';}
 function renderSea(){
   const d=window._routes;
   const rows=(d.routes||[]).sort((a,b)=>a.transit_days-b.transit_days);
@@ -184,62 +177,89 @@ async function renderCarrier(){
 }
 function renderRates(){
   const body=document.getElementById('ratesBody');
-  if(!AUTH.active){body.innerHTML='<tr><td colspan="5"><a href="/login.html" style="color:#8fb4ff">Войти — и увидеть доступные наблюдения ставок (14 дней бесплатно) →</a></td></tr>';return;}
-  const entries=ddRouteRateEntries(RATES);
+  const entries=ddRouteRateEntries(RATES).filter(e=>e.state.current);
   body.innerHTML=entries.length?entries.map(({row:r,state:s})=>
-    '<tr><td class="d">'+ddRateEscape(r.cn)+'</td><td class="d">'+ddRateEscape(r.ru)+'</td><td class="rate">'+
-    (s.current?'<b style="color:#5bffc0">~$'+s.price+'/кг</b>':'<span style="color:var(--mut)">Архив: ~$'+s.historical+'/кг</span>')+
-    '</td><td class="rate">'+ddRateEscape(r.n==null?'—':r.n)+'</td><td class="rate">'+s.label+(s.current?'':' · архив')+'</td></tr>').join(''):
-    '<tr><td colspan="5" style="color:var(--mut)">Нет ставок с подтверждённой датой. Запросите текущую котировку у перевозчика.</td></tr>';
+    '<tr><td class="d">'+ddRateEscape(r.cn)+'</td><td class="d">'+ddRateEscape(r.ru)+'</td><td class="rate"><b style="color:#5bffc0">~$'+s.price+'/кг</b>'+
+    '</td><td class="rate">'+ddRateEscape(r.n==null?'—':r.n)+'</td><td class="rate">'+s.label+'</td></tr>').join(''):
+    '<tr><td colspan="5" style="color:var(--mut)">В доступной выборке нет подтверждённых текущих котировок. Запросите предложение у перевозчика.</td></tr>';
 }
 async function initAuth(){
   const tok=localStorage.getItem('dd_token');
-  const bar=document.getElementById('authBar'),msg=document.getElementById('authMsg'),btn=document.getElementById('authBtn');
+  const msg=document.getElementById('authMsg'),btn=document.getElementById('authBtn');
   if(tok){
     try{
-      const m=await(await fetch(AUTH_API+'/auth/me',{headers:{Authorization:'Bearer '+tok},cache:'no-store'})).json();
+      const response=await fetch(AUTH_API+'/auth/me',{headers:{Authorization:'Bearer '+tok},cache:'no-store'});
+      if(!response.ok)throw new Error('AuthHTTPError');
+      const m=await response.json();
       if(m.auth&&m.active){
-        RATES=await(await fetch(AUTH_API+'/routes/rates',{headers:{Authorization:'Bearer '+tok},cache:'no-store'})).json();
-        if(RATES.gated)return;
-        AUTH={active:true};
-        msg.textContent='✓ Доступ к ценам открыт до '+m.trial_until+(m.company?' · '+m.company:'');
-        btn.textContent='Открыть тарифы';btn.href='/claim.html';
-      }else if(m.auth&&!m.active){
-        msg.innerHTML='Бесплатный период закончился ('+m.trial_until+'). Продлите доступ к ценам в тарифах.';
-        btn.textContent='Продлить →';btn.href='/claim.html?plan=indices_pro';
+        const response=await fetch(AUTH_API+'/routes/rates',{headers:{Authorization:'Bearer '+tok},cache:'no-store'});
+        if(!response.ok)throw new Error('RatesHTTPError');
+        const candidate=await response.json();
+        if(!candidate.gated){
+          RATES=candidate;AUTH={active:true};
+          msg.textContent='Вход выполнен. В текущей таблице показаны только пригодные датированные наблюдения.';
+          btn.textContent='Кабинет';btn.href='/claim.html';
+          return;
+        }
       }
     }catch(e){}
   }
+  // Use only the already-public limited projection; never fetch a private fallback.
+  try{
+    const response=await fetch(AUTH_API+'/routes/rates/demo',{cache:'no-store'});
+    if(!response.ok)throw new Error('RatesHTTPError');
+    RATES=await response.json();
+  }catch(e){RATES={};}
 }
-// ERAI — публичный ж/д-индекс (показываем всем, живое значение)
-fetch('data/erai.json').then(r=>r.json()).then(e=>{
-  if(e.west_usd_feu){const c=document.getElementById('eraiCell');if(c)c.innerHTML='<b style="color:#5bffc0">$'+Math.round(e.west_usd_feu)+'/FEU</b>';}
-}).catch(()=>{});
-// ЦЦИ — публичный контейнерный индекс Китай→РФ (бенчмарк)
-const _cciHide=()=>{const b=document.getElementById('cciBox');if(b)b.style.display='none';};
-fetch('data/cci.json').then(r=>r.json()).then(c=>{
-  if(!c.value_usd_feu){_cciHide();return;}
-  document.getElementById('cciBox').style.display='block';
-  document.getElementById('cciVal').textContent='$'+c.value_usd_feu.toLocaleString('ru-RU')+' / 40′';
+// BEGIN confirmed source period.
+function ddCalendarDay(value){
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(value))return null;
+  const stamp=Date.parse(value+'T00:00:00Z');
+  return Number.isFinite(stamp)&&new Date(stamp).toISOString().slice(0,10)===value?{iso:value,stamp,label:value.split('-').reverse().join('.')}:null;
+}
+function ddConfirmedPeriod(item,now=Date.now()){
+  if(!item||item.period_verified!==true||item.is_current!==true||item.data_status!=='current')return null;
+  const start=ddCalendarDay(item.valid_from),end=ddCalendarDay(item.valid_until);
+  const today=Date.parse(new Date(now).toISOString().slice(0,10)+'T00:00:00Z');
+  if(!start||!end||start.stamp>end.stamp||today<start.stamp||today>end.stamp)return null;
+  return {start,end,label:start.label+' — '+end.label};
+}
+function ddPositive(value){return typeof value==='number'&&Number.isFinite(value)&&value>0;}
+function ddEraiObservationLabel(item){
+  const start=ddCalendarDay(item&&item.observation_period_start),end=ddCalendarDay(item&&item.observation_period_end);
+  const today=Date.parse(new Date().toISOString().slice(0,10)+'T00:00:00Z');
+  if(item&&item.period_verified===true&&item.data_status==='dated_observation'&&Array.isArray(item.period_applies_to)&&item.period_applies_to.includes('west_usd_feu')&&start&&end&&start.stamp<=end.stamp&&end.stamp<=today)return 'Последнее подтверждённое наблюдение: '+start.label+' — '+end.label+'. Текущий период индекса не подтверждён.';
+  return 'Период источника ERAI не подтверждён.';
+}
+// END confirmed source period.
+function renderErai(e){
+  const el=document.getElementById('eraiCell'),period=ddConfirmedPeriod(e);
+  el.textContent=period&&ddPositive(e.west_usd_feu)?'$'+Math.round(e.west_usd_feu)+'/FEU · '+period.label:ddEraiObservationLabel(e);
+}
+fetch('data/erai.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('erai');return r.json();}).then(renderErai).catch(()=>renderErai({}));
+// CCI is a dated monthly index, not a quotation for the user's shipment.
+function renderCci(c){
+  const box=document.getElementById('cciBox'),date=ddCalendarDay(c.as_of);
+  const age=date?(Date.parse(new Date().toISOString().slice(0,10)+'T00:00:00Z')-date.stamp)/86400000:null;
+  const usable=!!(date&&age>=0&&age<=45&&ddPositive(c.value_usd_feu)&&(!c.data_status||c.data_status==='current'));
+  document.getElementById('cciVal').textContent=usable?'$'+c.value_usd_feu.toLocaleString('ru-RU')+' / 40′':'—';
+  document.getElementById('cciAsof').textContent=date?'данные на '+date.label+(usable?'':' · требуется обновление'):'дата источника не подтверждена';
   if(c.route)document.getElementById('cciRoute').textContent=c.route;
-  if(c.as_of)document.getElementById('cciAsof').textContent='на '+c.as_of;
-  const d=document.getElementById('cciDelta');
-  const parts=[];
-  if(c.mom_pct!=null)parts.push((c.mom_pct>=0?'+':'')+c.mom_pct+'% м/м');
-  if(c.yoy_pct!=null)parts.push((c.yoy_pct>=0?'+':'')+c.yoy_pct+'% г/г');
-  if(parts.length)d.innerHTML='<span style="color:'+(c.mom_pct>=0?'#ff9b6b':'#5bffc0')+'">'+parts.join(' · ')+'</span>';
-}).catch(()=>{_cciHide();});
-// FESCO — тарифы по портам входа в РФ (Новороссийск, СПб, …)
-fetch('data/fesco_tariffs.json').then(r=>r.json()).then(f=>{
-  const b=document.getElementById('portBody'), ps=(f.ports||[]).filter(p=>p.ct40_usd);
-  b.innerHTML = ps.length ? ps.map(p=>
-    '<tr><td class="d"><b>'+p.port+'</b>'+(p.sea?' <span style="color:var(--mut);font-size:12px">('+p.sea+')</span>':'')+'</td>'+
-    '<td class="d" style="font-size:12.5px;color:var(--mut)">'+(p.origins||'')+'</td>'+
-    '<td class="rate">'+(p.ct20_usd?'$'+p.ct20_usd.toLocaleString('ru-RU'):'—')+'</td>'+
-    '<td class="rate"><b style="color:#5bffc0">$'+p.ct40_usd.toLocaleString('ru-RU')+'</b></td>'+
-    '<td class="f" style="font-size:12px">'+(p.valid||'').replace(/Valid from/i,'до').replace(/till/i,'—')+'</td></tr>').join('')
-    : '<tr><td colspan="5" style="color:var(--mut)">данные обновляются</td></tr>';
-}).catch(()=>{document.getElementById('portBody').innerHTML='<tr><td colspan="5" style="color:var(--mut)">данные временно недоступны</td></tr>';});
+  document.getElementById('cciDelta').textContent='';
+  box.style.display='block';
+}
+fetch('data/cci.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('cci');return r.json();}).then(renderCci).catch(()=>renderCci({}));
+function renderFesco(f){
+  const body=document.getElementById('portBody');
+  const rows=(Array.isArray(f.ports)?f.ports:[]).map(row=>({row,period:ddConfirmedPeriod(row)})).filter(x=>x.period&&(ddPositive(x.row.ct20_usd)||ddPositive(x.row.ct40_usd)));
+  body.innerHTML=rows.length?rows.map(({row:p,period})=>
+    '<tr><td class="d"><b>'+ddRateEscape(p.port)+'</b></td><td class="d" style="font-size:12.5px;color:var(--mut)">'+ddRateEscape(p.origins)+'</td>'+
+    '<td class="rate">'+(ddPositive(p.ct20_usd)?'$'+p.ct20_usd.toLocaleString('ru-RU'):'—')+'</td>'+
+    '<td class="rate">'+(ddPositive(p.ct40_usd)?'$'+p.ct40_usd.toLocaleString('ru-RU'):'—')+'</td>'+
+    '<td class="f" style="font-size:12px">'+period.label+(typeof p.source_url==='string'&&/^https:\/\//.test(p.source_url)?'<br><a href="'+ddRateEscape(p.source_url)+'" target="_blank" rel="noopener">Источник</a>':'')+'</td></tr>').join(''):
+    '<tr><td colspan="5" style="color:var(--mut)">Нет тарифа с подтверждённым действующим периодом. Уточните котировку у перевозчика.</td></tr>';
+}
+fetch('data/fesco_tariffs.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw Error('fesco');return r.json();}).then(renderFesco).catch(()=>renderFesco({}));
 fetch('data/routes.json').then(r=>r.json()).then(async d=>{
   window._routes=d;
   document.getElementById('upd').textContent='обновлено '+d.updated+' · источник: расписания '+(d.carrier||'перевозчиков');

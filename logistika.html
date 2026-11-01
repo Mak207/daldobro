@@ -76,10 +76,33 @@ function ddRouteRateEntries(data){
   return entries.sort((a,b)=>Number(b.state.current)-Number(a.state.current)||b.state.date.localeCompare(a.state.date));
 }
 // END route-rate freshness.
+// BEGIN index-source eligibility.
+function ddIndexDate(value,now=Date.now()){
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}(?:$|T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$)/.test(value))return null;
+  const iso=value.slice(0,10),stamp=Date.parse(iso+'T00:00:00Z');
+  if(!Number.isFinite(stamp)||new Date(stamp).toISOString().slice(0,10)!==iso)return null;
+  if(value.length>10&&(!Number.isFinite(Date.parse(value))||Date.parse(value)>now))return null;
+  const age=Math.floor((now-stamp)/86400000);
+  return age<0?null:{iso,age,label:iso.split('-').reverse().join('.')};
+}
+// END index-source eligibility.
 let DATA={},RATES={},GATE={},PW={},RAIL={};
 const tg=window.Telegram&&Telegram.WebApp; if(tg){try{tg.ready();tg.expand();}catch(e){}}
 function renderLogistics(result){
-  DATA=result.payload.DATA; RATES=result.payload.RATES||{}; GATE=result.payload.GATE||{}; PW=result.payload.PW||{}; RAIL=result.payload.RAIL||{};
+  DATA=result.payload.DATA||{}; RATES=result.payload.RATES||{}; GATE=result.payload.GATE||{}; PW=result.payload.PW||{}; RAIL=result.payload.RAIL||{};
+  const omissions=[];
+  const dated=(row,maxAge)=>{const date=ddIndexDate(row&&((row.source_date||row.as_of||row.last_date||row.date||row.published_at)));return date&&date.age<=maxAge;};
+  const oldPW=PW;
+  PW={...PW,ports:(PW.ports||[]).filter(row=>dated(row,8)),chokepoints:(PW.chokepoints||[]).filter(row=>dated(row,8))};
+  if((oldPW.ports||[]).length+(oldPW.chokepoints||[]).length>(PW.ports||[]).length+(PW.chokepoints||[]).length)omissions.push('Исторические или недатированные данные о трафике портов исключены из текущей сводки.');
+  const aisSource=GATE.source_date||GATE.as_of;
+  const aisStamp=typeof aisSource==='string'&&aisSource.includes('T')&&ddIndexDate(aisSource)?Date.parse(aisSource):NaN;
+  if((GATE.gates||[]).length&&!(GATE.window==='24ч'&&Number.isFinite(aisStamp)&&Date.now()-aisStamp>=0&&Date.now()-aisStamp<=86400000)){GATE={};omissions.push('Период наблюдения AIS за последние сутки не подтверждён.');}
+  const oldRail=RAIL.recent||[];
+  RAIL={...RAIL,recent:oldRail.filter(row=>dated(row,8))};
+  if(oldRail.length>RAIL.recent.length)omissions.push('Релизы без подтверждённой свежей даты исключены из текущей сводки.');
+  const digestDate=ddIndexDate(DATA.source_date||DATA.updated);
+  if(!digestDate||digestDate.age>8){DATA={};omissions.push('Для отраслевой сводки нет подтверждённых данных за последние 8 дней.');}
 const paid=document.body.classList.contains("paid");
 document.getElementById("paybox").innerHTML=paid?'':'<div class="pay">🔒 <b>Заголовки тем открыты. Сами сводки — по подписке.</b><br>Полный логистический дайджест (заторы, ставки, контейнеры, маркетплейсы) входит в подписку <b>«Индексы PRO» — 4 900 ₽/мес</b>. Проверяйте дату доступной сводки перед использованием.<br><a href="/claim.html?plan=indices_pro&from=logistika">Подключить PRO →</a></div>';
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -107,15 +130,15 @@ if(GATE.gates&&GATE.gates.length){
   H+='<div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:6px 0 8px">🌍 Опережающий индикатор — суда идут в РФ (AIS, за 24ч)</div>';
   H+='<div class="theme"><div class="cnt">Через какие зарубежные «ворота» сейчас идут суда в РФ — прибытие в РФ-порты через лаг. Объективно, по спутниковым/наземным AIS.</div>'+
      GATE.gates.map(function(g){return '<div class="item"><b>'+esc(g.gate)+'</b>: в РФ идут <b>'+g.to_rf+'</b> судов · всего в воротах '+g.total+' · прибытие ~'+esc(g.lag)+'</div>';}).join("")+
-     '<div class="item" style="color:var(--muted);font-size:12px">обновлено '+esc(GATE.updated||"")+"</div></div>";
+     '<div class="item" style="color:var(--muted);font-size:12px">данные на '+esc(aisSource)+"</div></div>";
 }
 // 0) Датированные наблюдения ставок; архив не является текущей котировкой.
-const rateEntries=ddRouteRateEntries(RATES);
+const rateEntries=ddRouteRateEntries(RATES).filter(e=>e.state.current);
 if(rateEntries.length){
   H+='<div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:6px 0 8px">💰 Наблюдения ставок по направлениям ('+esc(RATES.unit||'$/кг')+')</div>';
   H+='<div class="theme"><div class="cnt">Дата относится к конкретному наблюдению. Архивные ставки не описывают текущий рынок и не используются в калькуляторе. Текущую котировку подтверждает перевозчик.</div>'+
     rateEntries.map(function(e){var r=e.row,s=e.state;return '<div class="item">'+esc(r.cn)+' → '+esc(r.ru)+': '+
-      (s.current?'<b style="color:#5bffc0">'+s.price+' $/кг</b>':'<span style="color:var(--muted)">Архив: '+s.historical+' $/кг</span>')+
+      '<b style="color:#5bffc0">'+s.price+' $/кг</b>'+
       ' · данные на '+s.label+'</div>';}).join('')+'</div>';
 }
 // A) СТАТУС МАРШРУТОВ (по погранпереходам/портам)
@@ -140,7 +163,9 @@ if((DATA.themes||[]).length){
   H+='<div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:14px 0 8px">📰 Темы недели</div>';
   H+=DATA.themes.map(function(t){return block(t.name,"упоминаний за неделю: "+t.count+(paid?"":" · сводка — по подписке"),t.items,1);}).join("");
 }
-out.innerHTML=H||'<div class="theme"><div class="cnt">На этой неделе значимых событий немного — зайдите позже.</div></div>';
+if(!rateEntries.length)H+='<div class="theme"><div class="cnt">В доступной выборке нет подтверждённых текущих котировок. Запросите предложение у перевозчика.</div></div>';
+if(omissions.length)H+='<details class="theme"><summary>Не все источники актуальны</summary>'+omissions.map(text=>'<div class="item">'+esc(text)+'</div>').join('')+'</details>';
+out.innerHTML=H||'<div class="theme"><div class="cnt">Нет подтверждённых актуальных данных для сводки.</div></div>';
 
 }
 ddProLoad('logistics', renderLogistics);
