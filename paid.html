@@ -28,11 +28,15 @@ a.tg{background:linear-gradient(100deg,#2f9cf5,#3ad7c8)}
   const invoice=new URLSearchParams(location.search).get('p')||'';
   const validInvoice=/^[0-9a-f]{8}-[0-9a-f-]{27}$/i.test(invoice);
   try{pending=JSON.parse(sessionStorage.getItem('dd_pending_payment')||'null')}catch(e){}
+  function confirmedLivePayment(d){
+    return !!(d&&d.status==='succeeded'&&d.paid===true&&d.environment==='live'&&d.test!==true);
+  }
   async function check(){
     if(busy)return;
-    if(!validInvoice&&(!pending||typeof pending.yk!=='string'||Date.now()-Number(pending.created)>86400000)){
+    const age=pending?Date.now()-Number(pending.created):NaN;
+    if(!validInvoice&&(!pending||typeof pending.yk!=='string'||!pending.yk||!Number.isFinite(age)||age<0||age>86400000)){
       title.textContent='Проверьте подтверждение оплаты';
-      msg.textContent='На этой странице нет номера вашего счёта. Статус можно проверить на странице оформления, где вы получили ссылку на оплату. Подтверждение и доступ придут на указанный e-mail.';
+      msg.textContent='На этой странице нет номера вашего счёта. Статус можно проверить на странице оформления, где вы получили ссылку на оплату. После подтверждённой оплаты инструкции направляются на указанный e-mail.';
       return;
     }
     busy=true;retry.style.display='none';
@@ -41,11 +45,17 @@ a.tg{background:linear-gradient(100deg,#2f9cf5,#3ad7c8)}
       const r=await fetch('https://app.daldobro.ru/pay/status?'+(validInvoice?'p='+encodeURIComponent(invoice):'yk='+encodeURIComponent(pending.yk)),{signal:abort.signal,cache:'no-store'});
       if(!r.ok||!(r.headers.get('content-type')||'').includes('application/json'))throw Error('status');
       const d=await r.json();
-      if(d.status==='succeeded'&&d.paid===true){
+      if(d.environment==='test'||d.test===true){
+        title.textContent='Тестовый платёж';
+        msg.textContent='Этот счёт создан в тестовом режиме. Рабочая услуга по нему не активируется.';
+      }else if(confirmedLivePayment(d)){
         title.textContent='Оплата подтверждена';
         msg.textContent='Спасибо! Услуга активируется автоматически. Подтверждение и инструкции придут на указанный e-mail. Обработка может занять несколько минут.';
       }else if(d.status==='canceled'){
         title.textContent='Оплата отменена';msg.textContent='Этот счёт не оплачен. Вернитесь на страницу тарифов, чтобы оформить новый.';
+      }else if(d.status==='succeeded'){
+        title.textContent='Подтверждение оплаты проверяется';
+        msg.textContent='Пока нет полного подтверждения рабочего режима этого платежа. Не оплачивайте счёт повторно; проверьте статус позже.';retry.style.display='inline-block';
       }else{
         title.textContent='Ожидаем подтверждение оплаты';msg.textContent='Платёжный сервис ещё не подтвердил списание. Если вы уже оплатили, проверьте статус через минуту.';retry.style.display='inline-block';
       }

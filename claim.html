@@ -120,8 +120,8 @@ input:focus{outline:none;border-color:var(--acc)}
       <div class="t">Индексы PRO</div>
       <div class="p">4 900&nbsp;₽ <span class="per">/мес</span></div>
       <div class="for">Работать со ставками как с цифрами</div>
-      <ul class="feat"><li>Ставки по маршрутам: море / жд / авиа, порт→порт</li><li>Выгрузка в Excel и доступ по API</li><li>Те же алерты, но «раньше всех»</li></ul>
-      <div class="note">Всё из «Алертов» + сами данные. Ставки — средние по рынку (ориентир для переговоров). Текущие значения видны на сайте бесплатно.</div>
+      <ul class="feat"><li>Ставки по маршрутам: море / жд / авиа, порт→порт</li><li>Выгрузка в Excel и доступ по API</li><li>Уведомления о доступных обновлениях</li></ul>
+      <div class="note">Всё из «Алертов» + сами данные. Ставки — ориентир для переговоров; даты наблюдений и доступность рядов указаны на сайте. Коридоры поставок — архив за 2021–2023 годы. Последние доступные значения индексов с датами видны бесплатно.</div>
     </div>
   </div>
 </div>
@@ -272,13 +272,22 @@ document.querySelectorAll('.pk').forEach(el=>el.addEventListener('click',()=>{
   document.getElementById('orgRow').style.display=payKind==='qr'?'flex':'none';
   document.getElementById('payBtn').textContent=payKind==='qr'?'Сформировать счёт и QR →':'Перейти к оплате →';
 }));
-let _lastPay=null,_pollT=null;
+let _lastPay=null,_pollT=null,_paySeq=0,_payRequestBusy=false,_pollAbort=null;
+function confirmedLivePayment(s){
+  return !!(s&&s.status==='succeeded'&&s.paid===true&&s.environment==='live'&&s.test!==true);
+}
 async function pay(){
+  if(_payRequestBusy)return;
   const err=document.getElementById('err'),ok=document.getElementById('okmsg'),btn=document.getElementById('payBtn');
   err.textContent='';ok.textContent='';
   const email=document.getElementById('email').value.trim(),inn=document.getElementById('inn').value.trim();
   if(!email||email.indexOf('@')<0){err.textContent='Укажите e-mail — на него придёт чек и доступ.';return;}
   if(plan==='check_full'&&(!inn||inn.length<10)){err.textContent='Для полной проверки укажите ИНН компании (10 или 12 цифр) — иначе некого проверять.';return;}
+  const seq=++_paySeq;
+  _payRequestBusy=true;_lastPay=null;clearInterval(_pollT);_pollT=null;
+  if(_pollAbort){_pollAbort.abort();_pollAbort=null;}
+  const state=document.getElementById('payState');state.className='';state.textContent='ожидаем оплату…';
+  document.getElementById('qrBox').classList.remove('show');
   btn.disabled=true;btn.textContent='Создаю счёт…';
   try{
     const r=await fetch(PAY_API+'/pay/create',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plan:plan,inn:inn,email:email,tracking:ddPaymentTracking()})});
@@ -293,19 +302,35 @@ async function pay(){
     new QRCode(qc,{text:d.url,width:170,height:170,correctLevel:QRCode.CorrectLevel.M});
     document.getElementById('qrBox').classList.add('show');
     ok.textContent='';
-    // поллинг статуса: как оплатят — покажем «Дал добро!»
-    clearInterval(_pollT);
+    // Статус относится только к этому счёту; старый ответ не обновляет новый QR.
+    let pollBusy=false;
     _pollT=setInterval(async()=>{
+      if(pollBusy||seq!==_paySeq)return;
+      pollBusy=true;
+      const abort=new AbortController();_pollAbort=abort;
+      const timeout=setTimeout(()=>abort.abort(),15000);
       try{
-        const s=await(await fetch(PAY_API+'/pay/status?yk='+encodeURIComponent(d.yk_id))).json();
-        if(s.paid||s.status==='succeeded'){
+        const r=await fetch(PAY_API+'/pay/status?yk='+encodeURIComponent(d.yk_id),{signal:abort.signal,cache:'no-store'});
+        if(!r.ok||!(r.headers.get('content-type')||'').toLowerCase().includes('application/json'))throw Error('status');
+        const s=await r.json();
+        if(seq!==_paySeq)return;
+        const st=document.getElementById('payState');st.className='';
+        if(s.environment==='test'||s.test===true){
           clearInterval(_pollT);
-          const st=document.getElementById('payState');st.textContent='✓ Оплачено — дал добро! Услуга активируется автоматически.';st.className='ok';
+          st.textContent='Тестовый платёж. Рабочая услуга по нему не активируется.';
+        }else if(confirmedLivePayment(s)){
+          clearInterval(_pollT);
+          st.textContent='✓ Оплата подтверждена. Услуга активируется автоматически.';st.className='ok';
+        }else if(s.status==='canceled'){
+          clearInterval(_pollT);st.textContent='Оплата отменена. Для новой оплаты сформируйте новый счёт.';
+        }else{
+          st.textContent=s.status==='succeeded'?'Подтверждение оплаты проверяется. Не оплачивайте счёт повторно.':'Ожидаем подтверждение оплаты…';
         }
-      }catch(e){}
+      }catch(e){if(seq===_paySeq){state.className='';state.textContent='Статус пока недоступен. Проверяем снова; повторно оплачивать счёт не нужно.';}}
+      finally{clearTimeout(timeout);pollBusy=false;if(_pollAbort===abort)_pollAbort=null;}
     },7000);
   }catch(e){err.textContent='Ошибка сети. Попробуйте ещё раз или напишите hello@daldobro.ru';}
-  finally{btn.disabled=false;btn.textContent=payKind==='qr'?'Сформировать счёт и QR →':'Перейти к оплате →';}
+  finally{_payRequestBusy=false;btn.disabled=false;btn.textContent=payKind==='qr'?'Сформировать счёт и QR →':'Перейти к оплате →';}
 }
 // печатный счёт для бухгалтерии (QR внутри)
 function printInvoice(){
