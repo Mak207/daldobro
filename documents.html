@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="referrer" content="same-origin">
+  <title>Документы — кабинет ДалДобро</title>
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/cabinet-documents.css?v=20261101-docs1">
+  <style>
+    :root{color-scheme:dark;--bg:#080b16;--txt:#eaf0fb;--mut:#9aa8c6;--acc:#5b8cff;--line:rgba(120,140,190,.18)}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(1000px 650px at 90% -15%,#13244c,transparent 70%),var(--bg);color:var(--txt);font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+    a{color:#b2caff}button,input,select{font:inherit}button,a{touch-action:manipulation}button:focus-visible,a:focus-visible{outline:3px solid #a8c4ff;outline-offset:4px}
+    .cab-header{display:flex;align-items:center;gap:24px;max-width:1280px;margin:auto;padding:20px 24px;border-bottom:1px solid var(--line);flex-wrap:wrap}.cab-logo{display:flex;align-items:center;gap:10px;color:var(--txt);text-decoration:none;font-size:21px;font-weight:800}.cab-logo img{width:34px;height:34px;object-fit:contain}.cab-logo b{color:#84a9ff}.cab-nav{display:flex;align-items:center;gap:20px;flex:1}.cab-nav a{text-decoration:none;font-size:14px;padding:8px 0}.cab-nav a[aria-current]{color:var(--txt);border-bottom:2px solid #769aff}.cab-account{display:flex;align-items:center;gap:12px;color:var(--mut);font-size:13px;min-width:0}.cab-account span{overflow:hidden;text-overflow:ellipsis;max-width:230px}.cab-account button{border:1px solid var(--line);border-radius:10px;background:transparent;color:var(--txt);padding:8px 12px;cursor:pointer}
+    main{max-width:1280px;margin:auto;padding:32px 24px 56px}.cab-access{max-width:600px;margin:60px auto;padding:32px;border:1px solid var(--line);border-radius:20px;background:rgba(23,30,48,.65)}.cab-access h1{font-size:28px;margin:0 0 12px}.cab-access p{color:var(--mut)}.cab-access a{display:inline-block;padding:12px 18px;background:linear-gradient(100deg,#5b8cff,#7c5cff);border-radius:12px;color:#fff;font-weight:700;text-decoration:none}.cab-loading{color:var(--mut);padding:48px 0}.cab-foot{max-width:1280px;margin:auto;padding:20px 24px;color:var(--mut);font-size:12px;border-top:1px solid var(--line)}[hidden]{display:none!important}
+    @media(max-width:650px){.cab-header{padding:15px 16px;gap:12px}.cab-nav{order:3;flex-basis:100%;gap:22px}.cab-account{margin-left:auto}.cab-account span{max-width:130px}main{padding:24px 14px 40px}.cab-access{padding:24px;margin:24px auto}.cab-foot{padding:18px 16px}}
+  </style>
+</head>
+<body>
+  <header class="cab-header">
+    <a class="cab-logo" href="/" aria-label="ДалДобро — главная"><img src="/logo.png" alt=""><span>Дал<b>Добро</b></span></a>
+    <nav class="cab-nav" aria-label="Кабинет"><a href="/">Расчёт поставки</a><a href="/documents.html" aria-current="page">Документы</a></nav>
+    <div class="cab-account" id="cabAccount" hidden><span id="cabEmail"></span><button type="button" id="cabLogout">Выйти</button></div>
+  </header>
+  <main>
+    <div class="cab-loading" id="cabLoading" role="status">Загружаем кабинет…</div>
+    <section class="cab-access" id="cabLogin" hidden>
+      <h1>Документы ваших сделок</h1>
+      <p>Добавляйте фото и файлы. Кабинет сам создаст папки клиентов и сделок, а вы сможете изменить названия и расположение документов.</p>
+      <a href="/login.html?next=%2Fdocuments.html">Войти в кабинет</a>
+    </section>
+    <section class="cab-access" id="cabUnavailable" hidden>
+      <h1>Не удалось загрузить кабинет</h1><p>Проверьте соединение и попробуйте ещё раз.</p>
+      <a href="/documents.html">Обновить</a>
+    </section>
+    <div id="cabDocuments" hidden></div>
+  </main>
+  <footer class="cab-foot">ДалДобро · <a href="/politika.html">Политика конфиденциальности</a></footer>
+  <script src="/cabinet-documents.js?v=20261101-docs1" defer></script>
+  <script src="/documents-page.js?v=20261101-docs1" defer></script>
+</body>
+</html>
