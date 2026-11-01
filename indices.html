@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Индексы рынка ВЭД 2026: Барометр, карго, жд, фрахт — ДалДобро</title>
-<meta name="description" content="Барометр ВЭД — опережающий индекс: пошлины, маркировка, санкции за 30–90 дней до того, как их ощутит рынок. Плюс индекс проблем, карго, жд и фрахт. Значения бесплатно, обновляются ежедневно.">
+<meta name="description" content="Барометр ВЭД — опережающий индекс: пошлины, маркировка, санкции за 30–90 дней до того, как их ощутит рынок. Плюс индекс проблем, карго, жд и фрахт. Значения бесплатно; дата исходных данных указана для каждого показателя.">
 <link rel="icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://daldobro.ru/indices.html">
 <meta property="og:updated_time" content="2026-07-20">
@@ -46,9 +46,9 @@ svg{width:100%;height:190px;display:block}
 .faq details p{margin:8px 0 0;font-size:13.5px}
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
-{"@type":"Question","name":"Что такое Барометр ВЭД?","acceptedAnswer":{"@type":"Answer","text":"Опережающий индекс рынка ввоза из Китая по шкале 0–100. Считает регуляторную нагрузку (пошлины, маркировку, санкции) с будущей датой вступления на ближайшие 30–90 дней и показывает её до того, как рынок её ощутит."}},
+{"@type":"Question","name":"Что такое Барометр ВЭД?","acceptedAnswer":{"@type":"Answer","text":"Индикатор регуляторных событий на ближайшие 30–90 дней по шкале 0–100. Проекты, опубликованные акты и сообщения отмечаются отдельно. Если свежесть источников не подтверждена, числовое значение не показывается."}},
 {"@type":"Question","name":"Индексы ДалДобро платные?","acceptedAnswer":{"@type":"Answer","text":"Текущие значения и тренд за полгода — бесплатно. Полная история, точные даты изменений, срезы по маршрутам, фильтр по коду ТН ВЭД и алерты — в тарифе Индексы PRO."}},
-{"@type":"Question","name":"Как часто обновляются индексы?","acceptedAnswer":{"@type":"Answer","text":"Ежедневно, по собственным данным ДалДобро: рыночные сигналы, ставки карго и жд, мировой фрахт, календарь регуляторных изменений."}}]}</script>
+{"@type":"Question","name":"Как часто обновляются индексы?","acceptedAnswer":{"@type":"Answer","text":"Расчёт запускается регулярно. Частота публикации источников различается; актуальность проверяйте по датам на странице. Время расчёта не заменяет дату исходных данных."}}]}</script>
 <script>(function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(110327454,"init",{clickmap:true,trackLinks:true,webvisor:false});</script>
 <noscript><div><img src="https://mc.yandex.ru/watch/110327454" style="position:absolute;left:-9999px" alt=""></div></noscript>
 </head>
@@ -59,20 +59,21 @@ svg{width:100%;height:190px;display:block}
 
 <h1>Индексы рынка ВЭД</h1>
 <p class="sub">Живые индикаторы рынка ввоза из Китая, которых нет в официальной статистике. Здесь — текущие значения и тренд за полгода, бесплатно. Полная история, срезы по маршрутам и алерты — в <a href="/claim.html?plan=indices_pro" style="color:#8fb4ff">Индексах PRO</a>.</p>
-<div class="short"><b>Коротко:</b> пять индикаторов ввоза из Китая, обновляются ежедневно. <b>Барометр ВЭД</b> — что регуляторно надвигается на 30–90 дней вперёд; <b>Индекс проблем</b> — сколько трения на таможне сейчас; <b>карго</b>, <b>жд</b> и <b>мировой фрахт</b> — сколько стоит довезти. Текущие значения — бесплатно.</div>
-<span class="upd" id="upd">обновляется ежедневно</span>
+<div class="short"><b>Коротко:</b> пять индикаторов ввоза из Китая. У каждого набора указана дата исходных данных. <b>Барометр ВЭД</b> — что регуляторно надвигается на 30–90 дней вперёд; <b>Индекс проблем</b> — сколько трения на таможне сейчас; <b>карго</b>, <b>жд</b> и <b>мировой фрахт</b> — сколько стоит довезти. Текущие значения — бесплатно.</div>
+<span class="upd" id="upd">Дата данных загружается…</span>
 
 <div class="card" id="baroCard" style="border-color:rgba(58,215,200,.35);background:linear-gradient(180deg,rgba(58,215,200,.06),rgba(23,30,48,.55))">
   <div class="now"><b id="baroNow" style="font-size:42px">—</b><span>Барометр ВЭД · шкала 0–100</span></div>
   <h2>🌡️ Барометр ВЭД <span class="badge" id="baroStatus" style="background:rgba(47,191,113,.15);color:var(--good)">—</span></h2>
-  <p style="max-width:730px"><b style="color:#c9d8ff">Опережающий индекс.</b> Считает регуляторную «непогоду», уже назначенную на ближайшие 30–90 дней — пошлины, маркировку, санкции с будущей датой вступления. Показывает боль <b>до</b> того, как рынок её почувствовал: пока «Индекс проблем» ниже отражает то, что обсуждают сегодня, Барометр смотрит вперёд. Чем выше — тем плотнее фронт изменений впереди.</p>
-  <div style="position:relative;height:14px;border-radius:8px;background:linear-gradient(90deg,#2fbf71,#f0b03a,#ff6a5a);margin:36px 0 8px" role="img" aria-label="Шкала Барометра ВЭД от 0 (ясно) до 100 (шторм)">
-    <div id="baroBubble" style="position:absolute;top:-30px;left:0%;transform:translateX(-50%);font-size:12px;font-weight:800;color:#fff;background:rgba(10,15,28,.92);border:1px solid var(--line);border-radius:8px;padding:2px 8px;transition:left .7s ease-out;white-space:nowrap">—</div>
-    <div id="baroMark" style="position:absolute;top:-5px;left:0%;width:4px;height:24px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.85);transition:left .7s ease-out"></div>
+  <p style="max-width:730px"><b style="color:#c9d8ff">Индикатор ближайших изменений.</b> Учитывает проекты, опубликованные акты и сообщения с указанными датами на ближайшие 30–90 дней. Стадия каждого события указана в сводке. Предполагаемая дата проекта может измениться; индекс описывает только доступные источники.</p>
+  <div style="position:relative;height:14px;border-radius:8px;background:linear-gradient(90deg,#2fbf71,#f0b03a,#ff6a5a);margin:36px 0 8px" role="img" aria-label="Шкала регуляторной нагрузки от 0 до 100">
+    <div id="baroBubble" hidden style="position:absolute;top:-30px;left:0%;transform:translateX(-50%);font-size:12px;font-weight:800;color:#fff;background:rgba(10,15,28,.92);border:1px solid var(--line);border-radius:8px;padding:2px 8px;transition:left .7s ease-out;white-space:nowrap">—</div>
+    <div id="baroMark" hidden style="position:absolute;top:-5px;left:0%;width:4px;height:24px;background:#fff;border-radius:2px;box-shadow:0 0 8px rgba(255,255,255,.85);transition:left .7s ease-out"></div>
   </div>
-  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:16px"><span>🟢 ясно</span><span>🟠 пасмурно</span><span>🔴 шторм</span></div>
+  <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-bottom:16px"><span>Низкая нагрузка</span><span>Умеренная</span><span>Высокая</span></div>
+  <p id="baroFresh" aria-live="polite" style="font-size:12px;color:var(--mut)"></p>
   <div id="baroForecast" style="padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:rgba(10,15,28,.45);font-size:14.5px;line-height:1.6;color:#c9d8ff">Метеосводка загружается…</div>
-  <p style="margin:14px 0 0;font-size:13px;color:var(--mut)">📅 Фронтов на радаре за 90 дней: <b id="baroCount" style="color:#c9d8ff">—</b>. Детальная метеосводка — каждое изменение с точной датой, фильтр по <b>вашему коду ТН ВЭД</b> и подсказка «что успеть сделать до даты».</p>
+  <p style="margin:14px 0 0;font-size:13px;color:var(--mut)">📅 Найдено событий на 90 дней: <b id="baroCount" style="color:#c9d8ff">—</b>. Детальная метеосводка — каждое изменение с точной датой, фильтр по <b>вашему коду ТН ВЭД</b> и подсказка «что успеть сделать до даты».</p>
   <a href="/claim.html?plan=indices_pro" style="display:inline-block;margin-top:14px;padding:11px 20px;border-radius:11px;font-weight:800;font-size:14px;color:#fff;text-decoration:none;background:linear-gradient(100deg,#2f9cf5,#3ad7c8)">Смотреть детальный прогноз →</a>
 </div>
 
@@ -80,33 +81,38 @@ svg{width:100%;height:190px;display:block}
   <div class="now"><b id="painNow">—</b><span>сейчас, доля проблемных сигналов</span></div>
   <h2>Индекс проблем в ВЭД</h2>
   <p>Сколько из рыночных сигналов месяца — о проблемах: задержки, заторы, блокировки, ужесточения. <b>Совпадающий</b> индикатор трения на таможне — что рынок ощущает прямо сейчас (в паре с опережающим Барометром выше). Растёт — закладывайте запас по срокам.</p>
+  <p id="asofPain" style="font-size:12px;color:var(--mut)"></p>
   <svg id="chPain" viewBox="0 0 900 190" preserveAspectRatio="none"></svg>
 </div>
 
 <div class="card">
   <div class="now"><b id="commNow">—</b><span>медианная комиссия за платёж в Китай</span></div>
   <h2>Платёжный барометр <span class="badge b-acc">ряд накапливается</span></h2>
-  <p>Во сколько реально обходится перевод денег в Китай: медианная комиссия платёжных посредников по сигналам рынка. Тема живёт с 2024 года — ряд короткий, пополняется ежедневно.</p>
+  <p>Во сколько реально обходится перевод денег в Китай: медианная комиссия платёжных посредников по сигналам рынка. Ряд короткий; дата последнего наблюдения указана ниже.</p>
+  <p id="asofComm" style="font-size:12px;color:var(--mut)"></p>
   <svg id="chComm" viewBox="0 0 900 190" preserveAspectRatio="none"></svg>
 </div>
 
 <div class="card">
   <div class="now"><b id="cargoNow">—</b><span>медианная ставка карго, $/кг</span></div>
   <h2>Карго-прайс-индекс</h2>
-  <p>Стоимость доставки «карго» из Китая в $/кг. Показываем текущее значение и тренд, обновляется ежедневно.</p>
+  <p>Стоимость доставки «карго» из Китая в $/кг. Показываем последнее доступное значение, размер выборки и тренд.</p>
+  <p id="asofCargo" style="font-size:12px;color:var(--mut)"></p>
   <svg id="chCargo" viewBox="0 0 900 190" preserveAspectRatio="none"></svg>
 </div>
 
 <div class="card">
-  <div class="now"><b id="railNow">—</b><span>ставка ЖД-доставки из Китая, за контейнер</span></div>
+  <div class="now"><b id="railNow">—</b><span>индекс ж/д транзита, $/FEU</span></div>
   <h2>Железная дорога</h2>
-  <p>Во сколько обходится доставка контейнера из Китая по железной дороге. Обновляется ежедневно.</p>
+  <p id="asofRail" style="font-size:12px;color:var(--mut)"></p>
+  <p>Ориентир стоимости перевозки 40-футового контейнера по железнодорожной колее 1520 на направлении Азия—Европа.</p>
 </div>
 
 <div class="card">
   <div class="now"><b id="worldNow">—</b><span>мировой контейнерный фрахт, за 40 футов</span></div>
   <h2>Мировой фрахт</h2>
-  <p>Общий уровень цен на морские контейнерные перевозки — фон для стоимости ввоза. Обновляется ежедневно.</p>
+  <p id="asofWorld" style="font-size:12px;color:var(--mut)"></p>
+  <p>Общий уровень цен на морские контейнерные перевозки. Дата доступного наблюдения указана ниже.</p>
 </div>
 
 <div class="card" style="border-color:rgba(91,140,255,.3)">
@@ -120,15 +126,15 @@ svg{width:100%;height:190px;display:block}
   <a class="cta" style="display:inline-block;margin:16px 0 0;padding:12px 24px;background:linear-gradient(100deg,#5b8cff,#7c5cff);border:0" href="/claim.html?plan=indices_pro">Подключить PRO →</a>
 </div>
 <div class="cta" style="background:rgba(58,215,200,.06);border-color:rgba(58,215,200,.25)">
-  <span>Свежие значения индексов — каждую неделю в нашем Telegram-канале.</span>
+  <span>Обзоры индексов — в нашем Telegram-канале.</span>
   <a href="https://t.me/DalDobro_media" style="background:linear-gradient(100deg,#2f9cf5,#3ad7c8)">Подписаться на канал →</a>
 </div>
 
 <div class="faq">
   <h2>Частые вопросы</h2>
-  <details><summary>Что такое Барометр ВЭД?</summary><p>Опережающий индекс рынка ввоза из Китая по шкале 0–100. Считает регуляторную нагрузку (пошлины, маркировку, санкции) с будущей датой вступления на 30–90 дней вперёд и показывает её <b>до</b> того, как её ощутит рынок.</p></details>
+  <details><summary>Что такое Барометр ВЭД?</summary><p>Индикатор регуляторных событий на ближайшие 30–90 дней по шкале 0–100. Проекты, опубликованные акты и сообщения отмечаются отдельно. При неполных или устаревших данных числовое значение не показывается.</p></details>
   <details><summary>Индексы платные?</summary><p>Текущие значения и тренд за полгода — бесплатно. Полная история, точные даты изменений, срезы по маршрутам, фильтр по коду ТН ВЭД и алерты — в <a href="/claim.html?plan=indices_pro">Индексах PRO</a>.</p></details>
-  <details><summary>Как часто обновляются?</summary><p>Ежедневно, по собственным данным ДалДобро: рыночные сигналы, ставки карго и жд, мировой фрахт, календарь регуляторных изменений.</p></details>
+  <details><summary>Как часто обновляются?</summary><p>Расчёт запускается регулярно. Частота публикации источников различается; актуальность проверяйте по датам на странице. Время расчёта не заменяет дату исходных данных.</p></details>
 </div>
 
 <div class="foot"><b>ДалДобро</b> — независимый навигатор по ввозу из Китая. Значения навигационные и не являются офертой. © ДалДобро · <a href="/" style="color:#a9c2ff">daldobro.ru</a></div>
@@ -153,23 +159,54 @@ function chart(id,ser,color,unit,name){
   s+='<text class="axis" x="6" y="'+(y(mx)+4)+'">'+mx+unit+'</text><text class="axis" x="6" y="'+(y(mn)+4)+'">'+mn+unit+'</text>';
   el.innerHTML=s;
 }
-// Барометр ВЭД — опережающий индекс
-fetch('data/leading_index.json').then(r=>r.json()).then(d=>{
-  const idx=d.index||0, c = idx<33?'var(--good)':(idx<66?'var(--warn)':'var(--bad)');
-  const n=document.getElementById('baroNow'); n.textContent=idx; n.style.background='none'; n.style.webkitTextFillColor=c; n.style.color=c;
-  const st=document.getElementById('baroStatus'); st.textContent=d.status||'—'; st.style.color=c; st.style.background='rgba(120,140,190,.12)';
-  const pos=Math.max(1,Math.min(98,idx))+'%';
-  document.getElementById('baroMark').style.left=pos;
-  const bub=document.getElementById('baroBubble'); bub.style.left=pos; bub.textContent=idx; bub.style.borderColor=c; bub.style.color=c;
-  document.getElementById('baroForecast').textContent=d.forecast||'';
-  document.getElementById('baroCount').textContent=(d.count&&d.count.d90)||0;
-}).catch(()=>{document.getElementById('baroCard').style.display='none';});
-fetch('data/indices.json').then(r=>r.json()).then(d=>{
-  document.getElementById('upd').textContent='обновлено '+d.updated;
+// Source dates and calculation timestamps have different meanings.
+function dataDate(value){
+  if(typeof value!=='string'||!/^\d{4}-\d{2}-\d{2}/.test(value))return null;
+  const iso=value.slice(0,10), stamp=Date.parse(iso+'T00:00:00Z');
+  if(!Number.isFinite(stamp))return null;
+  const age=Math.floor((Date.now()-stamp)/86400000);
+  return age<0?null:{iso:iso,label:iso.split('-').reverse().join('.'),age:age};
+}
+function dateLabel(value,maxAge){
+  const date=dataDate(value);
+  return date?'Данные на '+date.label+(date.age>maxAge?' · требуется обновление':''):'Дата исходных данных не подтверждена';
+}
+function renderBarometer(d){
+  const date=dataDate(d.updated), state=d.data_status||'unknown';
+  const valid=typeof d.index==='number'&&Number.isFinite(d.index)&&d.index>=0&&d.index<=100&&state==='current'&&date&&date.age<=4;
+  const idx=valid?d.index:null, color=!valid?'var(--mut)':(idx<33?'var(--good)':(idx<66?'var(--warn)':'var(--bad)'));
+  const number=document.getElementById('baroNow');number.textContent=valid?String(idx):'—';number.style.background='none';number.style.webkitTextFillColor=color;number.style.color=color;
+  const status=document.getElementById('baroStatus');
+  status.textContent=valid?(d.status||'По доступным источникам'):(state==='stale'||date&&date.age>4?'Данные устарели':(state==='unavailable'?'Данные временно недоступны':'Данные не подтверждены'));
+  status.style.color=color;status.style.background='rgba(120,140,190,.12)';
+  const marker=document.getElementById('baroMark'),bubble=document.getElementById('baroBubble');
+  marker.hidden=!valid;bubble.hidden=!valid;
+  if(valid){const pos=Math.max(1,Math.min(98,idx))+'%';marker.style.left=pos;bubble.style.left=pos;bubble.textContent=String(idx);bubble.style.borderColor=color;bubble.style.color=color;}
+  document.getElementById('baroFresh').textContent=dateLabel(d.updated,4);
+  const warnings=Array.isArray(d.warnings)?d.warnings.filter(x=>typeof x==='string'):[];
+  let forecast=d.forecast||'Нет подтверждённой сводки.';
+  if(!d.data_status&&!valid)forecast='Сохранённая сводка требует проверки актуальности. Дождитесь обновления источников.';
+  document.getElementById('baroForecast').textContent=forecast+(warnings.length?' '+warnings.join(' '):'');
+  const count=d.count&&d.count.d90;
+  document.getElementById('baroCount').textContent=state==='unavailable'||!Number.isFinite(count)?'—':String(count);
+}
+fetch('data/leading_index.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('unavailable');return r.json();}).then(renderBarometer).catch(()=>renderBarometer({index:null,data_status:'unavailable',status:'Данные временно недоступны',forecast:'Не удалось загрузить сводку. Попробуйте позже.'}));
+fetch('data/indices.json',{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('unavailable');return r.json();}).then(d=>{
+  document.getElementById('upd').textContent=dateLabel(d.updated,4);
   const pain=d.pain||[],comm=d.comm||[],cargo=d.cargo||[];
   if(pain.length){document.getElementById('painNow').textContent=pain[pain.length-1].v+'%';}
   if(comm.length){document.getElementById('commNow').textContent=comm[comm.length-1].v+'%';}
   if(cargo.length){document.getElementById('cargoNow').textContent='$'+cargo[cargo.length-1].v;}
+  const dates=d.source_updated||{};
+  [['Pain',pain,dates.news],['Comm',comm,dates.pay],['Cargo',cargo,dates.live_cargo||dates.cargo]].forEach(([name,rows,date])=>{
+    const last=rows.length?rows[rows.length-1]:null;
+    let label=dateLabel(date||d.updated,4);
+    if(last&&last.m)label+=' · период '+last.m;
+    if(last&&Number.isFinite(last.n))label+=' · наблюдений: '+last.n;
+    document.getElementById('asof'+name).textContent=label;
+  });
+  document.getElementById('asofRail').textContent=dateLabel(dates.live_cargo||d.updated,4);
+  document.getElementById('asofWorld').textContent=dateLabel(dates.live_cargo||d.updated,4);
   const meta=d.meta||{};
   if(meta.rail_erai){document.getElementById('railNow').textContent='$'+meta.rail_erai.toLocaleString('ru');}
   if(meta.world_wci){document.getElementById('worldNow').textContent='$'+meta.world_wci.toLocaleString('ru');}
