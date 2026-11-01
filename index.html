@@ -413,7 +413,7 @@ html[data-az-zoom]:not([data-az-zoom="100"]) :is(main,.page,.screen,.view,.conte
     <div class="col">
     <div class="col-head">Как повезёте</div>
     <div class="glass how-card">
-      <div class="how-lead">Прикинем доставку по <b>средним ставкам рынка</b>: выберите откуда, куда и город таможни — посчитаем фрахт и подставим в расчёт.</div>
+      <div class="how-lead">Прикинем доставку по <b>датированным наблюдениям ставок</b>, если для выбранного направления есть данные за последние 7 дней. Фрахт также можно ввести вручную.</div>
       <div id="freightHelp" style="font-size:13px;margin-bottom:10px"></div>
       <div id="freightCalc" style="display:none">
         <div style="display:grid;grid-template-columns:1fr;gap:8px">
@@ -426,6 +426,7 @@ html[data-az-zoom]:not([data-az-zoom="100"]) :is(main,.page,.screen,.view,.conte
           <input id="frWeight" type="number" placeholder="вес, кг" style="flex:1;padding:9px;background:rgba(10,15,28,.7);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:13px">
           <button type="button" onclick="applyFreight()" style="padding:9px 16px;border:0;border-radius:8px;font-weight:700;font-size:13px;color:#fff;background:linear-gradient(100deg,#5b8cff,#7c5cff);cursor:pointer">Посчитать →</button>
         </div>
+        <div style="font-size:12px;color:var(--mut);margin-top:8px">Если свежей ставки нет, введите фрахт вручную или запросите текущую ставку у перевозчика.</div>
         <div id="frOut" style="font-size:12.5px;color:var(--mut);margin-top:10px;line-height:1.5"></div>
       </div>
       <a href="/routes.html" style="display:inline-block;margin-top:14px;font-size:12.5px;color:#8fb4ff">Все маршруты и сроки Китай→РФ →</a>
@@ -616,6 +617,7 @@ html[data-az-zoom]:not([data-az-zoom="100"]) :is(main,.page,.screen,.view,.conte
 
 <script>
 const API='https://api.201-51-30-177.sslip.io';
+const AUTH_API='https://app.daldobro.ru';
 // ── свой трекер воронки (anon, без персональных данных; шлём батчами через sendBeacon) ──
 (function(){
   if(window.WL){window.ddTrack=function(){};window.ddFlush=function(){};return;} // вайтлейбл — сайт клиента, не трекаем
@@ -960,6 +962,44 @@ function loadHist(i){
 }
 renderHist();
 // ── мостик: прикинуть фрахт из наших ставок рынка ($/кг × вес × курс) — за входом ──
+// BEGIN route-rate freshness: identical on the three consuming pages.
+function ddRateEscape(value){
+  return String(value==null?'':value).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function ddRouteRateState(row,archived=false,now=Date.now()){
+  const empty={valid:false,current:false,date:'',label:'',price:null,historical:null};
+  if(!row||typeof row!=='object')return empty;
+  const own=k=>Object.prototype.hasOwnProperty.call(row,k);
+  const raw=own('as_of')?row.as_of:row.date;
+  // A file's updated/computed_at is never the observation date of a rate.
+  if(typeof raw!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?$/.test(raw))return empty;
+  const day=raw.slice(0,10),midnight=Date.parse(day+'T00:00:00Z');
+  if(!Number.isFinite(midnight)||new Date(midnight).toISOString().slice(0,10)!==day)return empty;
+  const instant=raw.length===10?midnight:Date.parse(raw);
+  if(!Number.isFinite(instant)||instant>now)return empty;
+  const date=new Date(instant).toISOString().slice(0,10);
+  const age=(Date.parse(new Date(now).toISOString().slice(0,10)+'T00:00:00Z')-Date.parse(date+'T00:00:00Z'))/86400000;
+  const positive=v=>typeof v==='number'&&Number.isFinite(v)&&v>0;
+  const price=row.usd_kg;
+  const historical=positive(row.historical_usd_kg)?row.historical_usd_kg:(positive(price)?price:null);
+  if(historical===null)return empty;
+  const current=!archived&&age>=0&&age<=7&&positive(price)&&
+    (!own('is_current')||row.is_current===true)&&(!own('data_status')||row.data_status==='current')&&
+    (!own('current_usd_kg')||row.current_usd_kg===price);
+  return {valid:true,current,date,label:date.split('-').reverse().join('.'),price:current?price:null,historical};
+}
+function ddRouteRateEntries(data){
+  const entries=[];
+  if(!data||data.gated)return entries;
+  for(const [key,archived] of [['rates',false],['archived_rates',true]]){
+    for(const row of (Array.isArray(data[key])?data[key]:[])){
+      const state=ddRouteRateState(row,archived);
+      if(state.valid&&typeof row.cn==='string'&&row.cn.trim()&&typeof row.ru==='string'&&row.ru.trim())entries.push({row,state});
+    }
+  }
+  return entries.sort((a,b)=>Number(b.state.current)-Number(a.state.current)||b.state.date.localeCompare(a.state.date));
+}
+// END route-rate freshness.
 let _rates=null;
 // морские ворота Китай→РФ: срок (морем+до таможни), город растаможки, поправка плеча к $/кг
 const PORTS=[
@@ -973,11 +1013,10 @@ const PORTS=[
    note:'быстро и дорого — для срочных и лёгких грузов'},
 ];
 function fillFrOptions(){
-  const CN=['Гуанчжоу','Иу','Шанхай','Нинбо','Шэньчжэнь','Пекин','Циндао','Гонконг'],
-        RU=['Москва','Владивосток','Екатеринбург','Новосибирск','Санкт-Петербург','Казань','Ростов-на-Дону','Краснодар'],
+  const rs=ddRouteRateEntries(_rates).filter(e=>e.state.current).map(e=>e.row);
+  const CN=[...new Set(rs.map(r=>r.cn))], RU=[...new Set(rs.map(r=>r.ru))],
         CUST=['Владивосток','Москва','Находка','Новороссийск','Санкт-Петербург','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
-  (_rates.rates||[]).forEach(r=>{if(!CN.includes(r.cn))CN.unshift(r.cn);if(!RU.includes(r.ru))RU.unshift(r.ru);});
-  const opt=a=>a.map(c=>'<option>'+c+'</option>').join('');
+  const opt=a=>a.map(c=>'<option>'+ddRateEscape(c)+'</option>').join('');
   document.getElementById('frFrom').innerHTML=opt(CN);
   document.getElementById('frPort').innerHTML=PORTS.map((p,i)=>'<option value="'+i+'">'+p.name+'</option>').join('');
   document.getElementById('frTo').innerHTML=opt(RU);
@@ -1001,56 +1040,69 @@ function frLock(){
     '🔒 <b>Бесплатные расчёты закончились.</b> Дальше — после входа: <b>14 дней бесплатно</b>, без карты.<br>'+
     '<a href="/routes.html" style="color:#8fb4ff;font-weight:700">Войти и продолжить →</a></div>';
 }
+function frUnavailable(reason){
+  document.getElementById('freightCalc').style.display='none';
+  document.getElementById('frOut').textContent='';
+  const archive=ddRouteRateEntries(_rates).find(e=>!e.state.current);
+  document.getElementById('freightHelp').textContent=(reason||'Нет подтверждённых ставок за последние 7 дней.')+
+    (archive?' Последнее доступное наблюдение: '+archive.state.label+' (архив).':'')+
+    ' Введите фрахт вручную или запросите текущую ставку у перевозчика.';
+}
+function showFreightBridge(message){
+  if(!ddRouteRateEntries(_rates).some(e=>e.state.current)){frUnavailable();return false;}
+  if(typeof _rates.usd_rub!=='number'||!Number.isFinite(_rates.usd_rub)||_rates.usd_rub<=0){
+    frUnavailable('Для пересчёта в рубли нужен подтверждённый курс.');return false;
+  }
+  document.getElementById('freightHelp').innerHTML=message;
+  document.getElementById('frOut').textContent='';
+  document.getElementById('freightCalc').style.display='block';
+  fillFrOptions();return true;
+}
+async function freightJSON(path,tok){
+  const r=await fetch(AUTH_API+path,{headers:tok?{Authorization:'Bearer '+tok}:{},cache:'no-store'});
+  if(!r.ok)throw new Error('FreightHTTPError');
+  return r.json();
+}
 async function initFreightBridge(){
-  const help=document.getElementById('freightHelp'),tok=localStorage.getItem('dd_token');
+  const tok=localStorage.getItem('dd_token');
+  document.getElementById('freightCalc').style.display='none';
   try{
     if(tok){
-      const m=await(await fetch(API+'/auth/me?t='+tok)).json();
+      const m=await freightJSON('/auth/me',tok);
       window._intelActive=!!(m.auth&&m.active);
-      if(window._lastD)loadMarket(window._lastD.code,window._lastD.term||term.value);   // перерисовать разведку с учётом входа
+      if(window._lastD)loadMarket(window._lastD.code,window._lastD.term||term.value);
       if(m.auth&&m.active){
-        _rates=await(await fetch(API+'/routes/rates?t='+tok)).json();
-        if(_rates.gated||!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">Ставки рынка накапливаются — скоро появятся.</span>';return;}
-        help.innerHTML='<span style="color:var(--good)">✓ Ставки рынка открыты</span> · курс '+(_rates.usd_rub||90)+' ₽/$';
-        document.getElementById('freightCalc').style.display='block';
-        fillFrOptions();
+        _rates=await freightJSON('/routes/rates',tok);
+        showFreightBridge('<span style="color:var(--good)">✓ Есть наблюдения ставок за последние 7 дней</span> · курс '+_rates.usd_rub+' ₽/$');
         return;
       }
     }
-    // демо-магнит: работает сразу, 3 расчёта бесплатно, потом вход
     if(frDemoUsed()>=FR_FREE){frLock();return;}
-    _rates=await(await fetch(API+'/routes/rates/demo')).json();
-    if(!(_rates.rates||[]).length){help.innerHTML='<span style="color:var(--mut)">Ставки рынка накапливаются — скоро появятся.</span>';return;}
-    help.innerHTML='<span style="color:var(--good)">✓ Работает — попробуйте</span> · бесплатно: <b id="frLeft">'+(FR_FREE-frDemoUsed())+'</b> из '+FR_FREE+' расчётов';
-    document.getElementById('freightCalc').style.display='block';
-    fillFrOptions();
-  }catch(e){}
+    _rates=await freightJSON('/routes/rates/demo');
+    showFreightBridge('<span style="color:var(--good)">✓ Есть наблюдения ставок за последние 7 дней</span> · бесплатно: <b id="frLeft">'+(FR_FREE-frDemoUsed())+'</b> из '+FR_FREE+' расчётов');
+  }catch(e){_rates=null;frUnavailable('Ставки сейчас недоступны.');}
 }
 function applyFreight(){
-  if(!_rates)return;
+  const out=document.getElementById('frOut');
   const from=document.getElementById('frFrom').value, to=document.getElementById('frTo').value,
         cust=document.getElementById('frCust').value, w=+document.getElementById('frWeight').value;
-  const port=PORTS[+(document.getElementById('frPort').value||0)];
-  const fx=_rates.usd_rub||90;
-  if(!w||w<=0){document.getElementById('frOut').textContent='Введите вес в кг.';return;}
-  const rs=_rates.rates||[], exact=rs.find(r=>r.cn===from&&r.ru===to);
-  let kg, src;
-  if(exact){kg=exact.usd_kg;src=window.WL?'ставка '+(WL.name||'компании'):'средняя по рынку на этом направлении';}
-  else{
-    const v=rs.map(r=>r.usd_kg).sort((a,b)=>a-b);
-    if(!v.length){document.getElementById('frOut').textContent='Ставки накапливаются — попробуйте позже.';return;}
-    kg=v[Math.floor(v.length/2)];src=window.WL?'средняя ставка '+(WL.name||'компании'):'средняя по рынку (по вашему направлению сигналов пока нет)';
-  }
-  const kgP=Math.round(kg*port.k*100)/100;   // поправка на плечо выбранного порта
+  if(!Number.isFinite(w)||w<=0){out.textContent='Введите вес в кг.';return;}
+  // Recheck at the moment of use: a page may have stayed open past the freshness window.
+  const exact=ddRouteRateEntries(_rates).find(e=>e.state.current&&e.row.cn===from&&e.row.ru===to);
+  if(!exact){out.textContent='Нет подтверждённой свежей ставки по этому направлению. Введите фрахт вручную или запросите текущую ставку у перевозчика.';return;}
+  const fx=_rates.usd_rub,port=PORTS[+(document.getElementById('frPort').value||0)];
+  if(typeof fx!=='number'||!Number.isFinite(fx)||fx<=0||!port){out.textContent='Недостаточно данных для расчёта. Введите фрахт вручную или запросите текущую ставку у перевозчика.';return;}
+  const kgP=Math.round(exact.state.price*port.k*100)/100;
   const rub=Math.round(kgP*w*fx);
+  if(!Number.isFinite(rub)||rub<=0){out.textContent='Проверьте вес и данные ставки; фрахт можно ввести вручную.';return;}
   document.getElementById('freight').value=rub;
   window._frCustoms=cust;
   if(!window.WL)ddTrack('freight_apply',{x:{from:from,to:to,port:port.name.replace(/ \(.*/,''),rub:rub}});
   const portNote=port.k!==1?(' (плечо через '+port.name.replace(/ \(.*/,'')+', ×'+port.k+')'):'';
-  document.getElementById('frOut').innerHTML='≈ '+kgP+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b>'+portNote+'<br>'+
-    from+' → '+to+' · порт: '+port.name.replace(/ \(.*/,'')+' 🕒'+port.days+' · таможня: '+cust+'<br>'+src+'.<br><b>'+(window.WL?'Это ориентир — точную ставку подтвердит менеджер.':'Это средняя по рынку — точную цену уточните у брокера справа →')+'</b>';
+  const src=window.WL?'ставка '+(WL.name||'компании'):'наблюдение по этому направлению';
+  out.innerHTML='≈ '+kgP+' $/кг × '+w+' кг × '+fx+' ₽ = <b style="color:#5bffc0">'+rub.toLocaleString('ru-RU')+' ₽</b>'+portNote+'<br>'+
+    ddRateEscape(from)+' → '+ddRateEscape(to)+' · порт: '+port.name.replace(/ \(.*/,'')+' 🕒'+port.days+' · таможня: '+ddRateEscape(cust)+'<br>'+ddRateEscape(src)+' · данные на '+exact.state.label+'.<br><b>Это ориентир — точную ставку подтвердит перевозчик.</b>';
   _chosen=null; calc();
-  // демо без входа: списываем попытку, после последней — замок
   if(_rates.demo&&!window.WL){
     localStorage.dd_frd=frDemoUsed()+1;
     const left=FR_FREE-frDemoUsed(), el=document.getElementById('frLeft');
@@ -1404,20 +1456,11 @@ function wlApply(){
       }
     }
   }
-  // ставки клиента: мостик работает сразу, без входа, с подписью «ставка компании»
+  // Ставки компании подчиняются той же проверке даты, что и рыночные наблюдения.
   if(W.rates&&W.rates.length){
     window.initFreightBridge=async function(){
-      _rates={usd_rub:W.usd_rub||90,rates:W.rates};
-      document.getElementById('freightHelp').innerHTML='<span style="color:var(--good)">✓ Наши ставки доставки</span>';
-      document.getElementById('freightCalc').style.display='block';
-      const CN=[...new Set(W.rates.map(r=>r.cn))],RU=[...new Set(W.rates.map(r=>r.ru))],
-            CUST=['Владивосток','Москва','Находка','Забайкальск','Уссурийск','Екатеринбург','Новосибирск','Благовещенск'];
-      const opt=a=>a.map(c=>'<option>'+c+'</option>').join('');
-      document.getElementById('frFrom').innerHTML=opt(CN);
-      document.getElementById('frTo').innerHTML=opt(RU);
-      document.getElementById('frCust').innerHTML=opt(CUST);
-      document.getElementById('frPort').innerHTML=PORTS.map((p,i)=>'<option value="'+i+'">'+p.name+'</option>').join('');
-      onPortChange();
+      _rates={usd_rub:W.usd_rub,rates:W.rates};
+      showFreightBridge('<span style="color:var(--good)">✓ Ставки компании с датой за последние 7 дней</span>');
     };
   }
   // подвал: клиентский + «работает на ДалДобро»

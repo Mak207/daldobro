@@ -1,26 +1,49 @@
 {
  "updated": "2021-04-13",
- "computed_at": "2026-11-01T02:08:08.485114+00:00",
- "unit": "$/кг (медиана рынка)",
+ "computed_at": "2026-11-01T02:54:21.142396+00:00",
+ "unit": "$/кг",
  "usd_rub": 80.54,
- "rates": [
+ "data_status": "stale",
+ "rates": [],
+ "archived_rates": [
   {
    "cn": "Гуанчжоу",
    "ru": "Москва",
-   "usd_kg": 5.2,
-   "n": 2,
+   "usd_kg": null,
+   "current_usd_kg": null,
+   "is_current": false,
+   "data_status": "stale",
    "as_of": "2021-04-13",
-   "src": "чаты рынка"
+   "period_from": "2021-03-05",
+   "period_to": "2021-04-13",
+   "n": 2,
+   "src": "чаты рынка",
+   "historical_usd_kg": 5.2
   },
   {
    "cn": "Иу",
    "ru": "Санкт-Петербург",
-   "usd_kg": 2.8,
-   "n": 1,
+   "usd_kg": null,
+   "current_usd_kg": null,
+   "is_current": false,
+   "data_status": "stale",
    "as_of": "2020-10-29",
-   "src": "чаты рынка"
+   "period_from": "2020-10-29",
+   "period_to": "2020-10-29",
+   "n": 1,
+   "src": "чаты рынка",
+   "historical_usd_kg": 2.8
   }
  ],
+ "freshness": {
+  "max_age_days": 7,
+  "basis": "per-row source observation date",
+  "current_count": 0,
+  "archived_count": 2,
+  "invalid_external_count": 0
+ },
  "total_routes": 2,
+ "current_count": 0,
+ "historical_count": 2,
  "preview": true
 }

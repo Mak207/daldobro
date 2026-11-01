@@ -38,6 +38,44 @@ body:not(.paid) .item.money{filter:blur(5px);-webkit-user-select:none;user-selec
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script src="/pro-access.js"></script>
 <script>
+// BEGIN route-rate freshness: identical on the three consuming pages.
+function ddRateEscape(value){
+  return String(value==null?'':value).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function ddRouteRateState(row,archived=false,now=Date.now()){
+  const empty={valid:false,current:false,date:'',label:'',price:null,historical:null};
+  if(!row||typeof row!=='object')return empty;
+  const own=k=>Object.prototype.hasOwnProperty.call(row,k);
+  const raw=own('as_of')?row.as_of:row.date;
+  // A file's updated/computed_at is never the observation date of a rate.
+  if(typeof raw!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?$/.test(raw))return empty;
+  const day=raw.slice(0,10),midnight=Date.parse(day+'T00:00:00Z');
+  if(!Number.isFinite(midnight)||new Date(midnight).toISOString().slice(0,10)!==day)return empty;
+  const instant=raw.length===10?midnight:Date.parse(raw);
+  if(!Number.isFinite(instant)||instant>now)return empty;
+  const date=new Date(instant).toISOString().slice(0,10);
+  const age=(Date.parse(new Date(now).toISOString().slice(0,10)+'T00:00:00Z')-Date.parse(date+'T00:00:00Z'))/86400000;
+  const positive=v=>typeof v==='number'&&Number.isFinite(v)&&v>0;
+  const price=row.usd_kg;
+  const historical=positive(row.historical_usd_kg)?row.historical_usd_kg:(positive(price)?price:null);
+  if(historical===null)return empty;
+  const current=!archived&&age>=0&&age<=7&&positive(price)&&
+    (!own('is_current')||row.is_current===true)&&(!own('data_status')||row.data_status==='current')&&
+    (!own('current_usd_kg')||row.current_usd_kg===price);
+  return {valid:true,current,date,label:date.split('-').reverse().join('.'),price:current?price:null,historical};
+}
+function ddRouteRateEntries(data){
+  const entries=[];
+  if(!data||data.gated)return entries;
+  for(const [key,archived] of [['rates',false],['archived_rates',true]]){
+    for(const row of (Array.isArray(data[key])?data[key]:[])){
+      const state=ddRouteRateState(row,archived);
+      if(state.valid&&typeof row.cn==='string'&&row.cn.trim()&&typeof row.ru==='string'&&row.ru.trim())entries.push({row,state});
+    }
+  }
+  return entries.sort((a,b)=>Number(b.state.current)-Number(a.state.current)||b.state.date.localeCompare(a.state.date));
+}
+// END route-rate freshness.
 let DATA={},RATES={},GATE={},PW={},RAIL={};
 const tg=window.Telegram&&Telegram.WebApp; if(tg){try{tg.ready();tg.expand();}catch(e){}}
 function renderLogistics(result){
@@ -71,12 +109,14 @@ if(GATE.gates&&GATE.gates.length){
      GATE.gates.map(function(g){return '<div class="item"><b>'+esc(g.gate)+'</b>: в РФ идут <b>'+g.to_rf+'</b> судов · всего в воротах '+g.total+' · прибытие ~'+esc(g.lag)+'</div>';}).join("")+
      '<div class="item" style="color:var(--muted);font-size:12px">обновлено '+esc(GATE.updated||"")+"</div></div>";
 }
-// 0) ОБЪЕКТИВНЫЕ СТАВКИ (зеркало для канальных заявлений «ставки выросли»)
-if(RATES.rates&&RATES.rates.length){
-  H+='<div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:6px 0 8px">💰 Ставки сейчас — объективный ориентир ('+esc(RATES.unit||"")+')</div>';
-  H+='<div class="theme"><div class="cnt">Рыночная медиана по маршрутам — сверяйте с тем, что пишут каналы ниже (совпадает → верить, расходится → шум).</div>'+
-     RATES.rates.map(function(r){return '<div class="item">'+esc(r.cn)+" → "+esc(r.ru)+': <b>'+r.usd_kg+" $/кг</b></div>";}).join("")+
-     '<div class="item" style="color:var(--muted);font-size:12px">курс ЦБ ≈ '+(RATES.usd_rub||"")+" ₽/$ · обновлено "+esc(RATES.updated||"")+"</div></div>";
+// 0) Датированные наблюдения ставок; архив не является текущей котировкой.
+const rateEntries=ddRouteRateEntries(RATES);
+if(rateEntries.length){
+  H+='<div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:6px 0 8px">💰 Наблюдения ставок по направлениям ('+esc(RATES.unit||'$/кг')+')</div>';
+  H+='<div class="theme"><div class="cnt">Дата относится к конкретному наблюдению. Архивные ставки не описывают текущий рынок и не используются в калькуляторе. Текущую котировку подтверждает перевозчик.</div>'+
+    rateEntries.map(function(e){var r=e.row,s=e.state;return '<div class="item">'+esc(r.cn)+' → '+esc(r.ru)+': '+
+      (s.current?'<b style="color:#5bffc0">'+s.price+' $/кг</b>':'<span style="color:var(--muted)">Архив: '+s.historical+' $/кг</span>')+
+      ' · данные на '+s.label+'</div>';}).join('')+'</div>';
 }
 // A) СТАТУС МАРШРУТОВ (по погранпереходам/портам)
 if((DATA.routes||[]).length){

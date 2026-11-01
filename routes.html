@@ -67,14 +67,14 @@ tr:last-child td{border-bottom:0}
 <p class="mut">Далее из Владивостока — таможенное оформление (Владивостокская / Находкинская таможня) и ЖД/авто по РФ.</p>
 
 <h2>🎯 Нужна точная цена доставки?</h2>
-<p class="mut">Все цифры на этой странице — <b>средние по рынку</b>: с ними удобно прикидывать бюджет и торговаться. Точную цену под ваш груз и адрес считает перевозчик.</p>
+<p class="mut">Учитывайте дату каждого наблюдения. <b>Архивные ставки не описывают текущий рынок.</b> Точную цену под ваш груз и адрес считает перевозчик.</p>
 <div id="carrierBox" style="margin:8px 0 24px;padding:16px 18px;border:1px dashed var(--line);border-radius:14px;background:var(--card)">
   <div id="carrierSlot" style="color:var(--mut);font-size:14px">Вы перевозчик? Это место свободно — ваша компания и кнопка расчёта будут здесь. <a href="mailto:hello@daldobro.ru?subject=Карточка%20перевозчика%20на%20маршрутах" style="color:#8fb4ff">Занять место →</a></div>
 </div>
 
-<h2>💰 Ставки по направлениям <span style="font-size:13px;font-weight:400;color:var(--mut)">— средние по рынку, обновляются</span></h2>
-<p class="mut">Средние ставки Китай→РФ по сигналам рынка (карго, авто, авиа). Таких цифр нет в мировых индексах — только у форвардеров и в отраслевых источниках. Это ориентир для переговоров, не точная котировка. Открываются после входа.</p>
-<table><thead><tr><th>Откуда</th><th>Куда</th><th>Ставка</th><th>Точек</th></tr></thead><tbody id="ratesBody"><tr><td colspan="4" style="color:var(--mut)">войдите, чтобы увидеть →</td></tr></tbody></table>
+<h2>💰 Ставки по направлениям <span style="font-size:13px;font-weight:400;color:var(--mut)">— датированные наблюдения</span></h2>
+<p class="mut">Наблюдения ставок Китай→РФ по сигналам рынка (карго, авто, авиа). Дата указана для каждого направления. Наблюдения старше 7 дней и ставки без подтверждённой актуальности отмечены как архив; в калькулятор они не подставляются. Текущую котировку подтверждает перевозчик. Доступные наблюдения открываются после входа.</p>
+<table><thead><tr><th>Откуда</th><th>Куда</th><th>Ставка</th><th>Точек</th><th>Дата наблюдения</th></tr></thead><tbody id="ratesBody"><tr><td colspan="5" style="color:var(--mut)">войдите, чтобы увидеть →</td></tr></tbody></table>
 
 <h2>🚂 ЖД: Китай → Россия</h2>
 <p class="mut">Компромисс цена/срок для центральной РФ. Контейнерные поезда через погранпереходы.</p>
@@ -110,15 +110,56 @@ tr:last-child td{border-bottom:0}
 const API='https://api.201-51-30-177.sslip.io';
 const AUTH_API='https://app.daldobro.ru';
 (function(){try{var aid=localStorage.dd_aid;if(!aid){aid='a'+Math.abs(Date.now()^(performance.now()*1e6|0)).toString(36)+Math.floor(1e6*Math.random()).toString(36);localStorage.dd_aid=aid;}var sid=sessionStorage.dd_sid;if(!sid){sid='s'+Date.now().toString(36);sessionStorage.dd_sid=sid;}var qp=new URLSearchParams(location.search);var utm=qp.get('utm_source')||qp.get('utm')||'';var ref='';try{var rh=document.referrer?new URL(document.referrer).hostname:'';if(rh&&rh.indexOf('daldobro')<0)ref=rh;}catch(e){}var dev=matchMedia('(max-width:820px)').matches?'mobile':'desktop';window._ddQ=[];window.ddTrack=function(t,x){try{window._ddQ.push({t:t,a:aid,s:sid,p:location.pathname,d:dev,r:ref,u:utm,c:(x&&x.c)||'',q:(x&&x.q)||'',x:(x&&x.x)||undefined});if(window._ddQ.length>=8)ddFlush();}catch(e){}};window.ddFlush=function(){if(!window._ddQ.length)return;var b=JSON.stringify(window._ddQ);window._ddQ=[];try{navigator.sendBeacon?navigator.sendBeacon(API+'/ev',new Blob([b],{type:'text/plain'})):fetch(API+'/ev',{method:'POST',headers:{'Content-Type':'text/plain'},body:b,keepalive:true});}catch(e){}};setInterval(ddFlush,4000);addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')ddFlush();});addEventListener('pagehide',ddFlush);ddTrack('route_view');}catch(e){window.ddTrack=function(){};window.ddFlush=function(){};}})();
+// BEGIN route-rate freshness: identical on the three consuming pages.
+function ddRateEscape(value){
+  return String(value==null?'':value).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+}
+function ddRouteRateState(row,archived=false,now=Date.now()){
+  const empty={valid:false,current:false,date:'',label:'',price:null,historical:null};
+  if(!row||typeof row!=='object')return empty;
+  const own=k=>Object.prototype.hasOwnProperty.call(row,k);
+  const raw=own('as_of')?row.as_of:row.date;
+  // A file's updated/computed_at is never the observation date of a rate.
+  if(typeof raw!=='string'||!/^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))?$/.test(raw))return empty;
+  const day=raw.slice(0,10),midnight=Date.parse(day+'T00:00:00Z');
+  if(!Number.isFinite(midnight)||new Date(midnight).toISOString().slice(0,10)!==day)return empty;
+  const instant=raw.length===10?midnight:Date.parse(raw);
+  if(!Number.isFinite(instant)||instant>now)return empty;
+  const date=new Date(instant).toISOString().slice(0,10);
+  const age=(Date.parse(new Date(now).toISOString().slice(0,10)+'T00:00:00Z')-Date.parse(date+'T00:00:00Z'))/86400000;
+  const positive=v=>typeof v==='number'&&Number.isFinite(v)&&v>0;
+  const price=row.usd_kg;
+  const historical=positive(row.historical_usd_kg)?row.historical_usd_kg:(positive(price)?price:null);
+  if(historical===null)return empty;
+  const current=!archived&&age>=0&&age<=7&&positive(price)&&
+    (!own('is_current')||row.is_current===true)&&(!own('data_status')||row.data_status==='current')&&
+    (!own('current_usd_kg')||row.current_usd_kg===price);
+  return {valid:true,current,date,label:date.split('-').reverse().join('.'),price:current?price:null,historical};
+}
+function ddRouteRateEntries(data){
+  const entries=[];
+  if(!data||data.gated)return entries;
+  for(const [key,archived] of [['rates',false],['archived_rates',true]]){
+    for(const row of (Array.isArray(data[key])?data[key]:[])){
+      const state=ddRouteRateState(row,archived);
+      if(state.valid&&typeof row.cn==='string'&&row.cn.trim()&&typeof row.ru==='string'&&row.ru.trim())entries.push({row,state});
+    }
+  }
+  return entries.sort((a,b)=>Number(b.state.current)-Number(a.state.current)||b.state.date.localeCompare(a.state.date));
+}
+// END route-rate freshness.
 let RATES={}, AUTH={active:false};
 function rateFor(cnRu){
-  // сопоставляем порт (Нинбо, Шанхай...) с направлением ставки (город → Москва/Владивосток)
-  for(const r of (RATES.rates||[])){ if(r.cn && cnRu.indexOf(r.cn)>=0) return '~$'+r.usd_kg+'/кг'; }
-  return AUTH.active ? 'по запросу' : null;
+  // This table is China → Vladivostok; do not substitute another destination's price.
+  return ddRouteRateEntries(RATES).find(e=>e.row.ru==='Владивосток'&&cnRu.indexOf(e.row.cn)>=0)||null;
 }
 function rateCell(cnRu){
-  if(!AUTH.active) return '<a href="/login.html" style="color:#8fb4ff">войти →</a>';
-  const v=rateFor(cnRu); return v?('<b style="color:#5bffc0">'+v+'</b>'):'по запросу';
+  if(!AUTH.active)return '<a href="/login.html" style="color:#8fb4ff">войти →</a>';
+  const entry=rateFor(cnRu);
+  if(!entry)return 'запросите текущую ставку';
+  const s=entry.state;
+  return (s.current?'<b style="color:#5bffc0">~$'+s.price+'/кг</b>':'<span style="color:var(--mut)">Архив: ~$'+s.historical+'/кг</span>')+
+    '<br><small style="color:var(--mut)">данные на '+s.label+'</small>';
 }
 function renderSea(){
   const d=window._routes;
@@ -143,11 +184,13 @@ async function renderCarrier(){
 }
 function renderRates(){
   const body=document.getElementById('ratesBody');
-  if(!AUTH.active){body.innerHTML='<tr><td colspan="4"><a href="/login.html" style="color:#8fb4ff">Войти — и увидеть реальные ставки по направлениям (14 дней бесплатно) →</a></td></tr>';return;}
-  const rs=(RATES.rates||[]);
-  body.innerHTML = rs.length ? rs.map(r=>
-    '<tr><td class="d">'+r.cn+'</td><td class="d">'+r.ru+'</td><td class="rate"><b style="color:#5bffc0">~$'+r.usd_kg+'/кг</b></td><td class="rate">'+r.n+'</td></tr>').join('')
-    : '<tr><td colspan="4" style="color:var(--mut)">данные накапливаются — скоро появятся ставки</td></tr>';
+  if(!AUTH.active){body.innerHTML='<tr><td colspan="5"><a href="/login.html" style="color:#8fb4ff">Войти — и увидеть доступные наблюдения ставок (14 дней бесплатно) →</a></td></tr>';return;}
+  const entries=ddRouteRateEntries(RATES);
+  body.innerHTML=entries.length?entries.map(({row:r,state:s})=>
+    '<tr><td class="d">'+ddRateEscape(r.cn)+'</td><td class="d">'+ddRateEscape(r.ru)+'</td><td class="rate">'+
+    (s.current?'<b style="color:#5bffc0">~$'+s.price+'/кг</b>':'<span style="color:var(--mut)">Архив: ~$'+s.historical+'/кг</span>')+
+    '</td><td class="rate">'+ddRateEscape(r.n==null?'—':r.n)+'</td><td class="rate">'+s.label+(s.current?'':' · архив')+'</td></tr>').join(''):
+    '<tr><td colspan="5" style="color:var(--mut)">Нет ставок с подтверждённой датой. Запросите текущую котировку у перевозчика.</td></tr>';
 }
 async function initAuth(){
   const tok=localStorage.getItem('dd_token');
