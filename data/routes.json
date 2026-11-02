@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-01",
+ "updated": "2026-11-02",
  "carrier": "FESCO",
  "routes": [
   {
@@ -10,7 +10,7 @@
    "mode": "море",
    "transit_days": 3,
    "n": 8,
-   "freq_per_week": 1.0
+   "freq_per_week": 0.9
   },
   {
    "line": "Лист1",
@@ -20,7 +20,7 @@
    "mode": "море",
    "transit_days": 3,
    "n": 4,
-   "freq_per_week": 1.0
+   "freq_per_week": 0.9
   },
   {
    "line": "Лист1",
@@ -29,8 +29,18 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 3,
-   "n": 5,
-   "freq_per_week": 0.9
+   "n": 6,
+   "freq_per_week": 1.2
+  },
+  {
+   "line": "Лист1",
+   "cn": "WENZHOU",
+   "cn_ru": "Вэньчжоу",
+   "ru": "Владивосток",
+   "mode": "море",
+   "transit_days": 4,
+   "n": 4,
+   "freq_per_week": 1.2
   },
   {
    "line": "Лист1",
@@ -40,16 +50,6 @@
    "mode": "море",
    "transit_days": 5,
    "n": 8,
-   "freq_per_week": 1.0
-  },
-  {
-   "line": "Лист1",
-   "cn": "SHANTOU",
-   "cn_ru": "Шаньтоу",
-   "ru": "Владивосток",
-   "mode": "море",
-   "transit_days": 6,
-   "n": 4,
    "freq_per_week": 0.9
   },
   {
@@ -59,8 +59,8 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 6,
-   "n": 5,
-   "freq_per_week": 0.9
+   "n": 6,
+   "freq_per_week": 1.2
   },
   {
    "line": "Лист1",
@@ -70,7 +70,17 @@
    "mode": "море",
    "transit_days": 7,
    "n": 8,
-   "freq_per_week": 1.0
+   "freq_per_week": 0.9
+  },
+  {
+   "line": "Лист1",
+   "cn": "SHANTOU",
+   "cn_ru": "Шаньтоу",
+   "ru": "Владивосток",
+   "mode": "море",
+   "transit_days": 7,
+   "n": 5,
+   "freq_per_week": 1.2
   },
   {
    "line": "Лист1",
@@ -79,8 +89,8 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 8,
-   "n": 3,
-   "freq_per_week": 0.9
+   "n": 4,
+   "freq_per_week": 1.2
   },
   {
    "line": "Лист1",
@@ -90,8 +100,8 @@
    "mode": "море",
    "transit_days": 9,
    "n": 1,
-   "freq_per_week": 0.9
+   "freq_per_week": 1.2
   }
  ],
- "checked_at": "2026-11-01T09:34:01.742601+00:00"
+ "checked_at": "2026-11-02T05:40:19.719130+00:00"
 }
