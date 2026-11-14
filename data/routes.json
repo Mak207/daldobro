@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-13",
+ "updated": "2026-11-14",
  "carrier": "FESCO",
  "routes": [
   {
@@ -29,8 +29,8 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 3,
-   "n": 5,
-   "freq_per_week": 0.8
+   "n": 6,
+   "freq_per_week": 1.0
   },
   {
    "line": "Лист1",
@@ -40,7 +40,7 @@
    "mode": "море",
    "transit_days": 4,
    "n": 4,
-   "freq_per_week": 0.8
+   "freq_per_week": 1.0
   },
   {
    "line": "Лист1",
@@ -60,7 +60,7 @@
    "mode": "море",
    "transit_days": 6,
    "n": 5,
-   "freq_per_week": 0.8
+   "freq_per_week": 1.0
   },
   {
    "line": "Лист1",
@@ -80,7 +80,7 @@
    "mode": "море",
    "transit_days": 7,
    "n": 4,
-   "freq_per_week": 0.8
+   "freq_per_week": 1.0
   },
   {
    "line": "Лист1",
@@ -90,7 +90,7 @@
    "mode": "море",
    "transit_days": 8,
    "n": 4,
-   "freq_per_week": 0.8
+   "freq_per_week": 1.0
   },
   {
    "line": "Лист1",
@@ -100,8 +100,8 @@
    "mode": "море",
    "transit_days": 11,
    "n": 1,
-   "freq_per_week": 0.8
+   "freq_per_week": 1.0
   }
  ],
- "checked_at": "2026-11-13T05:40:20.693421+00:00"
+ "checked_at": "2026-11-14T05:40:19.826926+00:00"
 }
