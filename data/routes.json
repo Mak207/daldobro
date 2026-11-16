@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14",
+ "updated": "2026-11-16",
  "carrier": "FESCO",
  "routes": [
   {
@@ -29,8 +29,18 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 3,
+   "n": 7,
+   "freq_per_week": 1.2
+  },
+  {
+   "line": "Лист1",
+   "cn": "SHANGHAI",
+   "cn_ru": "Шанхай",
+   "ru": "Владивосток",
+   "mode": "море",
+   "transit_days": 3,
    "n": 6,
-   "freq_per_week": 1.0
+   "freq_per_week": 1.4
   },
   {
    "line": "Лист1",
@@ -39,8 +49,8 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 4,
-   "n": 4,
-   "freq_per_week": 1.0
+   "n": 6,
+   "freq_per_week": 1.2
   },
   {
    "line": "Лист1",
@@ -59,8 +69,8 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 6,
-   "n": 5,
-   "freq_per_week": 1.0
+   "n": 6,
+   "freq_per_week": 1.2
   },
   {
    "line": "Лист1",
@@ -79,8 +89,8 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 7,
-   "n": 4,
-   "freq_per_week": 1.0
+   "n": 6,
+   "freq_per_week": 1.2
   },
   {
    "line": "Лист1",
@@ -89,19 +99,9 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 8,
-   "n": 4,
-   "freq_per_week": 1.0
-  },
-  {
-   "line": "Лист1",
-   "cn": "SHANGHAI",
-   "cn_ru": "Шанхай",
-   "ru": "Владивосток",
-   "mode": "море",
-   "transit_days": 11,
-   "n": 1,
-   "freq_per_week": 1.0
+   "n": 6,
+   "freq_per_week": 1.2
   }
  ],
- "checked_at": "2026-11-15T05:40:22.083841+00:00"
+ "checked_at": "2026-11-16T05:40:20.557985+00:00"
 }
