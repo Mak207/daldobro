@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-16",
+ "updated": "2026-11-19",
  "carrier": "FESCO",
  "routes": [
   {
@@ -30,7 +30,7 @@
    "mode": "море",
    "transit_days": 3,
    "n": 7,
-   "freq_per_week": 1.2
+   "freq_per_week": 1.4
   },
   {
    "line": "Лист1",
@@ -50,7 +50,7 @@
    "mode": "море",
    "transit_days": 4,
    "n": 6,
-   "freq_per_week": 1.2
+   "freq_per_week": 1.4
   },
   {
    "line": "Лист1",
@@ -70,7 +70,7 @@
    "mode": "море",
    "transit_days": 6,
    "n": 6,
-   "freq_per_week": 1.2
+   "freq_per_week": 1.4
   },
   {
    "line": "Лист1",
@@ -90,7 +90,7 @@
    "mode": "море",
    "transit_days": 7,
    "n": 6,
-   "freq_per_week": 1.2
+   "freq_per_week": 1.4
   },
   {
    "line": "Лист1",
@@ -100,8 +100,8 @@
    "mode": "море",
    "transit_days": 8,
    "n": 6,
-   "freq_per_week": 1.2
+   "freq_per_week": 1.4
   }
  ],
- "checked_at": "2026-11-18T05:40:22.047485+00:00"
+ "checked_at": "2026-11-19T05:40:22.380538+00:00"
 }
