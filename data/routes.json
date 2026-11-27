@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23",
+ "updated": "2026-11-26",
  "carrier": "FESCO",
  "routes": [
   {
@@ -30,7 +30,7 @@
    "mode": "море",
    "transit_days": 3,
    "n": 7,
-   "freq_per_week": 1.6
+   "freq_per_week": 1.1
   },
   {
    "line": "Лист1",
@@ -39,7 +39,7 @@
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 3,
-   "n": 8,
+   "n": 10,
    "freq_per_week": 1.4
   },
   {
@@ -50,7 +50,7 @@
    "mode": "море",
    "transit_days": 4,
    "n": 6,
-   "freq_per_week": 1.6
+   "freq_per_week": 1.1
   },
   {
    "line": "Лист1",
@@ -70,7 +70,7 @@
    "mode": "море",
    "transit_days": 6,
    "n": 6,
-   "freq_per_week": 1.6
+   "freq_per_week": 1.1
   },
   {
    "line": "Лист1",
@@ -84,24 +84,24 @@
   },
   {
    "line": "Лист1",
-   "cn": "SHANTOU",
-   "cn_ru": "Шаньтоу",
-   "ru": "Владивосток",
-   "mode": "море",
-   "transit_days": 7,
-   "n": 6,
-   "freq_per_week": 1.6
-  },
-  {
-   "line": "Лист1",
    "cn": "YANTIAN",
    "cn_ru": "Яньтянь (Шэньчжэнь)",
    "ru": "Владивосток",
    "mode": "море",
    "transit_days": 8,
    "n": 6,
-   "freq_per_week": 1.6
+   "freq_per_week": 1.1
+  },
+  {
+   "line": "Лист1",
+   "cn": "SHANTOU",
+   "cn_ru": "Шаньтоу",
+   "ru": "Владивосток",
+   "mode": "море",
+   "transit_days": 8,
+   "n": 6,
+   "freq_per_week": 1.1
   }
  ],
- "checked_at": "2026-11-23T05:40:21.480534+00:00"
+ "checked_at": "2026-11-27T05:40:24.002550+00:00"
 }
